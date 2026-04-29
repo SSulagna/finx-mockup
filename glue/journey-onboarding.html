@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer onboarding & KYC journey — FinX Glue</title>
+  <meta name="description" content="A six-call orchestration that takes a prospect from initiation through identity verification and AML screening to an active party in your bank.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* Page-unique: subtle accent ring on the API sequence card so the journey
+       guide reads as the centrepiece of the page (per prompt). */
+    .api-sequence {
+      box-shadow: 0 0 0 1px rgba(0, 212, 212, 0.15), 0 12px 40px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+    .api-sequence::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: -1px; right: -1px; bottom: -1px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(0, 212, 212, 0.4), transparent 60%);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      padding: 1px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html#approach" class="nav-link">Approach</a>
+        <a href="../index.html#platform" class="nav-link">Platform</a>
+        <a href="index.html" class="nav-link active">Glue</a>
+        <a href="../glass/index.html" class="nav-link">Glass</a>
+        <a href="../index.html#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search Glue documentation" autocomplete="off" aria-label="Search Glue documentation">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="subnav" aria-label="Glue sections">
+    <div class="subnav-inner">
+      <a href="../index.html" class="subnav-back">← Back to FinX</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">FinX Glue</span>
+      <div class="subnav-links">
+        <a href="index.html#getstarted" class="subnav-link">Get Started</a>
+        <a href="index.html#concepts" class="subnav-link">Concepts</a>
+        <a href="api-reference.html" class="subnav-link">API Reference</a>
+        <a href="journey-onboarding.html" class="subnav-link active">Journey Guides</a>
+        <a href="index.html#operate" class="subnav-link">Operate</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="docs">
+
+    <aside class="docs-sidebar" aria-label="Glue navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Get Started</div>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="index.html#getstarted">Auth &amp; tenant headers</a></li>
+          <li><a href="index.html#getstarted">Environments</a></li>
+          <li><a href="index.html#getstarted">First API call</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Concepts</div>
+        <ul>
+          <li><a href="index.html#concepts">BIAN Service Domains</a></li>
+          <li><a href="index.html#concepts">Canonical model</a></li>
+          <li><a href="index.html#concepts">Extensibility model</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">API Reference</div>
+        <ul>
+          <li><a href="api-reference.html">Party Lifecycle Mgmt</a></li>
+          <li><a href="api-reference.html">Account Management</a></li>
+          <li><a href="api-reference.html">Payments</a></li>
+          <li><a href="api-reference.html">Document Directory</a></li>
+          <li><a href="api-reference.html">IDV connectors</a></li>
+          <li><a href="api-reference.html">AML connectors</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Journey Guides</div>
+        <ul>
+          <li><a href="journey-onboarding.html" class="active">Customer onboarding &amp; KYC</a></li>
+          <li><a href="#">Account opening</a></li>
+          <li><a href="#">Card issuance</a></li>
+          <li><a href="#">Payment initiation</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Operate</div>
+        <ul>
+          <li><a href="index.html#operate">Runbooks</a></li>
+          <li><a href="index.html#operate">Releases</a></li>
+          <li><a href="index.html#operate">Deprecations</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="docs-main">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Glue</a>
+        <span class="sep">/</span>
+        <a href="#">Journey guides</a>
+        <span class="sep">/</span>
+        <span class="current">Customer onboarding &amp; KYC</span>
+      </nav>
+
+      <h1 class="docs-title">Customer onboarding and KYC journey</h1>
+
+      <div class="docs-tags">
+        <span class="docs-tag docs-tag--cyan">6 API calls</span>
+        <span class="docs-tag">~3 min</span>
+        <span class="docs-tag">PLM · IDV · AML</span>
+      </div>
+
+      <p class="docs-lead">
+        This journey takes a prospect from first contact through identity verification and AML screening to an active party on your bank's books. It composes six Glue endpoints across three BIAN service domains and two ecosystem partners. Most banks implement this exact sequence on day one.
+      </p>
+
+      <h2 id="overview">Overview</h2>
+      <p>
+        Onboarding is the canonical FinX journey: it touches Party Lifecycle Management on the bank side, Document Directory for evidence storage, Jumio for identity verification, and ComplyAdvantage for sanctions and PEP screening. Glue orchestrates these as a single linear flow, polls the asynchronous IDV result, and lifts the party to <code>active</code> status only when both checks complete cleanly.
+      </p>
+
+      <!-- API SEQUENCE CARD — the centrepiece of this page -->
+      <h2 id="sequence">API sequence</h2>
+
+      <div class="api-sequence" role="figure" aria-label="Six-step onboarding API sequence">
+        <div class="api-sequence-head">
+          <div class="api-sequence-title">Customer onboarding · 6 calls</div>
+          <div class="api-sequence-meta">PLM → DOCS → IDV → AML → PLM</div>
+        </div>
+
+        <div class="api-step">
+          <div class="api-step-num">1</div>
+          <div class="api-step-body">
+            <div class="api-step-call">
+              <span class="method-badge method-post">POST</span>
+              <span class="api-step-path">/v1/parties/initiate</span>
+              <span class="api-step-tag">PLM · BIAN</span>
+            </div>
+            <div class="api-step-desc">Create a draft party from the prospect's submitted attributes. Returns <code>cust_8a2f</code> with status <code>draft</code>.</div>
+          </div>
+        </div>
+
+        <div class="api-step">
+          <div class="api-step-num">2</div>
+          <div class="api-step-body">
+            <div class="api-step-call">
+              <span class="method-badge method-post">POST</span>
+              <span class="api-step-path">/v1/documents</span>
+              <span class="api-step-tag">Document Directory</span>
+            </div>
+            <div class="api-step-desc">Upload the customer's ID document. Glue persists the binary in the document layer and returns a reference token to attach to subsequent calls.</div>
+          </div>
+        </div>
+
+        <div class="api-step">
+          <div class="api-step-num">3</div>
+          <div class="api-step-body">
+            <div class="api-step-call">
+              <span class="method-badge method-post">POST</span>
+              <span class="api-step-path">/v1/idv/initiate</span>
+              <span class="api-step-tag">Jumio</span>
+            </div>
+            <div class="api-step-desc">Initiate identity verification with the document reference and party ID. Returns an <code>idv_session</code> handle.</div>
+          </div>
+        </div>
+
+        <div class="api-step">
+          <div class="api-step-num">4</div>
+          <div class="api-step-body">
+            <div class="api-step-call">
+              <span class="method-badge method-get">GET</span>
+              <span class="api-step-path">/v1/idv/{id}/result</span>
+              <span class="api-step-tag">Poll until complete</span>
+            </div>
+            <div class="api-step-desc">Poll every 2s with exponential back-off, or subscribe to the <code>idv.completed</code> webhook. Most sessions resolve in 8–20 seconds.</div>
+          </div>
+        </div>
+
+        <div class="api-step">
+          <div class="api-step-num">5</div>
+          <div class="api-step-body">
+            <div class="api-step-call">
+              <span class="method-badge method-post">POST</span>
+              <span class="api-step-path">/v1/aml/screen</span>
+              <span class="api-step-tag">ComplyAdvantage</span>
+            </div>
+            <div class="api-step-desc">Screen the verified identity against sanctions, PEP, and adverse-media lists. Returns a synchronous decision plus a list of any matches.</div>
+          </div>
+        </div>
+
+        <div class="api-step">
+          <div class="api-step-num">6</div>
+          <div class="api-step-body">
+            <div class="api-step-call">
+              <span class="method-badge method-patch">PATCH</span>
+              <span class="api-step-path">/v1/parties/{id}/lifecycle</span>
+              <span class="api-step-tag">Update to active</span>
+            </div>
+            <div class="api-step-desc">Lift the party from <code>draft</code> to <code>active</code>. The same endpoint is used later for suspension, reactivation, and closure.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Polling guidance callout -->
+      <div class="callout callout--warn" role="note">
+        <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="callout-body">
+          <strong>Polling guidance</strong>
+          The IDV result endpoint is asynchronous. Begin polling no sooner than 2 seconds after initiation, then back off as <code>2s, 4s, 8s, 16s</code> capped at 30s. Always honour the <code>Retry-After</code> header when present. For volumes above 1k onboardings/day, prefer the <code>idv.completed</code> webhook.
+        </div>
+      </div>
+
+      <h2 id="example">Example: end-to-end cURL</h2>
+      <p>The following sequence creates a party, uploads a document, and starts an IDV session. The remaining three calls follow the same pattern.</p>
+
+      <div class="code-panel">
+        <div class="code-bar">
+          <div class="code-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="code-language">cURL</div>
+          <button class="code-copy" type="button">Copy</button>
+        </div>
+<pre><code><span class="tok-cmt"># 1. Initiate party</span>
+<span class="tok-fn">curl</span> -X POST https://api.ustfinx.com/v1/parties/initiate \
+  -H <span class="tok-str">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="tok-str">"X-Tenant-Id: bank_a"</span> \
+  -H <span class="tok-str">"Content-Type: application/json"</span> \
+  -d <span class="tok-str">'{
+    "givenName": "Asha",
+    "familyName": "Mehta",
+    "dateOfBirth": "1992-04-12",
+    "residentialAddress": { "country": "AE", "city": "Abu Dhabi" }
+  }'</span>
+
+<span class="tok-cmt"># &rarr; { "id": "cust_8a2f", "status": "draft" }</span>
+
+<span class="tok-cmt"># 2. Upload ID document</span>
+<span class="tok-fn">curl</span> -X POST https://api.ustfinx.com/v1/documents \
+  -H <span class="tok-str">"Authorization: Bearer $TOKEN"</span> \
+  -F <span class="tok-str">"partyId=cust_8a2f"</span> \
+  -F <span class="tok-str">"type=passport"</span> \
+  -F <span class="tok-str">"file=@./passport.jpg"</span>
+
+<span class="tok-cmt"># 3. Initiate IDV</span>
+<span class="tok-fn">curl</span> -X POST https://api.ustfinx.com/v1/idv/initiate \
+  -H <span class="tok-str">"Authorization: Bearer $TOKEN"</span> \
+  -d <span class="tok-str">'{ "partyId": "cust_8a2f", "documentRef": "doc_3df1" }'</span></code></pre>
+      </div>
+
+      <div class="callout callout--info" role="note">
+        <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div class="callout-body">
+          <strong>Idempotency</strong>
+          Every <code>POST</code> in this sequence accepts an <code>Idempotency-Key</code> header. Reuse the same key on retries to avoid duplicating parties, documents, or IDV sessions. Keys are honoured for 24 hours.
+        </div>
+      </div>
+
+      <h2 id="related">Related guides</h2>
+      <div class="related-grid">
+        <a href="#" class="related-card">
+          <div class="related-meta">JOURNEY · 4 CALLS</div>
+          <div class="related-title">Account opening on Vault Core</div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-meta">JOURNEY · 5 CALLS</div>
+          <div class="related-title">Card issuance with IDEMIA</div>
+        </a>
+        <a href="api-reference.html" class="related-card">
+          <div class="related-meta">REFERENCE</div>
+          <div class="related-title">PLM · Create party endpoint</div>
+        </a>
+      </div>
+
+    </main>
+
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#overview" class="active">Overview</a></li>
+        <li><a href="#sequence">API sequence</a></li>
+        <li><a href="#example">Example: cURL</a></li>
+        <li><a href="#related">Related guides</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit on GitHub</a>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="index.html">Glue Developer Hub</a></li>
+            <li><a href="../glass/index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#platform">Ecosystem</a></li>
+            <li><a href="../index.html#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="../index.html#approach">White paper</a></li>
+            <li><a href="journey-onboarding.html">Journey guides</a></li>
+            <li><a href="api-reference.html">API reference</a></li>
+            <li><a href="index.html#operate">Releases</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address" aria-label="UST email address">
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password" aria-label="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" defer></script>
+  <script>
+    (function () {
+      var modal = document.getElementById('signin-modal');
+      var openLink = document.getElementById('staff-signin-link');
+      var closeBtn = modal.querySelector('.modal-close');
+      var form = document.getElementById('signin-form');
+      var pw = document.getElementById('signin-password');
+      var err = document.getElementById('signin-error');
+      function open(e){ if(e)e.preventDefault(); modal.classList.add('active'); modal.setAttribute('aria-hidden','false'); setTimeout(function(){pw.focus();},50); }
+      function close(){ modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); err.textContent=''; }
+      openLink.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', function(e){ if(e.target===modal) close(); });
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape' && modal.classList.contains('active')) close(); });
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (pw.value === 'finx2026') {
+          try { sessionStorage.setItem('finx-internal-unlocked','1'); } catch(_){}
+          window.location.href = '../internal/index.html';
+        } else { err.textContent = 'Invalid credentials. Try the demo password shown below.'; }
+      });
+      try {
+        var unlocked = sessionStorage.getItem('finx-internal-unlocked') === '1';
+        var ind = document.getElementById('state-indicator');
+        if (unlocked) {
+          ind.classList.add('signed-in');
+          ind.querySelector('.state-label').textContent = 'Signed in as UST staff';
+        }
+      } catch(_) {}
+    })();
+  </script>
+</body>
+</html>

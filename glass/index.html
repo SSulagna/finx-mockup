@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinX Glass — Operations Guide</title>
+  <meta name="description" content="FinX Glass is the operations layer for composable banking. Role-based and module-based documentation for the people who run the bank day to day.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* Page-unique: Glass landing hero + role/module cards */
+    .glass-hero {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--border-dark);
+      margin-bottom: 16px;
+    }
+    .glass-hero .eyebrow { color: var(--cyan); }
+    .glass-hero .docs-title { font-size: 42px; margin-bottom: 16px; }
+    .glass-hero .docs-lead { max-width: 640px; margin-bottom: 24px; }
+    .glass-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Role cards: 2-up grid, colour dot + task list */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin: 16px 0 28px;
+    }
+    .role-card {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      padding: 22px 22px 20px;
+      color: inherit;
+      transition: all var(--transition);
+    }
+    .role-card:hover {
+      border-color: var(--cyan-dim);
+      transform: translateY(-2px);
+      text-decoration: none !important;
+      box-shadow: var(--shadow-md);
+    }
+    .role-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .role-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .role-dot.role-csr { color: #2EE6E6; background: #2EE6E6; }
+    .role-dot.role-comp { color: #5f9fff; background: #5f9fff; }
+    .role-dot.role-sup { color: #f5b65f; background: #f5b65f; }
+    .role-dot.role-admin { color: #B493F4; background: #B493F4; }
+    .role-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .role-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .role-tasks {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid var(--border-dark);
+      padding-top: 10px;
+    }
+    .role-tasks li {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .role-tasks li::before {
+      content: "›";
+      color: var(--cyan-dim);
+      font-weight: 700;
+    }
+    .role-card:hover .role-name { color: var(--cyan); }
+
+    /* Module cards: 3-up grid, icon + title + desc */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin: 16px 0 28px;
+    }
+    .module-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      transition: all var(--transition);
+      display: block;
+      color: inherit;
+    }
+    .module-card:hover {
+      border-color: var(--cyan-dim);
+      transform: translateY(-2px);
+      text-decoration: none !important;
+    }
+    .module-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--cyan-soft);
+      color: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .module-icon svg { width: 18px; height: 18px; }
+    .module-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+    .module-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+
+    /* Reference list */
+    .ref-list { list-style: none; padding: 0; margin: 12px 0 0; }
+    .ref-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-dark);
+      font-size: 13.5px;
+      color: var(--text-secondary);
+    }
+    .ref-list li:last-child { border-bottom: none; }
+    .ref-list a { color: var(--text-primary); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <!-- 6.1 Top navigation -->
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html#approach" class="nav-link">Approach</a>
+        <a href="../index.html#platform" class="nav-link">Platform</a>
+        <a href="../glue/index.html" class="nav-link">Glue</a>
+        <a href="index.html" class="nav-link active">Glass</a>
+        <a href="../index.html#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search Glass documentation" autocomplete="off" aria-label="Search Glass documentation">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Glass sub-navigation -->
+  <div class="subnav" aria-label="Glass sections">
+    <div class="subnav-inner">
+      <a href="../index.html" class="subnav-back">← Back to FinX</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">FinX Glass</span>
+      <div class="subnav-links">
+        <a href="#roles" class="subnav-link active">By Role</a>
+        <a href="#modules" class="subnav-link">Modules</a>
+        <a href="#reference" class="subnav-link">Reference</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6.3 Three-column documentation layout -->
+  <div class="docs">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="docs-sidebar" aria-label="Glass navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Get oriented</div>
+        <ul>
+          <li><a href="index.html" class="active">Overview</a></li>
+          <li><a href="#roles">Choose your role</a></li>
+          <li><a href="#modules">Explore modules</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">By Role</div>
+        <ul>
+          <li><a href="#">CSR / Ops Agent</a></li>
+          <li><a href="role-compliance.html">Compliance Officer</a></li>
+          <li><a href="#">Supervisor</a></li>
+          <li><a href="#">Admin / Platform</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Modules</div>
+        <ul>
+          <li><a href="#modules">Customer &amp; Account Mgmt</a></li>
+          <li><a href="#modules">Task Management</a></li>
+          <li><a href="#modules">Workflow Console</a></li>
+          <li><a href="#modules">Incident &amp; Alert Centre</a></li>
+          <li><a href="#modules">Service Orchestration</a></li>
+          <li><a href="#modules">Connector SPAs</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Reference</div>
+        <ul>
+          <li><a href="#reference">RBAC permissions</a></li>
+          <li><a href="#reference">FAQs</a></li>
+          <li><a href="#reference">Troubleshooting</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="docs-main">
+
+      <header class="glass-hero">
+        <span class="eyebrow">FinX Glass</span>
+        <h1 class="docs-title">Operations made coherent.</h1>
+        <p class="docs-lead">
+          Glass is the operations surface of the FinX platform. One workspace for customer service, compliance, supervisors, and platform admins — with tasks, queues, and tools organised the way the bank actually works, not the way a vendor's product team happens to ship.
+        </p>
+        <div class="glass-hero-ctas">
+          <a href="#roles" class="btn btn-primary">Choose your role →</a>
+          <a href="#modules" class="btn btn-secondary">Browse modules</a>
+        </div>
+      </header>
+
+      <!-- Choose your role -->
+      <h2 id="roles">Choose your role</h2>
+      <p>Glass content is organised by what you do, not by where the data lives. Pick the role closest to yours to see the tasks, modules, and permissions tuned for your day.</p>
+
+      <div class="role-grid">
+        <a href="#" class="role-card">
+          <div class="role-card-head">
+            <span class="role-dot role-csr" aria-hidden="true"></span>
+            <span class="role-name">CSR / Ops Agent</span>
+          </div>
+          <p class="role-desc">Front-line agents handling customer enquiries, account servicing, and first-touch case work across channels.</p>
+          <ul class="role-tasks">
+            <li>Look up a customer profile</li>
+            <li>Update contact details</li>
+            <li>Raise a service request</li>
+            <li>Trigger a card reissue</li>
+          </ul>
+        </a>
+
+        <a href="role-compliance.html" class="role-card">
+          <div class="role-card-head">
+            <span class="role-dot role-comp" aria-hidden="true"></span>
+            <span class="role-name">Compliance Officer</span>
+          </div>
+          <p class="role-desc">Reviews KYC outcomes, AML alerts, sanctions hits, and four-eyes approvals. Owns the regulatory posture of every onboarded customer.</p>
+          <ul class="role-tasks">
+            <li>Review KYC results</li>
+            <li>Approve high-risk customer</li>
+            <li>Handle AML alerts</li>
+            <li>Sanctions screening</li>
+          </ul>
+        </a>
+
+        <a href="#" class="role-card">
+          <div class="role-card-head">
+            <span class="role-dot role-sup" aria-hidden="true"></span>
+            <span class="role-name">Supervisor</span>
+          </div>
+          <p class="role-desc">Manages queues, SLA breaches, and team performance. Reassigns work, breaks deadlocks, and signs off on second-line approvals.</p>
+          <ul class="role-tasks">
+            <li>Monitor queue health</li>
+            <li>Reassign tasks</li>
+            <li>Approve exceptions</li>
+            <li>Review agent performance</li>
+          </ul>
+        </a>
+
+        <a href="#" class="role-card">
+          <div class="role-card-head">
+            <span class="role-dot role-admin" aria-hidden="true"></span>
+            <span class="role-name">Admin / Platform</span>
+          </div>
+          <p class="role-desc">Configures roles, permissions, workflow definitions, and connector settings. The control plane for how Glass behaves at this bank.</p>
+          <ul class="role-tasks">
+            <li>Manage RBAC roles</li>
+            <li>Edit workflow definitions</li>
+            <li>Configure connectors</li>
+            <li>Audit access logs</li>
+          </ul>
+        </a>
+      </div>
+
+      <!-- Modules -->
+      <h2 id="modules">Modules</h2>
+      <p>Six modules make up the Glass workspace. Each is independently navigable; together they cover the full operational surface of a composable bank.</p>
+
+      <div class="module-grid">
+        <a href="#" class="module-card">
+          <div class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-7 8-7s8 3 8 7"></path></svg>
+          </div>
+          <div class="module-title">Customer &amp; Account Management</div>
+          <div class="module-desc">Unified customer 360, account servicing, and arrangement lifecycle across the cores Glue exposes.</div>
+        </a>
+
+        <a href="#" class="module-card">
+          <div class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M8 10h8M8 14h5"></path></svg>
+          </div>
+          <div class="module-title">Task Management</div>
+          <div class="module-desc">Personal and team queues, SLA timers, four-eyes hand-offs, and reassignment for every operational task type.</div>
+        </a>
+
+        <a href="#" class="module-card">
+          <div class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>
+          </div>
+          <div class="module-title">Workflow Console</div>
+          <div class="module-desc">Visual editor and runtime view for Glue-orchestrated workflows. Inspect a step, retry, or branch from a stuck instance.</div>
+        </a>
+
+        <a href="#" class="module-card">
+          <div class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 22h20L12 2z"></path><path d="M12 9v6M12 18h.01"></path></svg>
+          </div>
+          <div class="module-title">Incident &amp; Alert Centre</div>
+          <div class="module-desc">Operational incidents, connector degradations, and AML alerts in one prioritised view with on-call routing.</div>
+        </a>
+
+        <a href="#" class="module-card">
+          <div class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg>
+          </div>
+          <div class="module-title">Service Orchestration Console</div>
+          <div class="module-desc">Define, deploy, and observe Glue service compositions. Bridges the developer view of Glue with the operator view of Glass.</div>
+        </a>
+
+        <a href="#" class="module-card">
+          <div class="module-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+          </div>
+          <div class="module-title">Fintech Connector SPAs</div>
+          <div class="module-desc">Embedded operator UIs for Jumio, ComplyAdvantage, and other ecosystem partners — surfaced inside Glass with single sign-on.</div>
+        </a>
+      </div>
+
+      <!-- Reference -->
+      <h2 id="reference">Reference</h2>
+      <p>Cross-cutting material that doesn't belong to a single role or module.</p>
+      <ul class="ref-list">
+        <li><a href="#">RBAC permissions catalogue</a> — every permission Glass exposes, what it grants, and which default roles include it.</li>
+        <li><a href="#">FAQs</a> — the questions that come up most often during the first 30 days of operating Glass.</li>
+        <li><a href="#">Troubleshooting</a> — recovery procedures for stuck workflows, failed connectors, and permission errors.</li>
+      </ul>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#roles" class="active">Choose your role</a></li>
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#reference">Reference</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit on GitHub</a>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="../glue/index.html">Glue Developer Hub</a></li>
+            <li><a href="index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#platform">Ecosystem</a></li>
+            <li><a href="../index.html#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="../index.html#approach">White paper</a></li>
+            <li><a href="role-compliance.html">By role</a></li>
+            <li><a href="#modules">By module</a></li>
+            <li><a href="#reference">RBAC reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6.10 State indicator -->
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <!-- 6.7 Sign-in modal -->
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address" aria-label="UST email address">
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password" aria-label="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

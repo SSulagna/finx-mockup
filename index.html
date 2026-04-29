@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UST FinX — Composable Banking at Scale</title>
+  <meta name="description" content="UST FinX is a BIAN-aligned platform for progressive bank modernisation. Modernise the bank without the bang.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    /* =========================================================================
+       Homepage-specific styles. Shared components live in main.css.
+       ========================================================================= */
+
+    /* --- X watermark + hero grid (signature 4.8) --- */
+    .x-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-sans);
+      font-size: 720px;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(0, 212, 212, 0.04);
+      pointer-events: none;
+      user-select: none;
+      -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+              mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+      z-index: 0;
+    }
+    .x-watermark--small { font-size: 600px; }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(0, 212, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 212, 212, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+              mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* --- Hero section --- */
+    .hero {
+      position: relative;
+      background: var(--gradient-hero);
+      padding: 120px 0 100px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+    }
+    .hero-title {
+      font-size: var(--fs-hero);
+      font-weight: 600;
+      line-height: var(--lh-hero);
+      letter-spacing: var(--tracking-hero);
+      margin-bottom: 24px;
+    }
+    .hero-title .accent { color: var(--cyan); }
+    .hero-sub {
+      font-size: 19px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin-bottom: 40px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 64px;
+    }
+    .hero-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-dark);
+    }
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: -0.01em;
+    }
+    .metric-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* --- Section header --- */
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 56px;
+    }
+    .section-head .h2 { margin-bottom: 16px; }
+    .section-head .h2 .accent { color: var(--cyan); }
+    .section-lead {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* --- Grids for cards --- */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .grid-3x2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    @media (max-width: 980px) {
+      .grid-2, .grid-3, .grid-4, .grid-3x2 { grid-template-columns: 1fr; }
+    }
+
+    /* --- Ecosystem diagram (component 6.2) --- */
+    .ecosystem {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+    }
+    .eco-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      grid-template-rows: auto auto auto auto;
+      gap: 16px;
+    }
+    .eco-row-channels {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 16px;
+      background: rgba(168, 196, 204, 0.04);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+    }
+    .eco-row-channels .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-right: 8px;
+    }
+    .eco-cube {
+      grid-column: 2;
+      grid-row: 2 / span 2;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #0A3540 0%, #062229 100%);
+      border: 1.5px solid var(--cyan);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 0 60px rgba(0, 212, 212, 0.15);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow var(--transition-slow);
+    }
+    .eco-cube:hover { box-shadow: 0 0 90px rgba(0, 212, 212, 0.28); }
+    .eco-cube-label {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: -0.01em;
+    }
+    .eco-cube-sub {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+    .eco-facets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+    }
+    .eco-facet {
+      background: rgba(0, 212, 212, 0.06);
+      border: 1px solid rgba(0, 212, 212, 0.18);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+    .eco-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      grid-row: 2 / span 2;
+    }
+    .eco-col-left { grid-column: 1; }
+    .eco-col-right { grid-column: 3; }
+    .eco-box {
+      background: transparent;
+      border: 1px solid var(--cyan-dim);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+    .eco-box--roadmap {
+      border: 1px dashed var(--cyan-dim);
+      color: var(--text-muted);
+    }
+    .eco-row-cores {
+      grid-column: 2;
+      grid-row: 4;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .eco-core {
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 11.5px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .eco-core--finx {
+      background: var(--cyan);
+      color: var(--bg-deep);
+    }
+    .eco-core--bank {
+      background: rgba(168, 196, 204, 0.10);
+      color: var(--text-muted);
+      border: 1px solid var(--border-medium);
+    }
+    .eco-row-networks {
+      grid-column: 1 / -1;
+      grid-row: 5;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-dark);
+    }
+    .eco-net-group .label {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .eco-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .eco-pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(168, 196, 204, 0.06);
+      border: 1px solid var(--border-dark);
+      color: var(--text-secondary);
+    }
+    .eco-pill--finx {
+      background: var(--cyan-soft);
+      border-color: rgba(0, 212, 212, 0.3);
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    @media (max-width: 980px) {
+      .eco-grid {
+        grid-template-columns: 1fr;
+      }
+      .eco-cube { grid-column: 1; grid-row: auto; width: 100%; max-width: 320px; }
+      .eco-col { grid-column: 1; grid-row: auto; }
+      .eco-row-cores { grid-column: 1; grid-row: auto; }
+      .eco-row-networks { grid-column: 1; grid-row: auto; grid-template-columns: 1fr; }
+    }
+
+    /* --- Products section: tabs (6.8) and preview (6.9) --- */
+    .product-tabs {
+      display: inline-flex;
+      gap: 4px;
+      background: rgba(168, 196, 204, 0.05);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin-bottom: 40px;
+    }
+    .product-tab {
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      transition: all var(--transition);
+    }
+    .product-tab.active {
+      background: var(--cyan);
+      color: var(--bg-deep);
+    }
+    .product-tab:hover:not(.active) { color: var(--text-primary); }
+
+    .product-panel {
+      display: none;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .product-panel.active { display: grid; }
+    @media (max-width: 980px) { .product-panel.active { grid-template-columns: 1fr; gap: 32px; } }
+
+    .product-tagline {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      margin-bottom: 12px;
+    }
+    .product-name {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .product-desc {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .product-features {
+      list-style: none;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .product-features li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .product-features li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 14px;
+      height: 8px;
+      border-left: 2px solid var(--cyan);
+      border-bottom: 2px solid var(--cyan);
+      transform: rotate(-45deg);
+    }
+
+    .product-preview {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(6, 34, 41, 0.6);
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .preview-dots { display: flex; gap: 6px; }
+    .preview-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(168, 196, 204, 0.2);
+    }
+    .preview-url {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: rgba(168, 196, 204, 0.05);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .preview-content {
+      padding: 28px;
+      min-height: 360px;
+    }
+    .preview-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .preview-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .preview-tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .preview-tag {
+      font-size: 10.5px;
+      padding: 3px 8px;
+      background: rgba(168, 196, 204, 0.06);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+    }
+    .preview-line {
+      height: 8px;
+      background: rgba(168, 196, 204, 0.08);
+      border-radius: 3px;
+      margin-bottom: 8px;
+    }
+    .preview-line.short { width: 60%; }
+    .preview-code {
+      margin-top: 16px;
+      background: #031319;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      border: 1px solid var(--border-dark);
+    }
+    .preview-code .verb { color: #ffb86c; font-weight: 500; }
+    .preview-code .path { color: var(--cyan); }
+
+    /* --- Comparison table --- */
+    .comparison {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .comparison th,
+    .comparison td {
+      padding: 18px 20px;
+      text-align: left;
+      font-size: 13.5px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .comparison thead th {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      background: var(--bg-mid);
+    }
+    .comparison tbody tr:last-child td { border-bottom: none; }
+    .comparison .row-label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+    .comparison td { color: var(--text-secondary); }
+    .col-finx,
+    .comparison thead th.col-finx {
+      background: var(--cyan-soft);
+      color: var(--text-primary);
+    }
+    .comparison thead th.col-finx { color: var(--cyan); }
+    .col-finx { font-weight: 500; }
+
+    @media (max-width: 980px) {
+      .comparison-wrap { overflow-x: auto; }
+      .comparison { min-width: 720px; }
+    }
+
+    /* --- CTA section --- */
+    .cta-section {
+      position: relative;
+      padding: var(--section-pad-y) 0;
+      background: var(--gradient-hero);
+      overflow: hidden;
+      isolation: isolate;
+      text-align: center;
+    }
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .cta-inner .h2 { margin-bottom: 20px; }
+    .cta-inner .h2 .accent { color: var(--cyan); }
+    .cta-sub {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin-bottom: 36px;
+    }
+    .cta-ctas {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 6.11 Draft tag -->
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <!-- 6.1 Top navigation -->
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="#approach" class="nav-link">Approach</a>
+        <a href="#platform" class="nav-link">Platform</a>
+        <a href="#products" class="nav-link">Products</a>
+        <a href="#paths" class="nav-link">Modernization</a>
+        <a href="#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <label class="visually-hidden" for="nav-search" style="position:absolute;left:-10000px;">Search documentation</label>
+        <input id="nav-search" class="search-input" type="search" placeholder="Search documentation" autocomplete="off">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 1. Hero -->
+  <section class="hero" id="top">
+    <div class="x-watermark" aria-hidden="true">X</div>
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="container">
+      <div class="hero-content">
+        <span class="eyebrow">Composable Banking at Scale</span>
+        <h1 class="hero-title">
+          Modernise the bank.<br>
+          <span class="accent">Without the bang.</span>
+        </h1>
+        <p class="hero-sub">
+          Banks have spent the last two decades caught between two impossible choices: a multi-year, big-bang core replacement, or a patchwork of point solutions that never quite cohere. FinX proposes a third path — a BIAN-aligned orchestration platform that lets banks evolve continuously, deliver value in months, and keep what already works.
+        </p>
+        <div class="hero-ctas">
+          <a href="#platform" class="btn btn-primary">Explore the platform →</a>
+          <a href="#approach" class="btn btn-secondary">Read the white paper</a>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric">
+            <span class="metric-value">6–9 months</span>
+            <span class="metric-label">TO FIRST VALUE</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">33,000+</span>
+            <span class="metric-label">UST EMPLOYEES</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">$2B+</span>
+            <span class="metric-label">REVENUE</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">BIAN aligned</span>
+            <span class="metric-label">ARCHITECTURE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Problem -->
+  <section class="section section--mid" id="problem">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">The Problem</span>
+        <h2 class="h2">Modernisation has been broken for too long.</h2>
+        <p class="section-lead">
+          Bank technology leaders are asked to deliver continuous innovation on platforms designed for an era of episodic change. The two prevailing answers — replace the core, or bolt on point solutions — both fail in predictable ways. Programmes overrun. Architectures fragment. Risk accumulates faster than value is delivered.
+        </p>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <h3 class="card-title">Big-bang transformation</h3>
+          <p class="card-desc">
+            Multi-year core replacements promise a clean slate but routinely overrun by years and over-budget by hundreds of millions. The longer the programme runs, the further the destination drifts from the bank that commissioned it. Few finish. Fewer succeed.
+          </p>
+        </article>
+        <article class="card">
+          <h3 class="card-title">Point solutions</h3>
+          <p class="card-desc">
+            The opposite extreme — a fintech for every gap — produces short-term wins and long-term entropy. Each integration ages independently, contracts proliferate, the canonical model fragments, and operations inherit a permanent integration tax that grows year over year.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Approach -->
+  <section class="section section--deep" id="approach">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">The FinX Approach</span>
+        <h2 class="h2">A different model. <span class="accent">Continuous evolution</span>, not episodic transformation.</h2>
+        <p class="section-lead">
+          FinX is not a product line. It is a delivery model: a BIAN-aligned orchestration layer, an iterative engagement pattern, and a coexistence strategy that keeps the existing core productive while new capability is composed around it.
+        </p>
+      </div>
+      <div class="grid-3">
+        <article class="card card--gradient">
+          <span class="card-tag">Architecture</span>
+          <h3 class="card-title">BIAN-aligned by design</h3>
+          <p class="card-desc">
+            Every API, every service domain, every canonical model maps to BIAN. The architecture is not opinion — it is industry standard. Banks gain interoperability, vendor optionality, and a shared language with their ecosystem partners.
+          </p>
+        </article>
+        <article class="card card--gradient">
+          <span class="card-tag">Delivery</span>
+          <h3 class="card-title">Iterative value, every quarter</h3>
+          <p class="card-desc">
+            Engagements are scoped to deliver measurable business outcomes in 6–9 month cycles, not multi-year programmes. The bank sees value early, learns continuously, and compounds capability with each release.
+          </p>
+        </article>
+        <article class="card card--gradient">
+          <span class="card-tag">Coexistence</span>
+          <h3 class="card-title">Managed legacy, not ripped legacy</h3>
+          <p class="card-desc">
+            The existing core stays in place and stays productive. Glue mediates between legacy and new — exposing modern APIs over old systems while gradually migrating service domains as the business case justifies.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Platform / Ecosystem -->
+  <section class="section section--mid" id="platform">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">The Platform</span>
+        <h2 class="h2">FinX Glue at the centre.<br>Everything else <span class="accent">composable around it</span>.</h2>
+        <p class="section-lead">
+          Glue is the orchestration layer: BIAN-aligned APIs, a canonical data model, a workflow engine, and a curated set of ecosystem connectors. Glass is the operations surface above it. Vault is the modern core beneath it. The bank's existing systems, fintech partners, and data platforms compose into a single coherent runtime.
+        </p>
+      </div>
+
+      <!-- 6.2 Ecosystem diagram -->
+      <div class="ecosystem" role="img" aria-label="UST FinX ecosystem diagram showing FinX Glue at the centre with channels, partners, cores, and networks composed around it">
+        <div class="eco-grid">
+
+          <!-- Top row: channels & partners -->
+          <div class="eco-row-channels">
+            <span class="label">Channels</span>
+            <span class="eco-pill">Digital Banking</span>
+            <span class="eco-pill">Mobile</span>
+            <span class="eco-pill">Branch</span>
+            <span class="eco-pill">Contact Centre</span>
+            <span class="eco-pill eco-pill--finx">FinX Glass</span>
+          </div>
+
+          <!-- Left column: ecosystem connectors -->
+          <div class="eco-col eco-col-left">
+            <div class="eco-box">Microsoft Dynamics 365</div>
+            <div class="eco-box">Zoot</div>
+            <div class="eco-box">ComplyAdvantage</div>
+            <div class="eco-box">Document Management</div>
+            <div class="eco-box">Jumio</div>
+            <div class="eco-box">Thirdstream</div>
+          </div>
+
+          <!-- Centre: Glue cube -->
+          <div class="eco-cube">
+            <div class="eco-cube-label">FinX Glue</div>
+            <div class="eco-cube-sub">Orchestration Layer</div>
+            <div class="eco-facets">
+              <div class="eco-facet">Workflow</div>
+              <div class="eco-facet">Streaming APIs</div>
+              <div class="eco-facet">Security</div>
+              <div class="eco-facet">BIAN APIs</div>
+            </div>
+          </div>
+
+          <!-- Right column: ecosystem connectors -->
+          <div class="eco-col eco-col-right">
+            <div class="eco-box">Microsoft Fabric</div>
+            <div class="eco-box">Wolters Kluwer</div>
+            <div class="eco-box">Oracle NetSuite</div>
+            <div class="eco-box eco-box--roadmap">Artificial Intelligence</div>
+            <div class="eco-box">Formpipe</div>
+            <div class="eco-box" style="background: var(--cyan-soft); border-color: rgba(0, 212, 212, 0.3); color: var(--cyan); font-weight: 600;">FinX Data Lake</div>
+          </div>
+
+          <!-- Cores row -->
+          <div class="eco-row-cores">
+            <div class="eco-core eco-core--bank">Customer Information File</div>
+            <div class="eco-core eco-core--finx">Thought Machine Vault Core</div>
+            <div class="eco-core eco-core--finx">Thought Machine Vault Payments</div>
+          </div>
+
+          <!-- Networks row -->
+          <div class="eco-row-networks">
+            <div class="eco-net-group">
+              <div class="label">Schemes &amp; Networks</div>
+              <div class="eco-pills">
+                <span class="eco-pill">Visa</span>
+                <span class="eco-pill">Mastercard</span>
+                <span class="eco-pill">Fedwire</span>
+                <span class="eco-pill">FedNow</span>
+                <span class="eco-pill">ADX</span>
+              </div>
+            </div>
+            <div class="eco-net-group">
+              <div class="label">Agent Banks</div>
+              <div class="eco-pills">
+                <span class="eco-pill">Correspondent A</span>
+                <span class="eco-pill">Correspondent B</span>
+                <span class="eco-pill">Correspondent C</span>
+              </div>
+            </div>
+            <div class="eco-net-group">
+              <div class="label">Third Party Integrations</div>
+              <div class="eco-pills">
+                <span class="eco-pill">Mastercard</span>
+                <span class="eco-pill">IDEMIA</span>
+                <span class="eco-pill">Bureau Services</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Products -->
+  <section class="section section--deep" id="products">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Products</span>
+        <h2 class="h2">Two products. One platform. <span class="accent">Built to work together.</span></h2>
+        <p class="section-lead">
+          Glue is the orchestration layer for engineering teams. Glass is the operations surface for the people running the bank. Both share the same canonical model, the same identity layer, and the same release cadence.
+        </p>
+      </div>
+
+      <!-- 6.8 Tab switcher -->
+      <div class="product-tabs" role="tablist" aria-label="Product selector">
+        <button class="product-tab active" role="tab" aria-selected="true" aria-controls="panel-glue" id="tab-glue" data-tab="glue">FinX Glue</button>
+        <button class="product-tab" role="tab" aria-selected="false" aria-controls="panel-glass" id="tab-glass" data-tab="glass">FinX Glass</button>
+      </div>
+
+      <!-- Glue panel -->
+      <div class="product-panel active" id="panel-glue" role="tabpanel" aria-labelledby="tab-glue">
+        <div>
+          <div class="product-tagline">For Engineering</div>
+          <h3 class="product-name">FinX Glue Developer Hub</h3>
+          <p class="product-desc">
+            BIAN-aligned APIs, canonical entities, journey guides, and a curated set of ecosystem connectors. Build new capability against a stable interface while Glue manages the integration tax behind the scenes.
+          </p>
+          <ul class="product-features">
+            <li>BIAN-aligned API surfaces across Party, Account, Payments, Documents</li>
+            <li>Pre-built connectors for Jumio, ComplyAdvantage, Zoot, Microsoft Fabric</li>
+            <li>Workflow engine with streaming APIs and idempotent retries</li>
+            <li>Multi-tenant isolation with environment-scoped credentials</li>
+          </ul>
+          <a href="glue/index.html" class="btn btn-primary">Open Glue Developer Hub →</a>
+        </div>
+        <!-- 6.9 Browser preview -->
+        <div class="product-preview">
+          <div class="preview-bar">
+            <div class="preview-dots"><span></span><span></span><span></span></div>
+            <div class="preview-url">docs.ustfinx.com/glue/journeys/onboarding</div>
+          </div>
+          <div class="preview-content">
+            <div class="preview-eyebrow">Journey Guide</div>
+            <div class="preview-title">Customer onboarding &amp; KYC journey</div>
+            <div class="preview-tags">
+              <span class="preview-tag">6 API calls</span>
+              <span class="preview-tag">~3 min</span>
+              <span class="preview-tag">PLM · IDV · AML</span>
+            </div>
+            <div class="preview-line"></div>
+            <div class="preview-line"></div>
+            <div class="preview-line short"></div>
+            <div class="preview-code">
+<span class="verb">POST</span> <span class="path">/v1/parties/initiate</span><br>
+<span class="verb">POST</span> <span class="path">/v1/idv/initiate</span><br>
+<span class="verb">GET</span>&nbsp; <span class="path">/v1/idv/{id}/result</span><br>
+<span class="verb">POST</span> <span class="path">/v1/aml/screen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Glass panel -->
+      <div class="product-panel" id="panel-glass" role="tabpanel" aria-labelledby="tab-glass" hidden>
+        <div>
+          <div class="product-tagline">For Operations</div>
+          <h3 class="product-name">FinX Glass Operations Guide</h3>
+          <p class="product-desc">
+            Role-based operations surface for compliance officers, CSRs, supervisors, and platform admins. Task-oriented documentation tied to RBAC permissions and the modules each role actually touches.
+          </p>
+          <ul class="product-features">
+            <li>Role landings for CSR, Compliance, Supervisor, Admin</li>
+            <li>Task walkthroughs aligned to BIAN service domains</li>
+            <li>Workflow Console, Alert Centre, Service Orchestration</li>
+            <li>Embedded RBAC reference and four-eyes approval patterns</li>
+          </ul>
+          <a href="glass/index.html" class="btn btn-primary">Open Glass Operations Guide →</a>
+        </div>
+        <div class="product-preview">
+          <div class="preview-bar">
+            <div class="preview-dots"><span></span><span></span><span></span></div>
+            <div class="preview-url">docs.ustfinx.com/glass/compliance/kyc-review</div>
+          </div>
+          <div class="preview-content">
+            <div class="preview-eyebrow">Compliance Officer · Task</div>
+            <div class="preview-title">Reviewing KYC results for a new customer</div>
+            <div class="preview-tags">
+              <span class="preview-tag">5 min read</span>
+              <span class="preview-tag">Module: Customer &amp; Account Mgmt</span>
+            </div>
+            <div class="preview-line"></div>
+            <div class="preview-line"></div>
+            <div class="preview-line short"></div>
+            <div class="preview-line"></div>
+            <div class="preview-line short"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Modernization Paths -->
+  <section class="section section--mid" id="paths">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Modernization Paths</span>
+        <h2 class="h2">Choose how to start. <span class="accent">Evolve from there.</span></h2>
+        <p class="section-lead">
+          There is no single right answer. Banks start where the business case is clearest and expand from there. Glue and the canonical model are the constants — the path through them is the bank's choice.
+        </p>
+      </div>
+      <div class="grid-4">
+        <article class="card card--path">
+          <span class="card-tag">Path 01</span>
+          <h3 class="card-title">Greenfield</h3>
+          <p class="card-desc">
+            Stand up a new digital brand or subsidiary on Glue + Vault from day one. Fastest path to a clean architecture without legacy migration risk.
+          </p>
+          <p class="card-meta">Time to first value: 6 months</p>
+        </article>
+        <article class="card card--path">
+          <span class="card-tag">Path 02</span>
+          <h3 class="card-title">Coexistence</h3>
+          <p class="card-desc">
+            Wrap the existing core with Glue to expose modern APIs and start composing new journeys without disturbing the systems of record.
+          </p>
+          <p class="card-meta">Time to first value: 4–6 months</p>
+        </article>
+        <article class="card card--path">
+          <span class="card-tag">Path 03</span>
+          <h3 class="card-title">Progressive</h3>
+          <p class="card-desc">
+            Migrate service domain by service domain. Party first, then Accounts, then Payments — with the canonical model holding the seam.
+          </p>
+          <p class="card-meta">Time to first value: 9 months · per domain</p>
+        </article>
+        <article class="card card--path">
+          <span class="card-tag">Path 04</span>
+          <h3 class="card-title">Full Modernization</h3>
+          <p class="card-desc">
+            Multi-year programme to retire the legacy core entirely, sequenced through Coexistence and Progressive milestones rather than one big-bang event.
+          </p>
+          <p class="card-meta">Time to full cutover: 24–36 months</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Comparison -->
+  <section class="section section--deep" id="comparison">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Comparative View</span>
+        <h2 class="h2">No single dimension tells the full story.</h2>
+        <p class="section-lead">
+          Compared against the prevailing modernisation patterns, FinX wins on the dimensions that compound — coexistence, time-to-value, long-term flexibility — without giving up on the dimensions that protect the bank.
+        </p>
+      </div>
+      <div class="comparison-wrap">
+        <table class="comparison">
+          <thead>
+            <tr>
+              <th scope="col">Dimension</th>
+              <th scope="col">Core Upgrade</th>
+              <th scope="col">Fintech Stack</th>
+              <th scope="col">New Core Platform</th>
+              <th scope="col" class="col-finx">FinX Approach</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Architectural Model</td>
+              <td>Monolithic, vendor-led</td>
+              <td>Fragmented point solutions</td>
+              <td>Modern, but single-vendor</td>
+              <td class="col-finx">BIAN-aligned, composable</td>
+            </tr>
+            <tr>
+              <td class="row-label">Time to Value</td>
+              <td>3–5 years</td>
+              <td>Fast, then plateaus</td>
+              <td>2–3 years</td>
+              <td class="col-finx">6–9 months per cycle</td>
+            </tr>
+            <tr>
+              <td class="row-label">Transformation Risk</td>
+              <td>Very high</td>
+              <td>Medium, accumulates</td>
+              <td>High</td>
+              <td class="col-finx">Low, incremental</td>
+            </tr>
+            <tr>
+              <td class="row-label">Integration Complexity</td>
+              <td>Low (initially)</td>
+              <td>Very high</td>
+              <td>Medium</td>
+              <td class="col-finx">Managed by Glue</td>
+            </tr>
+            <tr>
+              <td class="row-label">Coexistence Capability</td>
+              <td>Poor</td>
+              <td>By accident, not design</td>
+              <td>Limited</td>
+              <td class="col-finx">First-class, designed in</td>
+            </tr>
+            <tr>
+              <td class="row-label">Innovation Model</td>
+              <td>Vendor roadmap</td>
+              <td>Per-vendor, per-contract</td>
+              <td>Vendor roadmap</td>
+              <td class="col-finx">Continuous, open ecosystem</td>
+            </tr>
+            <tr>
+              <td class="row-label">Long-Term Flexibility</td>
+              <td>Lock-in</td>
+              <td>Contractual debt</td>
+              <td>Vendor lock-in</td>
+              <td class="col-finx">Vendor-optional, BIAN-portable</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Use cases -->
+  <section class="section section--mid" id="use-cases">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Use Cases</span>
+        <h2 class="h2">From architecture to outcomes.</h2>
+        <p class="section-lead">
+          Architecture is interesting only insofar as it enables outcomes. Six representative use cases that the FinX platform unlocks today.
+        </p>
+      </div>
+      <div class="grid-3x2">
+        <article class="card card--use">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
+          </div>
+          <h3 class="card-title">Customer 360</h3>
+          <p class="card-desc">
+            Unified party view across accounts, products, channels, and engagement history — built on the BIAN Party Lifecycle Management service domain.
+          </p>
+        </article>
+        <article class="card card--use">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h12"/></svg>
+          </div>
+          <h3 class="card-title">Digital Lending</h3>
+          <p class="card-desc">
+            End-to-end origination journey orchestrating IDV, AML, bureau, decisioning, and disbursement — productionised in a single quarter.
+          </p>
+        </article>
+        <article class="card card--use">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <h3 class="card-title">Multi-Core Coexistence</h3>
+          <p class="card-desc">
+            Run legacy and modern cores side-by-side under a unified canonical model. Migrate service domains as the business case justifies, not before.
+          </p>
+        </article>
+        <article class="card card--use">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><circle cx="12" cy="12" r="4"/></svg>
+          </div>
+          <h3 class="card-title">AI-Powered Onboarding</h3>
+          <p class="card-desc">
+            Document understanding, risk scoring, and adaptive friction — composed through the AI connector roadmap and the canonical Party model.
+          </p>
+        </article>
+        <article class="card card--use">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 4-9 4-9-4 9-4z"/><path d="M3 10l9 4 9-4"/><path d="M3 14l9 4 9-4"/></svg>
+          </div>
+          <h3 class="card-title">Operational Governance</h3>
+          <p class="card-desc">
+            Four-eyes approval flows, RBAC-enforced task management, and incident handling — wired into Glass for the people who run the bank day to day.
+          </p>
+        </article>
+        <article class="card card--use">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+          </div>
+          <h3 class="card-title">Data &amp; AI Enablement</h3>
+          <p class="card-desc">
+            Streaming events from Glue into the FinX Data Lake and Microsoft Fabric — a clean substrate for analytics, MI, and downstream AI workloads.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CTA -->
+  <section class="cta-section" id="cta">
+    <div class="x-watermark x-watermark--small" aria-hidden="true">X</div>
+    <div class="container">
+      <div class="cta-inner">
+        <span class="eyebrow">Get Started</span>
+        <h2 class="h2">Ready to evolve <span class="accent">continuously</span>?</h2>
+        <p class="cta-sub">
+          Bring us a service domain, a journey, or a coexistence problem. We will come back with a 6–9 month plan that delivers measurable value and leaves the bank's architecture stronger than we found it.
+        </p>
+        <div class="cta-ctas">
+          <a href="#" class="btn btn-primary">Talk to us →</a>
+          <a href="#approach" class="btn btn-secondary">Read the white paper</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="glue/index.html">Glue Developer Hub</a></li>
+            <li><a href="glass/index.html">Glass Operations Guide</a></li>
+            <li><a href="#platform">Ecosystem</a></li>
+            <li><a href="#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="#approach">White paper</a></li>
+            <li><a href="#use-cases">Use cases</a></li>
+            <li><a href="#comparison">Comparative view</a></li>
+            <li><a href="glue/api-reference.html">API reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6.10 State indicator -->
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <!-- 6.7 Sign-in modal -->
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <label class="visually-hidden" for="signin-email" style="position:absolute;left:-10000px;">UST email address</label>
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address">
+        <label class="visually-hidden" for="signin-password" style="position:absolute;left:-10000px;">Password</label>
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js" defer></script>
+  <script>
+    /* Lightweight homepage interactions. Will be consolidated into main.js
+       in a later pass (see SPEC section 13, prompt 6). */
+    (function () {
+      // Tab switcher (6.8)
+      var tabs = document.querySelectorAll('.product-tab');
+      var panels = document.querySelectorAll('.product-panel');
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () {
+          var key = t.getAttribute('data-tab');
+          tabs.forEach(function (x) {
+            var on = x === t;
+            x.classList.toggle('active', on);
+            x.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          panels.forEach(function (p) {
+            var on = p.id === 'panel-' + key;
+            p.classList.toggle('active', on);
+            if (on) { p.removeAttribute('hidden'); } else { p.setAttribute('hidden', ''); }
+          });
+        });
+      });
+
+      // Sign-in modal (6.7)
+      var modal = document.getElementById('signin-modal');
+      var openLink = document.getElementById('staff-signin-link');
+      var closeBtn = modal.querySelector('.modal-close');
+      var form = document.getElementById('signin-form');
+      var pw = document.getElementById('signin-password');
+      var err = document.getElementById('signin-error');
+
+      function openModal(e) {
+        if (e) e.preventDefault();
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        setTimeout(function () { pw.focus(); }, 50);
+      }
+      function closeModal() {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        err.textContent = '';
+      }
+      openLink.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+      });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (pw.value === 'finx2026') {
+          try { sessionStorage.setItem('finx-internal-unlocked', '1'); } catch (_) {}
+          window.location.href = 'internal/index.html';
+        } else {
+          err.textContent = 'Invalid credentials. Try the demo password shown below.';
+        }
+      });
+
+      // State indicator (6.10)
+      try {
+        var unlocked = sessionStorage.getItem('finx-internal-unlocked') === '1';
+        var ind = document.getElementById('state-indicator');
+        if (unlocked) {
+          ind.classList.add('signed-in');
+          ind.querySelector('.state-label').textContent = 'Signed in as UST staff';
+        }
+      } catch (_) {}
+    })();
+  </script>
+</body>
+</html>

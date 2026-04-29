@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UST FinX Internal Hub</title>
+  <meta name="description" content="UST internal-only hub. Engagement playbooks, sales enablement, architecture, delivery references, and client engagements.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+
+  <!-- Inline gate: redirect to homepage with modal opened if not unlocked.
+       Runs before paint to avoid flashing internal content. -->
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('finx-internal-unlocked') !== '1') {
+          location.replace('../index.html?signin=1');
+        }
+      } catch (e) {
+        location.replace('../index.html?signin=1');
+      }
+    })();
+  </script>
+
+  <style>
+    /* Page-unique: internal palette overrides + hub layout */
+    :root {
+      --accent: var(--internal-primary);
+      --accent-bg: var(--internal-bg);
+      --accent-border: var(--internal-border);
+    }
+
+    /* Internal banner stripe */
+    .internal-banner {
+      background: linear-gradient(90deg, rgba(180,147,244,0.18), rgba(180,147,244,0.10));
+      border-bottom: 1px solid var(--internal-border);
+      color: var(--internal-primary);
+      padding: 8px 32px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      backdrop-filter: blur(20px);
+    }
+    .internal-banner svg { width: 14px; height: 14px; }
+
+    /* Adjust nav active link colour for internal */
+    .nav-link.active { color: var(--internal-primary); }
+    .nav-link.active::after { background: var(--internal-primary) !important; }
+
+    /* Hero (internal) */
+    .int-hero {
+      padding: 80px 0 56px;
+      background: linear-gradient(180deg, #062229 0%, #0A3540 100%);
+      border-bottom: 1px solid var(--border-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .int-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(180, 147, 244, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180, 147, 244, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+      pointer-events: none;
+    }
+    .int-hero-inner { position: relative; z-index: 1; }
+    .int-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--internal-bg);
+      color: var(--internal-primary);
+      border: 1px solid var(--internal-border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .int-tag .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--internal-primary);
+      box-shadow: 0 0 8px var(--internal-primary);
+    }
+    .int-hero h1 {
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin: 0 0 16px;
+      color: var(--text-primary);
+    }
+    .int-hero h1 .accent { color: var(--internal-primary); }
+    .int-hero .lead {
+      max-width: 640px;
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0 0 24px;
+    }
+    .int-hero .meta {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .int-hero .meta strong { color: var(--text-primary); }
+    .int-hero .signout-btn {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      background: rgba(180, 147, 244, 0.08);
+      border: 1px solid var(--internal-border);
+      color: var(--internal-primary);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 2;
+      transition: all var(--transition);
+    }
+    .int-hero .signout-btn:hover {
+      background: rgba(180, 147, 244, 0.18);
+      transform: translateY(-1px);
+    }
+
+    /* Hub section */
+    .hub-section { padding: 60px 0 80px; background: var(--bg-deep); }
+    .hub-section .eyebrow { color: var(--internal-primary); }
+    .hub-section h2 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 8px 0 32px;
+      color: var(--text-primary);
+    }
+
+    /* Internal cards 2x3 grid */
+    .int-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 900px) {
+      .int-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .int-grid { grid-template-columns: 1fr; }
+    }
+
+    .int-card {
+      display: block;
+      background: linear-gradient(135deg, #0F4555 0%, #0A3540 100%);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      padding: 26px 26px 22px;
+      color: inherit;
+      position: relative;
+      transition: all var(--transition);
+    }
+    .int-card:hover {
+      border-color: var(--internal-border);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(180, 147, 244, 0.10), var(--shadow-md);
+      text-decoration: none !important;
+    }
+    .int-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--internal-bg);
+      color: var(--internal-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .int-card-icon svg { width: 20px; height: 20px; }
+    .int-card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+    }
+    .int-card:hover .int-card-title { color: var(--internal-primary); }
+    .int-card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0 0 14px;
+    }
+    .int-card-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      letter-spacing: 0.3px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-dark);
+    }
+    .int-card-arrow {
+      position: absolute;
+      top: 26px;
+      right: 26px;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+    .int-card:hover .int-card-arrow { color: var(--internal-primary); transform: translateX(2px); }
+
+    /* Override draft tag colour to purple for internal */
+    .draft-tag {
+      background: var(--internal-bg) !important;
+      color: var(--internal-primary) !important;
+      border-color: var(--internal-border) !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Internal banner -->
+  <div class="internal-banner" role="status">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    </svg>
+    UST Internal · Confidential · Do not share externally
+  </div>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <!-- Top navigation -->
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">Hub</a>
+        <a href="playbook-greenfield.html" class="nav-link">Playbooks</a>
+        <a href="#sales" class="nav-link">Sales</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#delivery" class="nav-link">Delivery</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search internal hub" autocomplete="off" aria-label="Search internal hub">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="int-hero">
+    <button class="signout-btn" type="button" id="signout-btn" aria-label="Sign out of UST internal hub">Sign out →</button>
+    <div class="container int-hero-inner">
+      <span class="int-tag"><span class="dot" aria-hidden="true"></span> UST Internal · Restricted</span>
+      <h1>UST <span class="accent">FinX</span> Internal Hub</h1>
+      <p class="lead">
+        The single source of truth for UST's FinX practice. Engagement playbooks, sales enablement, architecture deep-dives, delivery references, and client engagement records — curated for the people who deliver FinX to banks.
+      </p>
+      <div class="meta">
+        <span>Signed in as <strong>UST Staff</strong></span>
+        <span>·</span>
+        <span>Last updated <strong>22 Apr 2026</strong></span>
+        <span>·</span>
+        <span><strong>6</strong> sections · <strong>48</strong> documents</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Internal cards grid -->
+  <section class="hub-section">
+    <div class="container">
+      <span class="eyebrow">Internal Resources</span>
+      <h2>Six places everything lives</h2>
+
+      <div class="int-grid">
+
+        <a href="playbook-greenfield.html" class="int-card">
+          <div class="int-card-arrow" aria-hidden="true">→</div>
+          <div class="int-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          </div>
+          <h3 class="int-card-title">Engagement Playbooks</h3>
+          <p class="int-card-desc">Reusable end-to-end playbooks for the engagement shapes we run most often: greenfield launches, coexistence, and progressive modernisation.</p>
+          <div class="int-card-meta">3 playbooks · Last updated 22 Apr</div>
+        </a>
+
+        <a href="#sales" class="int-card">
+          <div class="int-card-arrow" aria-hidden="true">→</div>
+          <div class="int-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m7 14 4-4 4 4 5-5"></path></svg>
+          </div>
+          <h3 class="int-card-title">Sales Enablement</h3>
+          <p class="int-card-desc">Battle cards by competitor, ROI calculator, proposal templates, discovery question banks, and the FinX pitch deck master.</p>
+          <div class="int-card-meta">12 assets · Last updated 18 Apr</div>
+        </a>
+
+        <a href="#architecture" class="int-card">
+          <div class="int-card-arrow" aria-hidden="true">→</div>
+          <div class="int-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+          </div>
+          <h3 class="int-card-title">Architecture Deep-Dives</h3>
+          <p class="int-card-desc">Internal ADRs, design decisions, BIAN mapping rationale, and the canonical model evolution log. The "why" behind every Glue surface.</p>
+          <div class="int-card-meta">28 ADRs · Last updated 25 Apr</div>
+        </a>
+
+        <a href="#delivery" class="int-card">
+          <div class="int-card-arrow" aria-hidden="true">→</div>
+          <div class="int-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"></path><path d="M12 22v-6"></path><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="M2 12h6"></path><path d="M16 12h6"></path><path d="m4.93 19.07 4.24-4.24"></path><path d="m14.83 9.17 4.24-4.24"></path></svg>
+          </div>
+          <h3 class="int-card-title">Delivery References</h3>
+          <p class="int-card-desc">Implementation patterns, integration recipes, environment topologies, and the canonical deployment blueprints for each connector partner.</p>
+          <div class="int-card-meta">17 references · Last updated 24 Apr</div>
+        </a>
+
+        <a href="#engagements" class="int-card">
+          <div class="int-card-arrow" aria-hidden="true">→</div>
+          <div class="int-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <h3 class="int-card-title">Client Engagements</h3>
+          <p class="int-card-desc">Per-client engagement files (Bank A, Bank C, and others) with scope, status, key contacts, and lessons-learned from each phase.</p>
+          <div class="int-card-meta">9 active engagements · Last updated 28 Apr</div>
+        </a>
+
+        <a href="#prd" class="int-card">
+          <div class="int-card-arrow" aria-hidden="true">→</div>
+          <div class="int-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 13h6M9 17h6"></path></svg>
+          </div>
+          <h3 class="int-card-title">Product Requirements</h3>
+          <p class="int-card-desc">Roadmap PRDs for Glue and Glass, including in-flight extensibility model work, the next BIAN domain expansion, and AI-augmented operations.</p>
+          <div class="int-card-meta">14 PRDs · Last updated 26 Apr</div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">UST Internal · Confidential. The FinX practice's single source of truth.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Internal</div>
+          <ul>
+            <li><a href="index.html">Hub home</a></li>
+            <li><a href="playbook-greenfield.html">Playbooks</a></li>
+            <li><a href="#sales">Sales enablement</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Public</div>
+          <ul>
+            <li><a href="../index.html">Marketing site</a></li>
+            <li><a href="../glue/index.html">Glue Developer Hub</a></li>
+            <li><a href="../glass/index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#approach">White paper</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Practice</div>
+          <ul>
+            <li><a href="#">Org chart</a></li>
+            <li><a href="#">On-call rota</a></li>
+            <li><a href="#">Slack channels</a></li>
+            <li><a href="#">Office hours</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Help</div>
+          <ul>
+            <li><a href="#">Report an issue</a></li>
+            <li><a href="#">Suggest a doc</a></li>
+            <li><a href="#">Contact PracticeOps</a></li>
+            <li><a href="#" id="footer-signout">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global · Internal use only.</div>
+        <div class="footer-legal">
+          <a href="#">Confidentiality</a>
+          <a href="#">Acceptable use</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          Signed in as <strong style="color: var(--internal-primary);">UST Staff</strong>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6.10 State indicator (purple variant for signed-in) -->
+  <div class="state-indicator state-indicator--internal" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Signed in as UST staff</span>
+  </div>
+
+  <!-- Inline sign-out wiring (the shared main.js stub does not yet ship interactivity) -->
+  <script>
+    (function () {
+      function signOut() {
+        try { sessionStorage.removeItem('finx-internal-unlocked'); } catch (e) {}
+        location.replace('../index.html');
+      }
+      var btn = document.getElementById('signout-btn');
+      var footerBtn = document.getElementById('footer-signout');
+      if (btn) btn.addEventListener('click', signOut);
+      if (footerBtn) footerBtn.addEventListener('click', function (e) { e.preventDefault(); signOut(); });
+    })();
+  </script>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

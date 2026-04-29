@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviewing KYC results — FinX Glass</title>
+  <meta name="description" content="Step-by-step task walkthrough: how a Compliance Officer reviews KYC results for a new customer in FinX Glass.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* Page-unique: numbered task steps */
+    .task-steps {
+      list-style: none;
+      counter-reset: step;
+      padding: 0;
+      margin: 16px 0 28px;
+      display: grid;
+      gap: 14px;
+    }
+    .task-step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      position: relative;
+    }
+    .task-step::before {
+      content: counter(step, decimal-leading-zero);
+      grid-column: 1;
+      align-self: start;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--cyan);
+      line-height: 1;
+      padding-top: 4px;
+    }
+    .task-step-body { grid-column: 2; min-width: 0; }
+    .task-step-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 6px;
+      line-height: 1.3;
+    }
+    .task-step-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0 0 12px;
+    }
+    .task-step-desc:last-child { margin-bottom: 0; }
+
+    /* Screen reference (mock browser-like card showing the UI) */
+    .screen-ref {
+      background: #031319;
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin: 10px 0 4px;
+    }
+    .screen-ref-bar {
+      background: var(--bg-card);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .screen-ref-dots { display: flex; gap: 5px; }
+    .screen-ref-dots span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(168, 196, 204, 0.2);
+    }
+    .screen-ref-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .screen-ref-body {
+      padding: 16px 18px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .screen-ref-body strong { color: var(--text-primary); font-weight: 600; }
+    .screen-ref-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--border-dark);
+    }
+    .screen-ref-row:last-child { border-bottom: none; }
+    .screen-ref-row .pass { color: var(--cyan); font-weight: 600; }
+    .screen-ref-row .warn { color: #f5b65f; font-weight: 600; }
+    .screen-ref-row .fail { color: #ff6b8a; font-weight: 600; }
+
+    /* Decision options list inside step 3 */
+    .decision-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+      display: grid;
+      gap: 8px;
+    }
+    .decision-list li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px 12px;
+      background: rgba(168, 196, 204, 0.04);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .decision-list .opt-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      align-self: start;
+      text-align: center;
+    }
+    .opt-tag.opt-approve { background: var(--cyan-soft); color: var(--cyan); }
+    .opt-tag.opt-escalate { background: rgba(245, 182, 95, 0.15); color: #f5b65f; }
+    .opt-tag.opt-reject { background: rgba(255, 107, 138, 0.15); color: #ff6b8a; }
+  </style>
+</head>
+<body>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html#approach" class="nav-link">Approach</a>
+        <a href="../index.html#platform" class="nav-link">Platform</a>
+        <a href="../glue/index.html" class="nav-link">Glue</a>
+        <a href="index.html" class="nav-link active">Glass</a>
+        <a href="../index.html#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search Glass documentation" autocomplete="off" aria-label="Search Glass documentation">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="subnav" aria-label="Glass sections">
+    <div class="subnav-inner">
+      <a href="../index.html" class="subnav-back">← Back to FinX</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">FinX Glass</span>
+      <div class="subnav-links">
+        <a href="index.html#roles" class="subnav-link active">By Role</a>
+        <a href="index.html#modules" class="subnav-link">Modules</a>
+        <a href="index.html#reference" class="subnav-link">Reference</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="docs">
+
+    <!-- LEFT SIDEBAR — role + task hierarchy -->
+    <aside class="docs-sidebar" aria-label="Glass navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Compliance Officer</div>
+        <ul>
+          <li><a href="role-compliance.html">Role overview</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Compliance tasks</div>
+        <ul>
+          <li><a href="task-kyc-review.html" class="active">Review KYC results</a></li>
+          <li><a href="#">Approve high-risk customer</a></li>
+          <li><a href="#">Handle AML alert</a></li>
+          <li><a href="#">Sanctions screening</a></li>
+          <li><a href="#">Four-eyes approval</a></li>
+          <li><a href="#">Periodic review</a></li>
+          <li><a href="#">SAR submission</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Modules used</div>
+        <ul>
+          <li><a href="index.html#modules">Task Management</a></li>
+          <li><a href="index.html#modules">Customer &amp; Account Mgmt</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Other roles</div>
+        <ul>
+          <li><a href="#">CSR / Ops Agent</a></li>
+          <li><a href="#">Supervisor</a></li>
+          <li><a href="#">Admin / Platform</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="docs-main">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="role-compliance.html">Compliance Officer</a>
+        <span class="sep">/</span>
+        <a href="role-compliance.html#tasks">Compliance tasks</a>
+        <span class="sep">/</span>
+        <span class="current">Review KYC results</span>
+      </nav>
+
+      <h1 class="docs-title">Reviewing KYC results for a new customer</h1>
+
+      <div class="docs-tags">
+        <span class="docs-tag docs-tag--cyan">5 min read</span>
+        <span class="docs-tag">Module: Customer &amp; Account Mgmt</span>
+        <span class="docs-tag">Role: Compliance Officer</span>
+      </div>
+
+      <p class="docs-lead">
+        When a new customer completes the digital onboarding flow, Glue runs IDV through Jumio and AML screening through ComplyAdvantage in parallel. The combined outcome lands in your Compliance task queue as a <strong>KYC Review</strong> task. This walkthrough takes you from picking up the task to lifting the customer to <code>active</code>.
+      </p>
+
+      <h2 id="overview">Overview</h2>
+      <p>
+        A KYC review takes most officers between three and seven minutes when the underlying signals are clean. The longer cases — manual document checks, partial matches on PEP lists, address-mismatch flags — have their own escalation paths covered in <a href="#">Approve a high-risk customer</a>. Here we focus on the standard happy-path review.
+      </p>
+
+      <!-- Numbered steps -->
+      <h2 id="steps">Step-by-step</h2>
+
+      <ol class="task-steps">
+
+        <li class="task-step">
+          <div class="task-step-body">
+            <h3 class="task-step-title">Open the Task Management console</h3>
+            <p class="task-step-desc">
+              From the Glass left navigation, choose <strong>Task Management → My queue</strong>. KYC reviews are tagged <code>kyc.review</code> and ordered by SLA expiry. Click the task to open it; the customer record opens in the right pane while the task header stays pinned at the top.
+            </p>
+
+            <div class="screen-ref" aria-label="Task queue screenshot reference">
+              <div class="screen-ref-bar">
+                <div class="screen-ref-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="screen-ref-label">glass.ustfinx.com / tasks / my-queue</div>
+              </div>
+              <div class="screen-ref-body">
+                <div class="screen-ref-row"><span><strong>cust_8a2f</strong> · Asha Mehta · KYC Review</span><span class="warn">SLA 2h 14m</span></div>
+                <div class="screen-ref-row"><span><strong>cust_7b3e</strong> · Daniel Roy · KYC Review</span><span>SLA 5h 02m</span></div>
+                <div class="screen-ref-row"><span><strong>cust_4c1d</strong> · Priya Iyer · AML Alert</span><span class="fail">Breached</span></div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="task-step">
+          <div class="task-step-body">
+            <h3 class="task-step-title">Review the customer profile and connector findings</h3>
+            <p class="task-step-desc">
+              The right pane shows the consolidated customer record. Cross-check the four panels in order: <strong>Identity</strong> (name, DOB, address as submitted vs. as verified by Jumio), <strong>Document</strong> (the uploaded ID with Jumio's authenticity score), <strong>Sanctions &amp; PEP</strong> (ComplyAdvantage match list, with confidence scores), and <strong>Risk score</strong> (the bank's policy-derived composite). Hover any field to see the source connector and timestamp.
+            </p>
+
+            <div class="screen-ref" aria-label="Customer profile screenshot reference">
+              <div class="screen-ref-bar">
+                <div class="screen-ref-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="screen-ref-label">glass.ustfinx.com / customers / cust_8a2f / kyc</div>
+              </div>
+              <div class="screen-ref-body">
+                <div class="screen-ref-row"><span>Identity match (Jumio)</span><span class="pass">98% · Pass</span></div>
+                <div class="screen-ref-row"><span>Document authenticity</span><span class="pass">Genuine · Pass</span></div>
+                <div class="screen-ref-row"><span>Sanctions screening (ComplyAdvantage)</span><span class="pass">No match</span></div>
+                <div class="screen-ref-row"><span>PEP screening</span><span class="pass">No match</span></div>
+                <div class="screen-ref-row"><span>Adverse media</span><span class="warn">1 weak match · Review</span></div>
+                <div class="screen-ref-row"><span>Composite risk score</span><span class="pass">22 / 100 · Low</span></div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="task-step">
+          <div class="task-step-body">
+            <h3 class="task-step-title">Make your decision</h3>
+            <p class="task-step-desc">
+              The <strong>Decision</strong> bar at the bottom of the task offers three options. Pick one and add a reason note (mandatory). On confirm, Glass writes the decision event to the audit store and Glue updates the party lifecycle on the underlying core.
+            </p>
+
+            <ul class="decision-list">
+              <li>
+                <span class="opt-tag opt-approve">APPROVE</span>
+                <span><strong>Approve and lift to active.</strong> Sends a <code>PATCH /v1/parties/{id}/lifecycle</code> with status <code>active</code>. The customer is notified and can transact within seconds.</span>
+              </li>
+              <li>
+                <span class="opt-tag opt-escalate">ESCALATE</span>
+                <span><strong>Escalate to senior compliance.</strong> Routes the task to the senior queue with your notes attached. Use this for any weak adverse-media match or composite score above 60.</span>
+              </li>
+              <li>
+                <span class="opt-tag opt-reject">REJECT</span>
+                <span><strong>Reject and close.</strong> Sends a <code>PATCH /v1/parties/{id}/lifecycle</code> with status <code>rejected</code>. A reason note is required and is surfaced verbatim in the customer's regulator-facing audit trail.</span>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+      </ol>
+
+      <!-- Permission required callout -->
+      <div class="callout callout--info" role="note">
+        <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <div class="callout-body">
+          <strong>Permission required</strong>
+          You need the <code>kyc.review</code> permission to action this task and <code>customer.lifecycle.write</code> to complete the lift to <code>active</code>. Both are bundled in the default <code>compliance-officer</code> role. Approvals above the bank's risk threshold additionally require an <code>approval.foureyes</code> sign-off from a peer — Glass routes that automatically.
+        </div>
+      </div>
+
+      <!-- Related tasks -->
+      <h2 id="related">Related tasks</h2>
+      <div class="related-grid">
+        <a href="#" class="related-card">
+          <div class="related-meta">TASK · 8 MIN</div>
+          <div class="related-title">Approve a high-risk customer</div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-meta">TASK · 4 MIN</div>
+          <div class="related-title">Handle an AML alert</div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-meta">TASK · 6 MIN</div>
+          <div class="related-title">Provide four-eyes approval</div>
+        </a>
+      </div>
+
+    </main>
+
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#overview" class="active">Overview</a></li>
+        <li><a href="#steps">Step-by-step</a></li>
+        <li><a href="#related">Related tasks</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit on GitHub</a>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="../glue/index.html">Glue Developer Hub</a></li>
+            <li><a href="index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#platform">Ecosystem</a></li>
+            <li><a href="../index.html#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="../index.html#approach">White paper</a></li>
+            <li><a href="role-compliance.html">By role</a></li>
+            <li><a href="index.html#modules">By module</a></li>
+            <li><a href="index.html#reference">RBAC reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address" aria-label="UST email address">
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password" aria-label="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

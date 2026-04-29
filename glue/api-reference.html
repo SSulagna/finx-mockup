@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create party · Party Lifecycle Mgmt — FinX Glue API</title>
+  <meta name="description" content="API reference for POST /v1/parties/initiate. Create a draft party in FinX Glue. BIAN-aligned Party Lifecycle Management service.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* Page-unique: response section header + sub-titles */
+    .req-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 32px 0 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html#approach" class="nav-link">Approach</a>
+        <a href="../index.html#platform" class="nav-link">Platform</a>
+        <a href="index.html" class="nav-link active">Glue</a>
+        <a href="../glass/index.html" class="nav-link">Glass</a>
+        <a href="../index.html#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search Glue documentation" autocomplete="off" aria-label="Search Glue documentation">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="subnav" aria-label="Glue sections">
+    <div class="subnav-inner">
+      <a href="../index.html" class="subnav-back">← Back to FinX</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">FinX Glue</span>
+      <div class="subnav-links">
+        <a href="index.html#getstarted" class="subnav-link">Get Started</a>
+        <a href="index.html#concepts" class="subnav-link">Concepts</a>
+        <a href="api-reference.html" class="subnav-link active">API Reference</a>
+        <a href="journey-onboarding.html" class="subnav-link">Journey Guides</a>
+        <a href="index.html#operate" class="subnav-link">Operate</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="docs">
+
+    <aside class="docs-sidebar" aria-label="Glue navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">API Reference</div>
+        <ul>
+          <li>
+            <a href="api-reference.html" class="active">Party Lifecycle Mgmt</a>
+            <ul class="nested">
+              <li><a href="api-reference.html" class="active">POST /parties/initiate</a></li>
+              <li><a href="#">GET /parties/{id}</a></li>
+              <li><a href="#">PATCH /parties/{id}</a></li>
+              <li><a href="#">PATCH /parties/{id}/lifecycle</a></li>
+              <li><a href="#">DELETE /parties/{id}</a></li>
+            </ul>
+          </li>
+          <li><a href="#">Account Management</a></li>
+          <li><a href="#">Payments</a></li>
+          <li><a href="#">Document Directory</a></li>
+          <li><a href="#">IDV connectors</a></li>
+          <li><a href="#">AML connectors</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Get Started</div>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="index.html#getstarted">Auth &amp; tenant headers</a></li>
+          <li><a href="index.html#getstarted">First API call</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Journey Guides</div>
+        <ul>
+          <li><a href="journey-onboarding.html">Customer onboarding &amp; KYC</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="docs-main">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="api-reference.html">API Reference</a>
+        <span class="sep">/</span>
+        <a href="api-reference.html">Party Lifecycle Management</a>
+        <span class="sep">/</span>
+        <span class="current">Create party</span>
+      </nav>
+
+      <div class="endpoint">
+        <span class="method-badge method-post">POST</span>
+        <span class="endpoint-path">/v1/parties/initiate</span>
+      </div>
+
+      <h1 class="docs-title">Create party</h1>
+
+      <p class="docs-lead">
+        Create a draft party in the bank's Party Lifecycle Management service. Returns a canonical <code>party</code> object with a generated identifier and status <code>draft</code>. The party is not yet active and cannot transact until verification and screening are complete (see the <a href="journey-onboarding.html">onboarding journey</a>).
+      </p>
+
+      <h2 id="parameters">Parameters</h2>
+
+      <div class="req-section-title">Headers</div>
+      <div class="params">
+        <div class="params-row">
+          <div>
+            <div class="params-name">Authorization</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">Bearer token from your OAuth2 client-credentials exchange. Token must include the <code>plm:write</code> scope.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">X-Tenant-Id</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">The tenant identifier issued at onboarding (e.g. <code>bank_a</code>). Glue routes the request to the configured core for that tenant.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">Idempotency-Key</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--optional">Optional</span></div>
+          </div>
+          <div class="params-desc">A unique key (e.g. UUID v4) to deduplicate retried requests. Honoured for 24 hours.</div>
+        </div>
+      </div>
+
+      <div class="req-section-title">Body parameters</div>
+      <div class="params">
+        <div class="params-row">
+          <div>
+            <div class="params-name">givenName</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">The party's given (first) name. 1–100 UTF-8 characters.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">familyName</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">The party's family (last) name. 1–100 UTF-8 characters.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">dateOfBirth</div>
+            <div class="params-meta"><span class="params-type">string &lt;date&gt;</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">ISO-8601 date (<code>YYYY-MM-DD</code>). Must indicate an age between 18 and 120 inclusive.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">residentialAddress</div>
+            <div class="params-meta"><span class="params-type">object</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">Country (ISO-3166 alpha-2) is mandatory; city, postal code, and street are optional and may be enriched later.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">contact</div>
+            <div class="params-meta"><span class="params-type">object</span><span class="params-req params-req--optional">Optional</span></div>
+          </div>
+          <div class="params-desc">May include <code>email</code> and <code>phone</code> (E.164). At least one is required before lifting status to <code>active</code>.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">externalRef</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--optional">Optional</span></div>
+          </div>
+          <div class="params-desc">A free-form reference (max 64 chars) for correlating the party with your CRM record.</div>
+        </div>
+      </div>
+
+      <h2 id="request">Request example</h2>
+      <div class="code-panel">
+        <div class="code-bar">
+          <div class="code-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="code-language">JSON</div>
+          <button class="code-copy" type="button">Copy</button>
+        </div>
+<pre><code>{
+  <span class="tok-key">"givenName"</span>: <span class="tok-str">"Asha"</span>,
+  <span class="tok-key">"familyName"</span>: <span class="tok-str">"Mehta"</span>,
+  <span class="tok-key">"dateOfBirth"</span>: <span class="tok-str">"1992-04-12"</span>,
+  <span class="tok-key">"residentialAddress"</span>: {
+    <span class="tok-key">"country"</span>: <span class="tok-str">"AE"</span>,
+    <span class="tok-key">"city"</span>: <span class="tok-str">"Abu Dhabi"</span>,
+    <span class="tok-key">"postalCode"</span>: <span class="tok-str">"00000"</span>
+  },
+  <span class="tok-key">"contact"</span>: {
+    <span class="tok-key">"email"</span>: <span class="tok-str">"asha.mehta@example.com"</span>,
+    <span class="tok-key">"phone"</span>: <span class="tok-str">"+971501234567"</span>
+  },
+  <span class="tok-key">"externalRef"</span>: <span class="tok-str">"crm_7b3e"</span>
+}</code></pre>
+      </div>
+
+      <h2 id="responses">Responses</h2>
+
+      <div class="resp-tabs" role="tablist">
+        <button class="resp-tab active" role="tab" aria-selected="true" data-resp="201">201 Created</button>
+        <button class="resp-tab" role="tab" aria-selected="false" data-resp="400">400 Bad Request</button>
+        <button class="resp-tab" role="tab" aria-selected="false" data-resp="409">409 Conflict</button>
+      </div>
+
+      <div class="resp-panel active" id="resp-201" role="tabpanel">
+        <div class="code-panel">
+          <div class="code-bar">
+            <div class="code-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="code-language">JSON · 201</div>
+            <button class="code-copy" type="button">Copy</button>
+          </div>
+<pre><code>{
+  <span class="tok-key">"id"</span>: <span class="tok-str">"cust_8a2f"</span>,
+  <span class="tok-key">"status"</span>: <span class="tok-str">"draft"</span>,
+  <span class="tok-key">"givenName"</span>: <span class="tok-str">"Asha"</span>,
+  <span class="tok-key">"familyName"</span>: <span class="tok-str">"Mehta"</span>,
+  <span class="tok-key">"dateOfBirth"</span>: <span class="tok-str">"1992-04-12"</span>,
+  <span class="tok-key">"createdAt"</span>: <span class="tok-str">"2026-04-29T08:14:22Z"</span>,
+  <span class="tok-key">"_links"</span>: {
+    <span class="tok-key">"self"</span>: <span class="tok-str">"/v1/parties/cust_8a2f"</span>,
+    <span class="tok-key">"lifecycle"</span>: <span class="tok-str">"/v1/parties/cust_8a2f/lifecycle"</span>
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="resp-panel" id="resp-400" role="tabpanel" hidden>
+        <div class="code-panel">
+          <div class="code-bar">
+            <div class="code-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="code-language">JSON · 400</div>
+            <button class="code-copy" type="button">Copy</button>
+          </div>
+<pre><code>{
+  <span class="tok-key">"error"</span>: <span class="tok-str">"validation_failed"</span>,
+  <span class="tok-key">"message"</span>: <span class="tok-str">"One or more required fields are invalid."</span>,
+  <span class="tok-key">"details"</span>: [
+    {
+      <span class="tok-key">"field"</span>: <span class="tok-str">"dateOfBirth"</span>,
+      <span class="tok-key">"reason"</span>: <span class="tok-str">"must indicate an age of 18 or older"</span>
+    }
+  ]
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="resp-panel" id="resp-409" role="tabpanel" hidden>
+        <div class="code-panel">
+          <div class="code-bar">
+            <div class="code-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="code-language">JSON · 409</div>
+            <button class="code-copy" type="button">Copy</button>
+          </div>
+<pre><code>{
+  <span class="tok-key">"error"</span>: <span class="tok-str">"duplicate_party"</span>,
+  <span class="tok-key">"message"</span>: <span class="tok-str">"A party with the same externalRef already exists for this tenant."</span>,
+  <span class="tok-key">"existingPartyId"</span>: <span class="tok-str">"cust_7b3e"</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="callout callout--info" role="note">
+        <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div class="callout-body">
+          <strong>BIAN mapping</strong>
+          This endpoint maps to the BIAN <em>Party Lifecycle Management</em> service domain, <code>InitiateCustomerReference</code> service operation. The canonical response shape preserves BIAN field names where they exist; tenant extensions appear under <code>_extensions.{tenantId}</code> and never collide with the canonical contract.
+        </div>
+      </div>
+
+      <h2 id="related">Related</h2>
+      <div class="related-grid">
+        <a href="journey-onboarding.html" class="related-card">
+          <div class="related-meta">JOURNEY</div>
+          <div class="related-title">Customer onboarding &amp; KYC</div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-meta">ENDPOINT · PATCH</div>
+          <div class="related-title">/parties/{id}/lifecycle</div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-meta">ENDPOINT · GET</div>
+          <div class="related-title">/parties/{id}</div>
+        </a>
+      </div>
+
+    </main>
+
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#parameters" class="active">Parameters</a></li>
+        <li><a href="#request">Request example</a></li>
+        <li><a href="#responses">Responses</a></li>
+        <li><a href="#related">Related</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit on GitHub</a>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="index.html">Glue Developer Hub</a></li>
+            <li><a href="../glass/index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#platform">Ecosystem</a></li>
+            <li><a href="../index.html#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="../index.html#approach">White paper</a></li>
+            <li><a href="journey-onboarding.html">Journey guides</a></li>
+            <li><a href="api-reference.html">API reference</a></li>
+            <li><a href="index.html#operate">Releases</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address" aria-label="UST email address">
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password" aria-label="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" defer></script>
+  <script>
+    (function () {
+      // Response tabs
+      var tabs = document.querySelectorAll('.resp-tab');
+      var panels = document.querySelectorAll('.resp-panel');
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () {
+          var key = t.getAttribute('data-resp');
+          tabs.forEach(function (x) {
+            var on = x === t;
+            x.classList.toggle('active', on);
+            x.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          panels.forEach(function (p) {
+            var on = p.id === 'resp-' + key;
+            p.classList.toggle('active', on);
+            if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden','');
+          });
+        });
+      });
+
+      // Sign-in modal
+      var modal = document.getElementById('signin-modal');
+      var openLink = document.getElementById('staff-signin-link');
+      var closeBtn = modal.querySelector('.modal-close');
+      var form = document.getElementById('signin-form');
+      var pw = document.getElementById('signin-password');
+      var err = document.getElementById('signin-error');
+      function open(e){ if(e)e.preventDefault(); modal.classList.add('active'); modal.setAttribute('aria-hidden','false'); setTimeout(function(){pw.focus();},50); }
+      function close(){ modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); err.textContent=''; }
+      openLink.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', function(e){ if(e.target===modal) close(); });
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape' && modal.classList.contains('active')) close(); });
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (pw.value === 'finx2026') {
+          try { sessionStorage.setItem('finx-internal-unlocked','1'); } catch(_){}
+          window.location.href = '../internal/index.html';
+        } else { err.textContent = 'Invalid credentials. Try the demo password shown below.'; }
+      });
+      try {
+        var unlocked = sessionStorage.getItem('finx-internal-unlocked') === '1';
+        var ind = document.getElementById('state-indicator');
+        if (unlocked) {
+          ind.classList.add('signed-in');
+          ind.querySelector('.state-label').textContent = 'Signed in as UST staff';
+        }
+      } catch(_) {}
+    })();
+  </script>
+</body>
+</html>

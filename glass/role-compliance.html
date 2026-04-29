@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compliance Officer — FinX Glass</title>
+  <meta name="description" content="The Compliance Officer role in FinX Glass: KYC reviews, AML alerts, sanctions screening, and four-eyes approvals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* Page-unique: role landing — task list & permission tables */
+    .role-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 4px;
+      margin-bottom: 18px;
+    }
+    .role-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(95, 159, 255, 0.12);
+      color: #5f9fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .role-avatar svg { width: 26px; height: 26px; }
+    .role-header h1 { margin: 0 0 4px; }
+    .role-header .role-meta {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Task cards: list-style, each with breadcrumbed task title */
+    .task-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 14px 0 28px;
+    }
+    .task-row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      color: inherit;
+      transition: all var(--transition);
+    }
+    .task-row:hover {
+      border-color: var(--cyan-dim);
+      transform: translateY(-1px);
+      text-decoration: none !important;
+    }
+    .task-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--cyan-soft);
+      color: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .task-icon svg { width: 16px; height: 16px; }
+    .task-body .task-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .task-body .task-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .task-row .task-arrow {
+      color: var(--text-muted);
+      font-size: 18px;
+      transition: all var(--transition);
+    }
+    .task-row:hover .task-arrow { color: var(--cyan); transform: translateX(2px); }
+    .task-row:hover .task-title { color: var(--cyan); }
+
+    /* Permission table */
+    .perm-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 28px;
+      font-size: 13px;
+    }
+    .perm-table th, .perm-table td {
+      text-align: left;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .perm-table th {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      background: rgba(168, 196, 204, 0.04);
+    }
+    .perm-table code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--cyan);
+      background: var(--cyan-soft);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .perm-scope {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .perm-scope--read { background: rgba(95, 159, 255, 0.15); color: #5f9fff; }
+    .perm-scope--write { background: rgba(245, 182, 95, 0.15); color: #f5b65f; }
+    .perm-scope--approve { background: var(--cyan-soft); color: var(--cyan); }
+
+    /* Module access chips */
+    .module-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 28px;
+    }
+    .module-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+    }
+    .module-chip .check {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+    .module-chip.disabled { color: var(--text-muted); }
+    .module-chip.disabled .check { color: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html#approach" class="nav-link">Approach</a>
+        <a href="../index.html#platform" class="nav-link">Platform</a>
+        <a href="../glue/index.html" class="nav-link">Glue</a>
+        <a href="index.html" class="nav-link active">Glass</a>
+        <a href="../index.html#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search Glass documentation" autocomplete="off" aria-label="Search Glass documentation">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="subnav" aria-label="Glass sections">
+    <div class="subnav-inner">
+      <a href="../index.html" class="subnav-back">← Back to FinX</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">FinX Glass</span>
+      <div class="subnav-links">
+        <a href="index.html#roles" class="subnav-link active">By Role</a>
+        <a href="index.html#modules" class="subnav-link">Modules</a>
+        <a href="index.html#reference" class="subnav-link">Reference</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="docs">
+
+    <!-- LEFT SIDEBAR — role filter active, compliance task list expanded -->
+    <aside class="docs-sidebar" aria-label="Glass navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">By Role</div>
+        <ul>
+          <li><a href="#">CSR / Ops Agent</a></li>
+          <li><a href="role-compliance.html" class="active">Compliance Officer</a></li>
+          <li><a href="#">Supervisor</a></li>
+          <li><a href="#">Admin / Platform</a></li>
+        </ul>
+      </div>
+
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Compliance tasks</div>
+        <ul>
+          <li><a href="task-kyc-review.html">Review KYC results</a></li>
+          <li><a href="#">Approve high-risk customer</a></li>
+          <li><a href="#">Handle AML alert</a></li>
+          <li><a href="#">Sanctions screening</a></li>
+          <li><a href="#">Four-eyes approval</a></li>
+          <li><a href="#">Periodic review</a></li>
+          <li><a href="#">Suspicious activity report</a></li>
+        </ul>
+      </div>
+
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Modules used</div>
+        <ul>
+          <li><a href="index.html#modules">Customer &amp; Account Mgmt</a></li>
+          <li><a href="index.html#modules">Task Management</a></li>
+          <li><a href="index.html#modules">Incident &amp; Alert Centre</a></li>
+        </ul>
+      </div>
+
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Reference</div>
+        <ul>
+          <li><a href="index.html#reference">RBAC permissions</a></li>
+          <li><a href="index.html#reference">FAQs</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="docs-main">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Glass</a>
+        <span class="sep">/</span>
+        <a href="index.html#roles">By Role</a>
+        <span class="sep">/</span>
+        <span class="current">Compliance Officer</span>
+      </nav>
+
+      <div class="role-header">
+        <div class="role-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"></path><path d="m9 12 2 2 4-4"></path></svg>
+        </div>
+        <div>
+          <div class="role-meta">Role · Compliance</div>
+          <h1 class="docs-title">Compliance Officer</h1>
+        </div>
+      </div>
+
+      <div class="docs-tags">
+        <span class="docs-tag docs-tag--cyan">7 common tasks</span>
+        <span class="docs-tag">3 modules</span>
+        <span class="docs-tag">Regulated</span>
+      </div>
+
+      <p class="docs-lead">
+        Compliance Officers own the regulatory posture of every customer the bank onboards or services. In Glass, that means working through KYC outcomes, AML alerts, sanctions hits, and four-eyes approvals from a single task queue — with the underlying customer record, document evidence, and connector findings all one click away.
+      </p>
+
+      <h2 id="intro">What this role does</h2>
+      <p>
+        A Compliance Officer in Glass spends most of the day in two places: the <strong>Task Management</strong> queue (where KYC reviews and AML alerts arrive) and the <strong>Customer &amp; Account Management</strong> module (where the underlying customer record lives). The Glue platform feeds both — IDV outcomes from Jumio, screening results from ComplyAdvantage, and lifecycle states from Party Lifecycle Management all surface as actionable tasks rather than raw events.
+      </p>
+      <p>
+        The role is regulated. Every decision is auditable, every approval has a four-eyes counterpart, and every override emits a structured event to the bank's evidence store.
+      </p>
+
+      <!-- Common tasks -->
+      <h2 id="tasks">Common tasks</h2>
+      <p>The seven tasks below cover roughly 90% of the working day. Click into any task for a step-by-step walkthrough.</p>
+
+      <div class="task-list">
+
+        <a href="task-kyc-review.html" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M5 21c0-4 3-6 7-6s7 2 7 6"></path><path d="m17 11 1.5 1.5L21 10"></path></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">Review KYC results for a new customer</div>
+            <div class="task-desc">Inspect IDV findings from Jumio, AML screening from ComplyAdvantage, and approve or escalate. ~5 min.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a href="#" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 22h20L12 2z"></path><path d="M12 9v6"></path></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">Approve a high-risk customer</div>
+            <div class="task-desc">Two-step approval workflow with senior compliance sign-off. Required for any customer scored above the bank's risk threshold.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a href="#" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">Handle an AML alert</div>
+            <div class="task-desc">Triage transaction-monitoring alerts. Mark as false positive, escalate to a SAR, or freeze the account in line with policy.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a href="#" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">Run sanctions screening</div>
+            <div class="task-desc">Ad-hoc screening for an existing customer or counterparty. Results stream back from ComplyAdvantage in under a second.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a href="#" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="3"></circle><circle cx="15" cy="12" r="3"></circle></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">Provide four-eyes approval</div>
+            <div class="task-desc">Second-line review of a peer's decision. Required for high-value account changes, manual KYC overrides, and SAR submissions.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a href="#" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">Conduct a periodic review</div>
+            <div class="task-desc">Annual or risk-triggered KYC refresh. Glass surfaces customers due for review and pre-fills the diff against the last attested record.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a href="#" class="task-row">
+          <div class="task-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M9 13h6M9 17h6"></path></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">File a Suspicious Activity Report</div>
+            <div class="task-desc">Generate the regulator-ready SAR document from the case file and submit through the configured reporting channel.</div>
+          </div>
+          <span class="task-arrow" aria-hidden="true">→</span>
+        </a>
+
+      </div>
+
+      <!-- Permissions -->
+      <h2 id="permissions">Required permissions</h2>
+      <p>The default <code>compliance-officer</code> role bundles the permissions below. Banks can extend or restrict the bundle from the Admin module without affecting other roles.</p>
+
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Scope</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>kyc.review</code></td>
+            <td><span class="perm-scope perm-scope--approve">approve</span></td>
+            <td>Approve, reject, or escalate KYC outcomes from new onboardings and periodic reviews.</td>
+          </tr>
+          <tr>
+            <td><code>aml.alert.handle</code></td>
+            <td><span class="perm-scope perm-scope--write">write</span></td>
+            <td>Triage and resolve AML alerts. Cannot delete alerts; only mark as resolved or escalated.</td>
+          </tr>
+          <tr>
+            <td><code>sanctions.screen</code></td>
+            <td><span class="perm-scope perm-scope--write">write</span></td>
+            <td>Initiate ad-hoc sanctions screening against any party or counterparty.</td>
+          </tr>
+          <tr>
+            <td><code>customer.read</code></td>
+            <td><span class="perm-scope perm-scope--read">read</span></td>
+            <td>Read full customer record including documents and connector evidence. Required for review work.</td>
+          </tr>
+          <tr>
+            <td><code>customer.lifecycle.write</code></td>
+            <td><span class="perm-scope perm-scope--write">write</span></td>
+            <td>Update party lifecycle status (suspend, reactivate, close) within the compliance-allowed transitions.</td>
+          </tr>
+          <tr>
+            <td><code>approval.foureyes</code></td>
+            <td><span class="perm-scope perm-scope--approve">approve</span></td>
+            <td>Act as the second pair of eyes on a peer's decision. Cannot self-approve own decisions.</td>
+          </tr>
+          <tr>
+            <td><code>sar.submit</code></td>
+            <td><span class="perm-scope perm-scope--write">write</span></td>
+            <td>Generate and submit Suspicious Activity Reports to the configured reporting endpoint.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Module access -->
+      <h2 id="modules">Module access</h2>
+      <p>The Compliance Officer role sees three Glass modules in the primary navigation. Other modules remain hidden unless an admin grants additional roles.</p>
+
+      <div class="module-chips">
+        <span class="module-chip"><span class="check">✓</span> Customer &amp; Account Management</span>
+        <span class="module-chip"><span class="check">✓</span> Task Management</span>
+        <span class="module-chip"><span class="check">✓</span> Incident &amp; Alert Centre</span>
+        <span class="module-chip disabled"><span class="check">·</span> Workflow Console <em>(read-only)</em></span>
+        <span class="module-chip disabled"><span class="check">×</span> Service Orchestration</span>
+        <span class="module-chip disabled"><span class="check">×</span> Connector SPAs <em>(except Jumio)</em></span>
+      </div>
+
+    </main>
+
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#intro" class="active">What this role does</a></li>
+        <li><a href="#tasks">Common tasks</a></li>
+        <li><a href="#permissions">Required permissions</a></li>
+        <li><a href="#modules">Module access</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit on GitHub</a>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="../glue/index.html">Glue Developer Hub</a></li>
+            <li><a href="index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#platform">Ecosystem</a></li>
+            <li><a href="../index.html#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="../index.html#approach">White paper</a></li>
+            <li><a href="role-compliance.html">By role</a></li>
+            <li><a href="index.html#modules">By module</a></li>
+            <li><a href="index.html#reference">RBAC reference</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address" aria-label="UST email address">
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password" aria-label="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

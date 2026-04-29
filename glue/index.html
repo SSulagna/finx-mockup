@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinX Glue — Developer Hub</title>
+  <meta name="description" content="FinX Glue is the BIAN-aligned orchestration layer for composable banking. Build journeys, integrate cores, and operate at scale.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* Page-unique: Glue landing hero (smaller than homepage hero) */
+    .glue-hero {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--border-dark);
+      margin-bottom: 16px;
+    }
+    .glue-hero .eyebrow { color: var(--cyan); }
+    .glue-hero .docs-title { font-size: 42px; margin-bottom: 16px; }
+    .glue-hero .docs-lead { max-width: 640px; margin-bottom: 24px; }
+    .glue-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Quickstart 3-col grid */
+    .qs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0 28px;
+    }
+    .qs-card {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      color: inherit;
+      transition: all var(--transition);
+    }
+    .qs-card:hover { border-color: var(--cyan-dim); transform: translateY(-2px); text-decoration: none !important; }
+    .qs-card .qs-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .qs-card .qs-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+    .qs-card .qs-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <!-- 6.1 Top navigation -->
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html#approach" class="nav-link">Approach</a>
+        <a href="../index.html#platform" class="nav-link">Platform</a>
+        <a href="index.html" class="nav-link active">Glue</a>
+        <a href="../glass/index.html" class="nav-link">Glass</a>
+        <a href="../index.html#use-cases" class="nav-link">Use cases</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search Glue documentation" autocomplete="off" aria-label="Search Glue documentation">
+        <button class="nav-cta" type="button">Talk to us</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Glue sub-navigation -->
+  <div class="subnav" aria-label="Glue sections">
+    <div class="subnav-inner">
+      <a href="../index.html" class="subnav-back">← Back to FinX</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">FinX Glue</span>
+      <div class="subnav-links">
+        <a href="#getstarted" class="subnav-link active">Get Started</a>
+        <a href="#concepts" class="subnav-link">Concepts</a>
+        <a href="api-reference.html" class="subnav-link">API Reference</a>
+        <a href="journey-onboarding.html" class="subnav-link">Journey Guides</a>
+        <a href="#operate" class="subnav-link">Operate</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6.3 Three-column documentation layout -->
+  <div class="docs">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="docs-sidebar" aria-label="Glue navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Get Started</div>
+        <ul>
+          <li><a href="index.html" class="active">Overview</a></li>
+          <li><a href="#getstarted">Auth &amp; tenant headers</a></li>
+          <li><a href="#getstarted">Environments</a></li>
+          <li><a href="#getstarted">First API call</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Concepts</div>
+        <ul>
+          <li><a href="#concepts">BIAN Service Domains</a></li>
+          <li><a href="#concepts">Canonical model</a></li>
+          <li><a href="#concepts">Extensibility model</a></li>
+          <li><a href="#concepts">Idempotency &amp; retries</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">API Reference</div>
+        <ul>
+          <li><a href="api-reference.html">Party Lifecycle Mgmt</a></li>
+          <li><a href="api-reference.html">Account Management</a></li>
+          <li><a href="api-reference.html">Payments</a></li>
+          <li><a href="api-reference.html">Document Directory</a></li>
+          <li><a href="api-reference.html">IDV connectors</a></li>
+          <li><a href="api-reference.html">AML connectors</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Journey Guides</div>
+        <ul>
+          <li><a href="journey-onboarding.html">Customer onboarding &amp; KYC</a></li>
+          <li><a href="#">Account opening</a></li>
+          <li><a href="#">Card issuance</a></li>
+          <li><a href="#">Payment initiation</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Operate</div>
+        <ul>
+          <li><a href="#operate">Runbooks</a></li>
+          <li><a href="#operate">Releases</a></li>
+          <li><a href="#operate">Deprecations</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="docs-main">
+
+      <!-- Glue hero -->
+      <header class="glue-hero">
+        <span class="eyebrow">FinX Glue</span>
+        <h1 class="docs-title">Build on the orchestration layer.</h1>
+        <p class="docs-lead">
+          Glue is the BIAN-aligned orchestration layer at the centre of the FinX platform. It exposes a coherent canonical model over heterogeneous cores and ecosystem partners, so you can ship customer journeys without re-modelling the bank for every change.
+        </p>
+        <div class="glue-hero-ctas">
+          <a href="#getstarted" class="btn btn-primary">Quickstart →</a>
+          <a href="api-reference.html" class="btn btn-secondary">API Reference</a>
+        </div>
+      </header>
+
+      <!-- Quickstart -->
+      <h2 id="getstarted">Get started in three steps</h2>
+      <p>From zero to a working API call in roughly fifteen minutes. All quickstart examples target the sandbox environment with synthetic data.</p>
+      <div class="qs-grid">
+        <a href="#" class="qs-card">
+          <div class="qs-num">01</div>
+          <div class="qs-title">Auth &amp; tenant headers</div>
+          <div class="qs-desc">Configure your <code>X-Tenant-Id</code> and bearer token. OAuth2 client credentials flow.</div>
+        </a>
+        <a href="#" class="qs-card">
+          <div class="qs-num">02</div>
+          <div class="qs-title">Environments</div>
+          <div class="qs-desc">Sandbox, staging, production. Endpoint formats, rate limits, and data residency.</div>
+        </a>
+        <a href="#" class="qs-card">
+          <div class="qs-num">03</div>
+          <div class="qs-title">First API call</div>
+          <div class="qs-desc">Initiate a party, retrieve it, and observe the canonical response shape.</div>
+        </a>
+      </div>
+
+      <!-- Concepts -->
+      <h2 id="concepts">Concepts</h2>
+      <p>Glue is opinionated about three things: that the canonical model should follow BIAN, that extension should not require forking, and that orchestration should be observable end to end.</p>
+      <div class="qs-grid">
+        <a href="#" class="qs-card">
+          <div class="qs-num">CONCEPT</div>
+          <div class="qs-title">BIAN Service Domains</div>
+          <div class="qs-desc">How Glue maps endpoints to BIAN service operations and why that matters for coexistence.</div>
+        </a>
+        <a href="#" class="qs-card">
+          <div class="qs-num">CONCEPT</div>
+          <div class="qs-title">Canonical model</div>
+          <div class="qs-desc">A single shape for parties, accounts, and arrangements across cores and connectors.</div>
+        </a>
+        <a href="#" class="qs-card">
+          <div class="qs-num">CONCEPT</div>
+          <div class="qs-title">Extensibility model</div>
+          <div class="qs-desc">Add tenant-specific attributes without breaking schema contracts or upgrade paths.</div>
+        </a>
+      </div>
+
+      <!-- API Reference list -->
+      <h2 id="apis">API surfaces</h2>
+      <p>Six surface areas, each grouped by BIAN service domain. Counts indicate operations exposed in v1.</p>
+      <div class="surface-list">
+        <a href="api-reference.html" class="surface-row">
+          <div>
+            <div class="surface-title">Party Lifecycle Management</div>
+            <div class="surface-desc">Initiate, update, and close parties. Identity verification and AML hooks.</div>
+          </div>
+          <span class="surface-badge">14 ops</span>
+        </a>
+        <a href="api-reference.html" class="surface-row">
+          <div>
+            <div class="surface-title">Account Management</div>
+            <div class="surface-desc">Open, configure, and close current and savings accounts on the configured core.</div>
+          </div>
+          <span class="surface-badge">11 ops</span>
+        </a>
+        <a href="api-reference.html" class="surface-row">
+          <div>
+            <div class="surface-title">Payments</div>
+            <div class="surface-desc">Initiate, query, and reverse payments across schemes and agent banks.</div>
+          </div>
+          <span class="surface-badge">9 ops</span>
+        </a>
+        <a href="api-reference.html" class="surface-row">
+          <div>
+            <div class="surface-title">Document Directory</div>
+            <div class="surface-desc">Upload, retrieve, and reference customer documents stored in the document layer.</div>
+          </div>
+          <span class="surface-badge">6 ops</span>
+        </a>
+        <a href="api-reference.html" class="surface-row">
+          <div>
+            <div class="surface-title">IDV connectors</div>
+            <div class="surface-desc">Initiate identity verification through Jumio, Thirdstream, and others.</div>
+          </div>
+          <span class="surface-badge">5 ops</span>
+        </a>
+        <a href="api-reference.html" class="surface-row">
+          <div>
+            <div class="surface-title">AML connectors</div>
+            <div class="surface-desc">Sanctions, PEP, and adverse media screening via ComplyAdvantage.</div>
+          </div>
+          <span class="surface-badge">4 ops</span>
+        </a>
+      </div>
+
+      <!-- Journey Guides list -->
+      <h2 id="journeys">Journey guides</h2>
+      <p>Step-by-step walkthroughs that compose multiple endpoints into a single customer outcome. Begin with onboarding — the most-implemented journey across FinX engagements.</p>
+      <div class="surface-list">
+        <a href="journey-onboarding.html" class="surface-row">
+          <div>
+            <div class="surface-title">Customer onboarding &amp; KYC</div>
+            <div class="surface-desc">Six API calls across PLM, IDV, and AML. ~3 min read.</div>
+          </div>
+          <span class="surface-badge">Featured</span>
+        </a>
+        <a href="#" class="surface-row">
+          <div>
+            <div class="surface-title">Account opening</div>
+            <div class="surface-desc">Open a current account on Thought Machine Vault Core and link it to a verified party.</div>
+          </div>
+          <span class="surface-badge">4 calls</span>
+        </a>
+        <a href="#" class="surface-row">
+          <div>
+            <div class="surface-title">Card issuance</div>
+            <div class="surface-desc">Issue a virtual card via IDEMIA, attach to an account, and surface in-app.</div>
+          </div>
+          <span class="surface-badge">5 calls</span>
+        </a>
+        <a href="#" class="surface-row">
+          <div>
+            <div class="surface-title">Payment initiation</div>
+            <div class="surface-desc">Originate a faster-payment via Vault Payments with idempotency and reversal.</div>
+          </div>
+          <span class="surface-badge">3 calls</span>
+        </a>
+      </div>
+
+      <!-- Operate -->
+      <h2 id="operate">Operate</h2>
+      <p>Runbooks, release notes, and deprecation timelines for Glue and its connectors. Subscribe to <code>changelog.atom</code> for release notifications.</p>
+      <ul>
+        <li><a href="#">Incident response runbooks</a> — what to do when an upstream connector degrades.</li>
+        <li><a href="#">Release notes</a> — every Glue release, its scope, and any breaking flags.</li>
+        <li><a href="#">Deprecations</a> — fields and endpoints scheduled for removal, with migration guidance.</li>
+      </ul>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#getstarted" class="active">Get started</a></li>
+        <li><a href="#concepts">Concepts</a></li>
+        <li><a href="#apis">API surfaces</a></li>
+        <li><a href="#journeys">Journey guides</a></li>
+        <li><a href="#operate">Operate</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit on GitHub</a>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">Composable banking at scale. A BIAN-aligned approach to progressive modernisation.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Platform</div>
+          <ul>
+            <li><a href="index.html">Glue Developer Hub</a></li>
+            <li><a href="../glass/index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#platform">Ecosystem</a></li>
+            <li><a href="../index.html#paths">Modernization Paths</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Resources</div>
+          <ul>
+            <li><a href="../index.html#approach">White paper</a></li>
+            <li><a href="journey-onboarding.html">Journey guides</a></li>
+            <li><a href="api-reference.html">API reference</a></li>
+            <li><a href="#operate">Releases</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="#">About UST</a></li>
+            <li><a href="#">FinX Practice</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Engage</div>
+          <ul>
+            <li><a href="#">Talk to us</a></li>
+            <li><a href="#">Partner programme</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          <a href="#" id="staff-signin-link">UST staff sign in →</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6.10 State indicator -->
+  <div class="state-indicator" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Public view (no sign-in)</span>
+  </div>
+
+  <!-- 6.7 Sign-in modal -->
+  <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <div class="modal-header">
+        <div class="modal-title" id="signin-title">UST Staff Sign In</div>
+        <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
+      </div>
+      <form class="modal-body" id="signin-form" autocomplete="off">
+        <input id="signin-email" type="email" class="modal-input" placeholder="UST email address" aria-label="UST email address">
+        <input id="signin-password" type="password" class="modal-input" placeholder="Password" aria-label="Password">
+        <button type="submit" class="modal-btn">Continue with UST SSO</button>
+        <div class="modal-error" id="signin-error" aria-live="polite"></div>
+      </form>
+      <div class="modal-footer">
+        For UST employees only · Demo password: <strong>finx2026</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/main.js" defer></script>
+  <script>
+    /* Local interactions (consolidated into main.js in prompt 6) */
+    (function () {
+      var modal = document.getElementById('signin-modal');
+      var openLink = document.getElementById('staff-signin-link');
+      var closeBtn = modal.querySelector('.modal-close');
+      var form = document.getElementById('signin-form');
+      var pw = document.getElementById('signin-password');
+      var err = document.getElementById('signin-error');
+      function open(e){ if(e)e.preventDefault(); modal.classList.add('active'); modal.setAttribute('aria-hidden','false'); setTimeout(function(){pw.focus();},50); }
+      function close(){ modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); err.textContent=''; }
+      openLink.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', function(e){ if(e.target===modal) close(); });
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape' && modal.classList.contains('active')) close(); });
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (pw.value === 'finx2026') {
+          try { sessionStorage.setItem('finx-internal-unlocked','1'); } catch(_){}
+          window.location.href = '../internal/index.html';
+        } else { err.textContent = 'Invalid credentials. Try the demo password shown below.'; }
+      });
+      try {
+        var unlocked = sessionStorage.getItem('finx-internal-unlocked') === '1';
+        var ind = document.getElementById('state-indicator');
+        if (unlocked) {
+          ind.classList.add('signed-in');
+          ind.querySelector('.state-label').textContent = 'Signed in as UST staff';
+        }
+      } catch(_) {}
+    })();
+  </script>
+</body>
+</html>

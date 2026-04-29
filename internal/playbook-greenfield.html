@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greenfield Bank Launch — UST FinX Internal Playbook</title>
+  <meta name="description" content="UST internal playbook for delivering a 6-month greenfield bank launch on the FinX platform.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+
+  <!-- Inline gate -->
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('finx-internal-unlocked') !== '1') {
+          location.replace('../index.html?signin=1');
+        }
+      } catch (e) {
+        location.replace('../index.html?signin=1');
+      }
+    })();
+  </script>
+
+  <style>
+    /* Page-unique: internal-palette docs page */
+
+    /* Internal banner stripe */
+    .internal-banner {
+      background: linear-gradient(90deg, rgba(180,147,244,0.18), rgba(180,147,244,0.10));
+      border-bottom: 1px solid var(--internal-border);
+      color: var(--internal-primary);
+      padding: 8px 32px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      backdrop-filter: blur(20px);
+    }
+    .internal-banner svg { width: 14px; height: 14px; }
+
+    /* Recolour shared docs primitives toward purple on this page only */
+    .breadcrumb a:hover { color: var(--internal-primary); }
+    .docs-sidebar a.active {
+      color: var(--internal-primary) !important;
+      border-color: var(--internal-primary) !important;
+    }
+    .docs-aside a.active { color: var(--internal-primary) !important; }
+    .edit-link { color: var(--internal-primary); }
+    .edit-link:hover { color: #d0b8fa; }
+    .docs-tag--cyan {
+      background: var(--internal-bg) !important;
+      color: var(--internal-primary) !important;
+      border-color: var(--internal-border) !important;
+    }
+    .docs-main h2 { color: var(--text-primary); }
+    .docs-main code {
+      background: var(--internal-bg);
+      color: var(--internal-primary);
+    }
+    .docs-main a { color: var(--internal-primary); }
+
+    /* Override draft tag colour to purple */
+    .draft-tag {
+      background: var(--internal-bg) !important;
+      color: var(--internal-primary) !important;
+      border-color: var(--internal-border) !important;
+    }
+
+    /* Confidentiality callout (purple) */
+    .conf-callout {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--internal-bg);
+      border: 1px solid var(--internal-border);
+      border-left: 3px solid var(--internal-primary);
+      border-radius: var(--radius-md);
+      margin: 16px 0 24px;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .conf-callout svg { width: 18px; height: 18px; color: var(--internal-primary); margin-top: 2px; }
+    .conf-callout strong { color: var(--internal-primary); display: block; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.3px; }
+
+    /* Phase timeline */
+    .phase-timeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin: 16px 0 28px;
+      counter-reset: month;
+    }
+    @media (max-width: 720px) {
+      .phase-timeline { grid-template-columns: repeat(3, 1fr); }
+    }
+    .phase-cell {
+      counter-increment: month;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-top: 3px solid var(--internal-primary);
+      border-radius: var(--radius-md);
+      padding: 14px 14px 16px;
+      position: relative;
+    }
+    .phase-cell .phase-month {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      color: var(--internal-primary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .phase-cell .phase-month::before {
+      content: "M" counter(month) " · ";
+    }
+    .phase-cell .phase-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .phase-cell .phase-detail {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Team composition table */
+    .team-table { width: 100%; border-collapse: collapse; margin: 12px 0 28px; font-size: 13px; }
+    .team-table th, .team-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .team-table th {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      background: rgba(168, 196, 204, 0.04);
+    }
+    .team-table .role { color: var(--text-primary); font-weight: 600; }
+    .team-table .fte { font-family: var(--font-mono); color: var(--internal-primary); }
+
+    /* Reusable artefact list */
+    .artefact-list { list-style: none; padding: 0; margin: 12px 0 24px; }
+    .artefact-list li {
+      padding: 11px 14px;
+      background: rgba(180, 147, 244, 0.05);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .artefact-list li code {
+      background: transparent !important;
+      color: var(--internal-primary) !important;
+      font-size: 11.5px;
+      padding: 0 !important;
+    }
+
+    /* References block */
+    .ref-engagements {
+      background: var(--bg-card);
+      border: 1px solid var(--internal-border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin: 16px 0 24px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .ref-engagements strong { color: var(--internal-primary); }
+
+    /* Sub-nav purple */
+    .subnav-link.active { color: var(--internal-primary); border-color: var(--internal-primary); }
+    .subnav-product { color: var(--internal-primary); }
+  </style>
+</head>
+<body>
+
+  <!-- Internal banner -->
+  <div class="internal-banner" role="status">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    </svg>
+    UST Internal · Confidential · Do not share externally
+  </div>
+
+  <div class="draft-tag" aria-hidden="true">Mockup · Not live</div>
+
+  <!-- Top navigation -->
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo" aria-label="UST FinX home">
+          <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Hub</a>
+        <a href="playbook-greenfield.html" class="nav-link active">Playbooks</a>
+        <a href="#sales" class="nav-link">Sales</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#delivery" class="nav-link">Delivery</a>
+      </div>
+      <div class="nav-actions">
+        <input class="search-input" type="search" placeholder="Search internal hub" autocomplete="off" aria-label="Search internal hub">
+        <button class="nav-cta" type="button" id="signout-btn">Sign out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sub-navigation -->
+  <div class="subnav" aria-label="Internal sections">
+    <div class="subnav-inner">
+      <a href="index.html" class="subnav-back">← Back to Hub</a>
+      <span class="subnav-divider" aria-hidden="true"></span>
+      <span class="subnav-product">Engagement Playbooks</span>
+      <div class="subnav-links">
+        <a href="playbook-greenfield.html" class="subnav-link active">Greenfield Bank Launch</a>
+        <a href="#" class="subnav-link">Coexistence Engagement</a>
+        <a href="#" class="subnav-link">Progressive Modernisation</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="docs">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="docs-sidebar" aria-label="Playbook navigation">
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Engagement Playbooks</div>
+        <ul>
+          <li><a href="playbook-greenfield.html" class="active">Greenfield Bank Launch</a></li>
+          <li><a href="#">Coexistence Engagement</a></li>
+          <li><a href="#">Progressive Modernisation</a></li>
+          <li><a href="#">Full Modernisation</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">In this playbook</div>
+        <ul>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#phases">Phases</a></li>
+          <li><a href="#team">Team composition</a></li>
+          <li><a href="#artefacts">Reusable artefacts</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Related</div>
+        <ul>
+          <li><a href="#">Sales: greenfield battle card</a></li>
+          <li><a href="#">Architecture: greenfield blueprint</a></li>
+          <li><a href="#">Delivery: M0 readiness checklist</a></li>
+        </ul>
+      </div>
+      <div class="docs-sidebar-group">
+        <div class="docs-sidebar-title">Hub</div>
+        <ul>
+          <li><a href="index.html">Internal hub home</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="docs-main">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Internal Hub</a>
+        <span class="sep">/</span>
+        <a href="#">Engagement Playbooks</a>
+        <span class="sep">/</span>
+        <span class="current">Greenfield Bank Launch</span>
+      </nav>
+
+      <h1 class="docs-title">Greenfield Bank Launch <span style="color: var(--text-muted); font-weight: 400;">(6-month playbook)</span></h1>
+
+      <div class="docs-tags">
+        <span class="docs-tag docs-tag--cyan">UST Internal</span>
+        <span class="docs-tag">6 months · M0 → M6</span>
+        <span class="docs-tag">Owner: FinX Practice Ops</span>
+        <span class="docs-tag">v3.2 · 22 Apr 2026</span>
+      </div>
+
+      <!-- Confidentiality callout -->
+      <div class="conf-callout" role="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <div>
+          <strong>UST Internal · Do not share externally</strong>
+          This playbook contains commercial framing, pricing rationale, and named-client lessons learned. It is for UST FinX practice members only. Do not paste into proposals, share over public channels, or reproduce in client-facing material without explicit sign-off from PracticeOps.
+        </div>
+      </div>
+
+      <p class="docs-lead">
+        The Greenfield Bank Launch playbook covers the standard 6-month shape we run when a client is launching a new bank or a new digital brand from zero — no legacy core, no incumbent ops surface, no migration. It is the fastest path to first value FinX supports, and the engagement shape we recommend by default for digital subsidiaries and challenger spin-outs.
+      </p>
+
+      <!-- Overview -->
+      <h2 id="overview">Overview</h2>
+      <p>
+        Greenfield is the cleanest engagement shape: no legacy parity work, no migration, no shadow-mode comparison. The bank stands up FinX Glue against Thought Machine Vault Core (or another supported core) plus a core set of ecosystem connectors, and goes live with a single product line — typically current accounts plus a card. Subsequent products follow on a 4-8 week cadence.
+      </p>
+      <p>
+        Most greenfield engagements compress to 6 months because there is no parity gate, no legacy data clean-up, and no operational hand-over. The risk profile is also lower: there is no live customer base to disrupt. The work is mostly forward, and the team can run a single delivery rhythm rather than parallel parity and forward streams.
+      </p>
+
+      <!-- Phases -->
+      <h2 id="phases">Phases</h2>
+      <p>Six monthly phases, each with a single primary outcome. Each phase has its own readiness checklist (linked in the sidebar). Phase gates are hard: do not advance to the next phase until the current gate is signed off by the engagement lead and the client sponsor.</p>
+
+      <div class="phase-timeline" aria-label="Six-month phase timeline">
+        <div class="phase-cell">
+          <div class="phase-month">Discover</div>
+          <div class="phase-name">Scope &amp; design</div>
+          <div class="phase-detail">Target operating model, core selection, connector set, regulatory scope.</div>
+        </div>
+        <div class="phase-cell">
+          <div class="phase-month">Setup</div>
+          <div class="phase-name">Tenancy &amp; foundations</div>
+          <div class="phase-detail">Glue tenancy, environments, identity, observability, change controls.</div>
+        </div>
+        <div class="phase-cell">
+          <div class="phase-month">Build</div>
+          <div class="phase-name">Onboarding &amp; accounts</div>
+          <div class="phase-detail">Onboarding journey, account opening on Vault Core, IDV+AML wired in.</div>
+        </div>
+        <div class="phase-cell">
+          <div class="phase-month">Build</div>
+          <div class="phase-name">Cards &amp; payments</div>
+          <div class="phase-detail">Card issuance, faster payments rail, statements, basic ops surface.</div>
+        </div>
+        <div class="phase-cell">
+          <div class="phase-month">Harden</div>
+          <div class="phase-name">UAT &amp; pen-test</div>
+          <div class="phase-detail">End-to-end UAT, security testing, regulatory walkthroughs, runbooks.</div>
+        </div>
+        <div class="phase-cell">
+          <div class="phase-month">Launch</div>
+          <div class="phase-name">Pilot &amp; cutover</div>
+          <div class="phase-detail">Friends-and-family pilot, public launch, hyper-care, hand-over to BAU.</div>
+        </div>
+      </div>
+
+      <p>Phases overlap by roughly two weeks at each boundary. The gating activities (sign-offs, regulatory readiness, security review) sit at the close of each phase and do not overlap.</p>
+
+      <!-- Team Composition -->
+      <h2 id="team">Team composition</h2>
+      <p>The default greenfield team is 14 FTE across six functions, plus client-side counterparts in roughly the same ratio. Numbers below are UST-side only.</p>
+
+      <table class="team-table">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>FTE</th>
+            <th>Phase load</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="role">Engagement Lead</td><td class="fte">1.0</td><td>All phases. Primary client-side counterpart.</td></tr>
+          <tr><td class="role">Solution Architect</td><td class="fte">1.0</td><td>Heaviest in M0–M2; advisory thereafter.</td></tr>
+          <tr><td class="role">Glue Engineer (Senior)</td><td class="fte">2.0</td><td>M1–M5. Owns canonical model fit and journey orchestration.</td></tr>
+          <tr><td class="role">Glue Engineer</td><td class="fte">3.0</td><td>M2–M6.</td></tr>
+          <tr><td class="role">Glass Implementation</td><td class="fte">2.0</td><td>M2–M6. Configures roles, modules, RBAC for the client.</td></tr>
+          <tr><td class="role">Connector Specialist</td><td class="fte">1.5</td><td>M1–M4. Vault Core, Jumio, ComplyAdvantage on-boarding.</td></tr>
+          <tr><td class="role">QA / SDET</td><td class="fte">1.5</td><td>M2–M6. Heaviest in M5.</td></tr>
+          <tr><td class="role">SRE / Platform</td><td class="fte">1.0</td><td>All phases. Environments, observability, change controls.</td></tr>
+          <tr><td class="role">Tech Writer</td><td class="fte">0.5</td><td>M3–M6. Client runbooks and operator docs.</td></tr>
+          <tr><td class="role">Programme Manager</td><td class="fte">0.5</td><td>All phases.</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Reusable Artefacts -->
+      <h2 id="artefacts">Reusable artefacts</h2>
+      <p>The following assets are pre-built and should be lifted from the practice library at the start of every greenfield engagement. Do not re-create from scratch; extend in place.</p>
+
+      <ul class="artefact-list">
+        <li><code>GBL-001</code> <span><strong>Tenancy bootstrap script</strong> — provisions Glue tenancy, default RBAC roles, observability, and a sandbox environment in one run.</span></li>
+        <li><code>GBL-014</code> <span><strong>Onboarding journey template</strong> — the canonical 6-step onboarding flow pre-wired against Vault Core, Jumio, and ComplyAdvantage.</span></li>
+        <li><code>GBL-022</code> <span><strong>Vault Core configuration baseline</strong> — current account product, fee schedule, statement cadence, plus the recommended ledger structure.</span></li>
+        <li><code>GBL-031</code> <span><strong>Glass role pack: greenfield</strong> — pre-configured CSR, Compliance, Supervisor, Admin role definitions tuned for a single-product launch.</span></li>
+        <li><code>GBL-040</code> <span><strong>Pen-test scope &amp; vendor brief</strong> — pre-approved vendor list, scope template, and the standard remediation SLAs.</span></li>
+        <li><code>GBL-052</code> <span><strong>Hyper-care runbook</strong> — week-by-week support shape for the 6 weeks post-launch, including escalation matrix and incident war-room template.</span></li>
+      </ul>
+
+      <!-- References -->
+      <h2 id="references">References to past engagements</h2>
+      <div class="ref-engagements">
+        This playbook is the consolidation of two production runs: <strong>Bank A (2024)</strong> — a digital subsidiary launch in EMEA, delivered in 5.5 months — and <strong>Bank C (2025)</strong> — a challenger spin-out in APAC, delivered in 6.5 months including a regional regulatory readiness extension. Both engagements have full retrospectives in <a href="#">Client Engagements → Bank A</a> and <a href="#">Client Engagements → Bank C</a>. Read the retros before you scope a new greenfield: the deltas between Bank A and Bank C show where the playbook is rigid and where it must flex.
+      </div>
+
+      <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 32px;">
+        Maintained by FinX PracticeOps · Version 3.2 · Last reviewed 22 Apr 2026 · Next review due Q3 2026.
+      </p>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="docs-aside" aria-label="On this page">
+      <div class="docs-aside-title">On this page</div>
+      <ul>
+        <li><a href="#overview" class="active">Overview</a></li>
+        <li><a href="#phases">Phases</a></li>
+        <li><a href="#team">Team composition</a></li>
+        <li><a href="#artefacts">Reusable artefacts</a></li>
+        <li><a href="#references">References</a></li>
+      </ul>
+      <a href="#" class="edit-link">↗ Edit in Practice repo</a>
+    </aside>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="ust">UST</span>&nbsp;<span class="fin">Fin</span><span class="x">X</span><sup>™</sup>
+          </div>
+          <p class="footer-tagline">UST Internal · Confidential. The FinX practice's single source of truth.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Internal</div>
+          <ul>
+            <li><a href="index.html">Hub home</a></li>
+            <li><a href="playbook-greenfield.html">Playbooks</a></li>
+            <li><a href="#sales">Sales enablement</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Public</div>
+          <ul>
+            <li><a href="../index.html">Marketing site</a></li>
+            <li><a href="../glue/index.html">Glue Developer Hub</a></li>
+            <li><a href="../glass/index.html">Glass Operations Guide</a></li>
+            <li><a href="../index.html#approach">White paper</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Practice</div>
+          <ul>
+            <li><a href="#">Org chart</a></li>
+            <li><a href="#">On-call rota</a></li>
+            <li><a href="#">Slack channels</a></li>
+            <li><a href="#">Office hours</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Help</div>
+          <ul>
+            <li><a href="#">Report an issue</a></li>
+            <li><a href="#">Suggest a doc</a></li>
+            <li><a href="#">Contact PracticeOps</a></li>
+            <li><a href="#" id="footer-signout">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 UST Global · Internal use only.</div>
+        <div class="footer-legal">
+          <a href="#">Confidentiality</a>
+          <a href="#">Acceptable use</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-staff">
+          Signed in as <strong style="color: var(--internal-primary);">UST Staff</strong>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6.10 State indicator (purple variant) -->
+  <div class="state-indicator state-indicator--internal" id="state-indicator">
+    <span class="dot"></span>
+    <span class="state-label">Signed in as UST staff</span>
+  </div>
+
+  <!-- Inline sign-out wiring -->
+  <script>
+    (function () {
+      function signOut() {
+        try { sessionStorage.removeItem('finx-internal-unlocked'); } catch (e) {}
+        location.replace('../index.html');
+      }
+      var btn = document.getElementById('signout-btn');
+      var footerBtn = document.getElementById('footer-signout');
+      if (btn) btn.addEventListener('click', signOut);
+      if (footerBtn) footerBtn.addEventListener('click', function (e) { e.preventDefault(); signOut(); });
+    })();
+  </script>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>
