@@ -165,7 +165,7 @@
     var unlocked = isUnlocked();
     el.classList.toggle('signed-in', unlocked);
     var label = $('.state-label', el);
-    if (label) label.textContent = unlocked ? 'Signed in as UST staff' : 'Public view (no sign-in)';
+    if (label) label.textContent = unlocked ? 'Signed in: UST Internal' : 'Public view';
   }
 
   // ---------- Tab switcher (homepage Products section) ----------
@@ -231,6 +231,36 @@
       var action = t.getAttribute('data-action');
       if (action === 'signin') { e.preventDefault(); openModal(); }
       else if (action === 'signout') { e.preventDefault(); signOut(); }
+    });
+
+    // TOC anchor links: smooth-scroll within the active view without
+    // touching location.hash (which would trigger the router).
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest && e.target.closest('.toc-link');
+      if (!link) return;
+      e.preventDefault();
+      var href = link.getAttribute('href') || '';
+      var view = link.closest('.view') || document;
+      var target = null;
+      if (href && href.length > 1 && href.charAt(0) === '#') {
+        var id = href.slice(1);
+        if (id) target = view.querySelector('#' + CSS.escape(id));
+      }
+      if (!target) {
+        // Match by visible text: find a heading whose text starts with the link text.
+        var label = (link.textContent || '').trim().toLowerCase();
+        var headings = view.querySelectorAll('h2, h3');
+        for (var i = 0; i < headings.length; i++) {
+          var ht = (headings[i].textContent || '').trim().toLowerCase();
+          if (ht.indexOf(label) === 0) { target = headings[i]; break; }
+        }
+      }
+      if (target && target.scrollIntoView) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        var main = view.querySelector('.docs-main') || view;
+        if (main && main.scrollIntoView) main.scrollIntoView({ behavior: 'smooth' });
+      }
     });
 
     // Tabs

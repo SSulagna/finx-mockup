@@ -546,6 +546,285 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+
+    /* --- Internal hub specifics --- */
+    .signout-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 2;
+      background: transparent;
+      border: 1px solid var(--internal-border);
+      color: var(--internal-primary);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .signout-btn:hover {
+      background: var(--internal-bg);
+      border-color: var(--internal-primary);
+    }
+    .internal-grid .card--internal {
+      border-color: var(--internal-border);
+    }
+    .internal-grid .card--internal:hover {
+      border-color: var(--internal-primary);
+    }
+    .internal-icon {
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 14px;
+      display: inline-block;
+      filter: saturate(0.85);
+    }
+    .internal-return {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-dark);
+      text-align: center;
+    }
+    .footer-staff a { color: var(--text-secondary); transition: color var(--transition); }
+    .footer-staff a:hover { color: var(--internal-primary); }
+
+    /* =========================================================================
+       Polish pass: animations, search, A-Z jump, newsletter, 404, TOC
+       ========================================================================= */
+
+    /* --- Hero stagger fade-up on view enter --- */
+    @keyframes finx-fade-up {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes finx-fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .view.is-active > .page-hero .container > *,
+    .view.is-active > .hero .hero-content > * {
+      animation: finx-fade-up 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+    .view.is-active > .page-hero .container > *:nth-child(1),
+    .view.is-active > .hero .hero-content > *:nth-child(1) { animation-delay: 0ms; }
+    .view.is-active > .page-hero .container > *:nth-child(2),
+    .view.is-active > .hero .hero-content > *:nth-child(2) { animation-delay: 80ms; }
+    .view.is-active > .page-hero .container > *:nth-child(3),
+    .view.is-active > .hero .hero-content > *:nth-child(3) { animation-delay: 160ms; }
+    .view.is-active > .page-hero .container > *:nth-child(4),
+    .view.is-active > .hero .hero-content > *:nth-child(4) { animation-delay: 240ms; }
+    .view.is-active > .page-hero .container > *:nth-child(5),
+    .view.is-active > .hero .hero-content > *:nth-child(5) { animation-delay: 320ms; }
+    .view.is-active > .page-hero .container > *:nth-child(n+6),
+    .view.is-active > .hero .hero-content > *:nth-child(n+6) { animation-delay: 400ms; }
+
+    /* --- Smooth route transition (main content fades in) --- */
+    .view.is-active { animation: finx-fade-in 240ms ease-out both; }
+    @media (prefers-reduced-motion: reduce) {
+      .view.is-active,
+      .view.is-active > .page-hero .container > *,
+      .view.is-active > .hero .hero-content > * { animation: none !important; }
+    }
+
+    /* --- Architecture top-of-page TOC --- */
+    .toc-card {
+      max-width: 880px;
+      margin: 32px auto 0;
+      padding: 24px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+    }
+    .toc-card .toc-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px;
+    }
+    .toc-card ol {
+      list-style: none; margin: 0; padding: 0;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px;
+      counter-reset: toc;
+    }
+    @media (max-width: 720px) { .toc-card ol { grid-template-columns: 1fr; } }
+    .toc-card ol li { counter-increment: toc; }
+    .toc-card ol li a {
+      display: flex; gap: 12px; align-items: baseline;
+      font-size: 14px; color: var(--text-secondary);
+      padding: 6px 0; transition: color var(--transition);
+    }
+    .toc-card ol li a::before {
+      content: counter(toc, decimal-leading-zero);
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--cyan); min-width: 24px;
+    }
+    .toc-card ol li a:hover { color: var(--cyan); }
+
+    /* --- A-Z jump nav (resources/glossary) --- */
+    .az-jump {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      padding: 14px 16px; margin-bottom: 24px;
+      background: var(--bg-card); border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+    }
+    .az-jump .az-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-right: 6px; align-self: center;
+    }
+    .az-jump button {
+      width: 28px; height: 28px;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+      background: transparent; border: 1px solid var(--border-dark);
+      color: var(--text-secondary); border-radius: 4px;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .az-jump button:hover:not(:disabled) {
+      color: var(--cyan); border-color: var(--cyan-dim);
+      background: var(--cyan-soft);
+    }
+    .az-jump button:disabled { opacity: 0.25; cursor: default; }
+
+    /* --- Search modal (Cmd/Ctrl+K) --- */
+    .search-overlay {
+      position: fixed; inset: 0;
+      background: rgba(3, 19, 25, 0.78);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      z-index: 200; opacity: 0; pointer-events: none;
+      transition: opacity 180ms ease;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding-top: 12vh;
+    }
+    .search-overlay.active { opacity: 1; pointer-events: auto; }
+    .search-modal {
+      width: min(640px, 92vw);
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transform: translateY(-8px); transition: transform 180ms ease;
+    }
+    .search-overlay.active .search-modal { transform: translateY(0); }
+    .search-modal-input-wrap {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px; border-bottom: 1px solid var(--border-dark);
+    }
+    .search-modal-input-wrap .ico {
+      color: var(--text-muted); font-size: 16px;
+    }
+    .search-modal-input {
+      flex: 1; background: transparent; border: 0; outline: none;
+      color: var(--text-primary); font-family: var(--font-sans);
+      font-size: 16px; font-weight: 400;
+    }
+    .search-modal-input::placeholder { color: var(--text-muted); }
+    .kbd {
+      font-family: var(--font-mono); font-size: 11px;
+      padding: 3px 7px; border: 1px solid var(--border-dark);
+      border-radius: 4px; color: var(--text-muted);
+      background: rgba(168, 196, 204, 0.04);
+    }
+    .search-modal-section {
+      padding: 14px 20px;
+    }
+    .search-modal-section + .search-modal-section { border-top: 1px solid var(--border-dark); }
+    .search-modal-eyebrow {
+      font-size: 10.5px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .search-modal-list { list-style: none; margin: 0; padding: 0; }
+    .search-modal-list li a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 10px; border-radius: 6px;
+      font-size: 13.5px; color: var(--text-secondary);
+      transition: background var(--transition), color var(--transition);
+    }
+    .search-modal-list li a:hover {
+      background: var(--cyan-soft); color: var(--cyan);
+    }
+    .search-modal-list .pre {
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--text-muted); min-width: 56px;
+    }
+    .search-modal-footer {
+      display: flex; justify-content: space-between; gap: 12px;
+      padding: 12px 20px; border-top: 1px solid var(--border-dark);
+      font-size: 11.5px; color: var(--text-muted);
+    }
+    .cmdk-hint {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--text-muted);
+    }
+
+    /* --- Newsletter signup (footer) --- */
+    .footer-newsletter {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 24px; align-items: center;
+      padding: 28px 0; margin-top: 8px;
+      border-top: 1px solid var(--border-dark);
+    }
+    @media (max-width: 720px) { .footer-newsletter { grid-template-columns: 1fr; } }
+    .footer-newsletter-copy .nl-title {
+      font-size: 16px; font-weight: 600; color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .footer-newsletter-copy .nl-sub {
+      font-size: 13px; color: var(--text-muted);
+    }
+    .footer-newsletter-form {
+      display: flex; gap: 8px; min-width: 320px;
+    }
+    .footer-newsletter-form input {
+      flex: 1; min-width: 0;
+      padding: 10px 14px; font-size: 13px;
+      background: var(--bg-deep); color: var(--text-primary);
+      border: 1px solid var(--border-dark); border-radius: 6px;
+      font-family: var(--font-sans);
+      transition: border-color var(--transition);
+    }
+    .footer-newsletter-form input:focus {
+      outline: none; border-color: var(--cyan-dim);
+    }
+    .footer-newsletter-form button {
+      padding: 10px 20px; font-size: 13px; font-weight: 600;
+      background: var(--cyan); color: var(--bg-deep);
+      border: 0; border-radius: 6px; cursor: pointer;
+      transition: background var(--transition);
+    }
+    .footer-newsletter-form button:hover { background: var(--cyan-bright); }
+    .footer-newsletter.is-subscribed .footer-newsletter-form { display: none; }
+    .nl-thanks {
+      display: none; font-size: 13px; color: var(--cyan); font-weight: 500;
+    }
+    .footer-newsletter.is-subscribed .nl-thanks { display: block; }
+
+    /* --- 404 enhancement --- */
+    .notfound-actions {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px;
+    }
+    .notfound-suggest {
+      max-width: 880px; margin-top: 56px;
+    }
+
+    /* --- Universal focus indicator (keyboard) --- */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+      border-radius: 3px;
+    }
+
+    /* --- Lift animation for cards (already exist, refine shadow) --- */
+    .card { will-change: transform; }
+
+    /* --- Brighten primary buttons on hover --- */
+    .btn-primary { transition: background var(--transition), transform 120ms ease, box-shadow var(--transition); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 212, 212, 0.18); }
   </style>
 </head>
 <body>
@@ -604,7 +883,7 @@
         </div>
         <div class="hero-metrics">
           <div class="metric">
-            <span class="metric-value">6–9 months</span>
+            <span class="metric-value">6—9 months</span>
             <span class="metric-label">TO FIRST VALUE</span>
           </div>
           <div class="metric">
@@ -673,7 +952,7 @@
           <span class="card-tag">Delivery</span>
           <h3 class="card-title">Iterative value, every quarter</h3>
           <p class="card-desc">
-            Engagements are scoped to deliver measurable business outcomes in 6–9 month cycles, not multi-year programmes. The bank sees value early, learns continuously, and compounds capability with each release.
+            Engagements are scoped to deliver measurable business outcomes in 6—9 month cycles, not multi-year programmes. The bank sees value early, learns continuously, and compounds capability with each release.
           </p>
         </article>
         <article class="card card--gradient">
@@ -909,7 +1188,7 @@
           <p class="card-desc">
             Wrap the existing core with Glue to expose modern APIs and start composing new journeys without disturbing the systems of record.
           </p>
-          <p class="card-meta">Time to first value: 4–6 months</p>
+          <p class="card-meta">Time to first value: 4—6 months</p>
         </article>
         <article class="card card--path">
           <span class="card-tag">Path 03</span>
@@ -925,7 +1204,7 @@
           <p class="card-desc">
             Multi-year programme to retire the legacy core entirely, sequenced through Coexistence and Progressive milestones rather than one big-bang event.
           </p>
-          <p class="card-meta">Time to full cutover: 24–36 months</p>
+          <p class="card-meta">Time to full cutover: 24—36 months</p>
         </article>
       </div>
     </div>
@@ -962,10 +1241,10 @@
             </tr>
             <tr>
               <td class="row-label">Time to Value</td>
-              <td>3–5 years</td>
+              <td>3—5 years</td>
               <td>Fast, then plateaus</td>
-              <td>2–3 years</td>
-              <td class="col-finx">6–9 months per cycle</td>
+              <td>2—3 years</td>
+              <td class="col-finx">6—9 months per cycle</td>
             </tr>
             <tr>
               <td class="row-label">Transformation Risk</td>
@@ -1085,10 +1364,10 @@
         <span class="eyebrow">Get Started</span>
         <h2 class="h2">Ready to evolve <span class="accent">continuously</span>?</h2>
         <p class="cta-sub">
-          Bring us a service domain, a journey, or a coexistence problem. We will come back with a 6–9 month plan that delivers measurable value and leaves the bank's architecture stronger than we found it.
+          Bring us a service domain, a journey, or a coexistence problem. We will come back with a 6—9 month plan that delivers measurable value and leaves the bank's architecture stronger than we found it.
         </p>
         <div class="cta-ctas">
-          <a href="#" class="btn btn-primary">Talk to us →</a>
+          <a href="#/resources" class="btn btn-primary">Talk to us →</a>
           <a href="#/resources" class="btn btn-secondary">Read the white paper</a>
         </div>
       </div>
@@ -1430,6 +1709,16 @@
         <p class="page-lead">
           The case for BIAN-aligned, composable banking is not an aesthetic preference. It is a structural answer to a structural problem: banks need to evolve continuously without betting the firm on a single multi-year programme. This page sets out the architectural argument that anchors every other decision in FinX.
         </p>
+        <nav class="toc-card" aria-label="On this page">
+          <div class="toc-eyebrow">On this page</div>
+          <ol>
+            <li><a class="toc-link" href="#arch-bian">Why BIAN provides the right framework</a></li>
+            <li><a class="toc-link" href="#arch-target">FinX target architecture</a></li>
+            <li><a class="toc-link" href="#arch-domains">Service domains FinX implements</a></li>
+            <li><a class="toc-link" href="#arch-coexistence">Coexistence and risk reduction</a></li>
+            <li><a class="toc-link" href="#arch-data">Data, AI, and governance</a></li>
+          </ol>
+        </nav>
       </div>
     </section>
 
@@ -1594,11 +1883,16 @@
         </div>
       </div>
     </section>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/modernization" class="card card--link"><h3 class="card-title">Modernization paths →</h3><p class="card-text">How banks adopt the platform: greenfield, coexistence, progressive.</p></a>
+      <a href="#/use-cases" class="card card--link"><h3 class="card-title">Use cases →</h3><p class="card-text">What Glue and Glass deliver in practice across the bank.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Developer hub →</h3><p class="card-text">Build against the BIAN-aligned API surface.</p></a>
+    </div></div></aside>
   </section>
 
 
   <!-- ============================================================ -->
-  <!-- VIEW: #/modernization  (placeholder hub)                     -->
+  <!-- VIEW: #/modernization                                        -->
   <!-- ============================================================ -->
   <section class="view" data-route="/modernization" data-title="Modernization Paths — UST FinX">
     <section class="page-hero">
@@ -1607,91 +1901,447 @@
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><span>Modernization</span></nav>
         <span class="eyebrow">Modernization Paths</span>
         <h1 class="page-title">Choose how to start. <span class="accent">Evolve from there.</span></h1>
-        <p class="page-lead">FinX supports four paths into composable banking. Each starts from where the bank actually is, not from a hypothetical green field.</p>
+        <p class="page-lead">There is no single right way to modernise a bank. FinX supports four entry points into composable banking — each starts from where the bank actually is, runs through the same canonical architecture, and converges on the same target estate. The choice is about pace, risk appetite, and the legacy footprint, not about a different platform.</p>
       </div>
     </section>
+
     <section class="section section--mid">
       <div class="container">
         <div class="grid-4">
-          <a href="#/modernization/greenfield" class="card card--link card--path"><div class="card-eyebrow">Path</div><h3 class="card-title">Greenfield →</h3><p class="card-text">Stand up a new bank or new line of business on FinX from day one.</p><div class="card-meta">6 months to first value</div></a>
-          <a href="#/modernization/coexistence" class="card card--link card--path"><div class="card-eyebrow">Path</div><h3 class="card-title">Coexistence →</h3><p class="card-text">Wrap legacy systems behind BIAN domains and add new capabilities alongside.</p><div class="card-meta">9 months to first value</div></a>
-          <a href="#/modernization/progressive" class="card card--link card--path"><div class="card-eyebrow">Path</div><h3 class="card-title">Progressive →</h3><p class="card-text">Migrate domain by domain over a multi-year horizon with continuous value delivery.</p><div class="card-meta">12+ months programme</div></a>
-          <a href="#/modernization" class="card card--link card--path"><div class="card-eyebrow">Path</div><h3 class="card-title">Full Modernization</h3><p class="card-text">End-state replacement of the core estate. The longest path; the cleanest target architecture.</p><div class="card-meta">Strategic horizon</div></a>
+          <a href="#/modernization/greenfield" class="card card--link card--path">
+            <div class="card-eyebrow">Path 01</div>
+            <h3 class="card-title">Greenfield →</h3>
+            <p class="card-text">Stand up a new bank or new line of business on FinX from day one. Target architecture and implementation architecture are the same.</p>
+            <div class="card-meta">~6 months to first customer</div>
+          </a>
+          <a href="#/modernization/coexistence" class="card card--link card--path">
+            <div class="card-eyebrow">Path 02</div>
+            <h3 class="card-title">Coexistence →</h3>
+            <p class="card-text">Wrap legacy cores behind BIAN-aligned domains and add new capabilities alongside. The book of business stays put.</p>
+            <div class="card-meta">~9 months to first new capability</div>
+          </a>
+          <a href="#/modernization/progressive" class="card card--link card--path">
+            <div class="card-eyebrow">Path 03</div>
+            <h3 class="card-title">Progressive →</h3>
+            <p class="card-text">Migrate domain by domain over an 18—36 month horizon with continuous value delivery and reversible checkpoints.</p>
+            <div class="card-meta">12+ month programme</div>
+          </a>
+          <a href="#/modernization" class="card card--link card--path" aria-disabled="true" style="opacity:0.7;">
+            <div class="card-eyebrow">Path 04 · Coming soon</div>
+            <h3 class="card-title">Full Modernization</h3>
+            <p class="card-text">End-state replacement of the core estate. The longest path; the cleanest target architecture.</p>
+            <div class="card-meta">Strategic horizon</div>
+          </a>
         </div>
       </div>
     </section>
+
+    <section class="section section--mid">
+      <div class="container">
+        <span class="eyebrow">First 6 months with FinX</span>
+        <h2 class="page-title" style="font-size:32px;">A predictable cadence, whichever path you pick.</h2>
+        <p class="page-lead">Every FinX engagement is sequenced into three phases over the first six months. The phases are the same; what changes between paths is which capability is in scope at each step.</p>
+        <div class="grid-3">
+          <div class="card card--path">
+            <div class="card-eyebrow">Months 1—2</div>
+            <h3 class="card-title">Phase 01 · Quick Wins</h3>
+            <p class="card-text">Stand up the canonical contract, the tenant, and the first BIAN service domains. Channels integrate against Glue. A first journey — typically onboarding and KYC — goes live end-to-end against synthetic data.</p>
+          </div>
+          <div class="card card--path">
+            <div class="card-eyebrow">Months 3—4</div>
+            <h3 class="card-title">Phase 02 · Capability Extension</h3>
+            <p class="card-text">Account Management, Document Directory, and Payments come behind the canonical seam. Glass operations console comes online for compliance, CSR, and supervisor roles. Real customer journeys go live in production.</p>
+          </div>
+          <div class="card card--path">
+            <div class="card-eyebrow">Months 5—6</div>
+            <h3 class="card-title">Phase 03 · Migration &amp; Scale</h3>
+            <p class="card-text">Additional domains migrate behind the contract; legacy systems are progressively decommissioned or relegated to systems of record. Canonical events flow into Microsoft Fabric for governed analytics and AI.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--mid">
+      <div class="container">
+        <span class="eyebrow">Risk vs Value</span>
+        <h2 class="page-title" style="font-size:32px;">How the four paths compare.</h2>
+        <p class="page-lead">Higher value typically tracks with higher delivery risk and longer timelines. The composable, BIAN-aligned seam is what lets banks pick a point on this curve without committing the whole estate to it.</p>
+        <div class="surface-list" style="margin-top:24px;">
+          <div class="value-bar"><div class="value-bar-label"><strong>Greenfield</strong> · time-to-value</div><div class="value-bar-track"><div class="value-bar-fill" style="width:90%;"></div></div><div class="value-bar-amt">High</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Greenfield</strong> · delivery risk</div><div class="value-bar-track"><div class="value-bar-fill value-bar-fill--low" style="width:30%;"></div></div><div class="value-bar-amt">Low</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Coexistence</strong> · time-to-value</div><div class="value-bar-track"><div class="value-bar-fill" style="width:70%;"></div></div><div class="value-bar-amt">Med-High</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Coexistence</strong> · delivery risk</div><div class="value-bar-track"><div class="value-bar-fill value-bar-fill--low" style="width:45%;"></div></div><div class="value-bar-amt">Medium</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Progressive</strong> · time-to-value</div><div class="value-bar-track"><div class="value-bar-fill" style="width:55%;"></div></div><div class="value-bar-amt">Medium</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Progressive</strong> · delivery risk</div><div class="value-bar-track"><div class="value-bar-fill value-bar-fill--low" style="width:55%;"></div></div><div class="value-bar-amt">Medium</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Full Modernization</strong> · long-run value</div><div class="value-bar-track"><div class="value-bar-fill" style="width:100%;"></div></div><div class="value-bar-amt">Highest</div></div>
+          <div class="value-bar"><div class="value-bar-label"><strong>Full Modernization</strong> · delivery risk</div><div class="value-bar-track"><div class="value-bar-fill value-bar-fill--low" style="width:85%;"></div></div><div class="value-bar-amt">High</div></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Related</div><div class="grid-3">
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture &amp; BIAN →</h3><p class="card-text">Why composable, why BIAN, and what the target estate looks like.</p></a>
+      <a href="#/use-cases" class="card card--link"><h3 class="card-title">Use Cases →</h3><p class="card-text">What modernisation looks like at the level of customer and operator journeys.</p></a>
+      <a href="#/platform" class="card card--link"><h3 class="card-title">Platform →</h3><p class="card-text">Glue and Glass — what gets installed on every path.</p></a>
+    </div></div></aside>
   </section>
 
-
-  <!-- Placeholder views for the remaining routes -->
+  <!-- ============================================================ -->
+  <!-- VIEW: #/modernization/greenfield                             -->
+  <!-- ============================================================ -->
   <section class="view" data-route="/modernization/greenfield" data-title="Greenfield — UST FinX">
     <section class="page-hero"><div class="container">
       <a href="#/modernization" class="back-link">← Back to Modernization</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/modernization">Modernization</a><span class="sep">/</span><span>Greenfield</span></nav>
-      <span class="eyebrow">Path · Greenfield</span>
+      <div class="preview-tags"><span class="preview-tag">Path · Greenfield</span><span class="preview-tag">~6 months to first customer</span></div>
       <h1 class="page-title">Stand up a new bank on FinX from day one.</h1>
-      <p class="page-lead">The greenfield path is for new banks, new lines of business, or carve-outs where there is no legacy estate to preserve. The target architecture and the implementation architecture are the same.</p>
+      <p class="page-lead">The greenfield path is for new banks, new digital lines of business, and carve-outs where there is no legacy estate to preserve. The target architecture and the implementation architecture are the same — every domain goes live composable, BIAN-aligned, and on the canonical contract from day one.</p>
     </div></section>
-    <section class="section section--mid"><div class="container"><div class="grid-3">
-      <div class="card"><h3 class="card-title">Time to first value</h3><p class="card-text">6 months from contract to first live customer journey, including KYC, account opening, and a first payment.</p></div>
-      <div class="card"><h3 class="card-title">What is included</h3><p class="card-text">Glue, Glass, Thought Machine Vault Core &amp; Payments, IDV/AML connectors, document directory, and a configured set of BIAN service domains.</p></div>
-      <div class="card"><h3 class="card-title">Reference engagements</h3><p class="card-text">Bank A (2024) and Bank C (2025) — see internal playbooks for engagement structure.</p></div>
-    </div></div></section>
-    <aside class="related-pages"><div class="container"><div class="related-title">Related</div><div class="grid-3">
-      <a href="#/modernization/coexistence" class="card card--link"><h3 class="card-title">Coexistence →</h3></a>
-      <a href="#/modernization/progressive" class="card card--link"><h3 class="card-title">Progressive →</h3></a>
-      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3></a>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Best for</span>
+      <h2 class="page-title" style="font-size:28px;">New banks starting on a fully composable stack.</h2>
+      <p class="page-lead" style="font-size:16px;">New digital banks, sponsor-bank programmes, embedded-finance carve-outs, and country launches where there is no entrenched core to wrap. Best when the target operating model is being designed alongside the technology.</p>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Phase timeline</span>
+      <h2 class="page-title" style="font-size:28px;">From foundation to continuous innovation.</h2>
+      <div class="timeline-list">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Months 1—2</div><div class="timeline-title">Launch Foundation</div><div class="timeline-text">Tenant, canonical contract, PLM, Document Directory, IDV/AML, and a first onboarding journey live in sandbox.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Months 3—4</div><div class="timeline-title">Expand Ecosystem</div><div class="timeline-text">Account Management, Payments, and Glass operations console come online. First production journeys with real customers.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Months 5—6</div><div class="timeline-title">Scale Operations</div><div class="timeline-text">Compliance, CSR, supervisor, and admin roles onboarded in Glass. Canonical events flow into Microsoft Fabric.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Month 6+</div><div class="timeline-title">Innovate Continuously</div><div class="timeline-text">New products, partners, and connectors plug in behind the canonical seam without disturbing existing journeys.</div></div>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">First 6 months</span>
+      <h2 class="page-title" style="font-size:28px;">What you get out of the box.</h2>
+      <ul style="columns: 2; column-gap: 32px; padding-left: 18px; line-height: 1.9; color: var(--text-secondary); font-size: 14.5px;">
+        <li>FinX Glue with the canonical contract pre-configured</li>
+        <li>FinX Glass operations console</li>
+        <li>BIAN-aligned Party Lifecycle Management</li>
+        <li>Document Directory with secure storage</li>
+        <li>Identity Verification connector (Jumio)</li>
+        <li>AML / sanctions / PEP screening (ComplyAdvantage)</li>
+        <li>Account Management with Thought Machine Vault Core</li>
+        <li>Domestic and cross-border Payments orchestration</li>
+        <li>Microsoft Dynamics 365 customer-engagement integration</li>
+        <li>Microsoft Fabric for canonical event analytics</li>
+        <li>RBAC, audit trail, and regulatory export</li>
+        <li>Production-grade SRE runbooks and observability</li>
+      </ul>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Engagement model</span>
+      <h2 class="page-title" style="font-size:28px;">A single accountable team, end to end.</h2>
+      <div class="grid-3">
+        <div class="card"><h3 class="card-title">Joint delivery</h3><p class="card-text">UST banking architects, FinX platform engineers, and the bank's product and risk leads work as one team on a shared backlog.</p></div>
+        <div class="card"><h3 class="card-title">Quarterly cadence</h3><p class="card-text">Steering at the quarter, increments at the sprint. Every quarter ends with a measurable production milestone.</p></div>
+        <div class="card"><h3 class="card-title">Reference engagements</h3><p class="card-text">Bank A (2024) and Bank C (2025) — full greenfield launches on FinX. Internal playbooks document the engagement structure end-to-end.</p></div>
+      </div>
+      <div style="margin-top:32px;">
+        <a href="#/resources" class="btn btn-primary">Talk to a banking architect →</a>
+      </div>
+    </div></section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Related modernization paths</div><div class="grid-3">
+      <a href="#/modernization/coexistence" class="card card--link"><h3 class="card-title">Coexistence →</h3><p class="card-text">Wrap legacy cores behind the canonical contract.</p></a>
+      <a href="#/modernization/progressive" class="card card--link"><h3 class="card-title">Progressive →</h3><p class="card-text">Migrate one domain at a time over 18—36 months.</p></a>
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">The target estate every path converges on.</p></a>
     </div></div></aside>
   </section>
 
+  <!-- ============================================================ -->
+  <!-- VIEW: #/modernization/coexistence                            -->
+  <!-- ============================================================ -->
   <section class="view" data-route="/modernization/coexistence" data-title="Coexistence — UST FinX">
     <section class="page-hero"><div class="container">
       <a href="#/modernization" class="back-link">← Back to Modernization</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/modernization">Modernization</a><span class="sep">/</span><span>Coexistence</span></nav>
-      <span class="eyebrow">Path · Coexistence</span>
+      <div class="preview-tags"><span class="preview-tag">Path · Coexistence</span><span class="preview-tag">~9 months to first new capability</span></div>
       <h1 class="page-title">Wrap the legacy. Add the new.</h1>
-      <p class="page-lead">Most banks do not have the option to start over. The coexistence path puts BIAN-aligned domains in front of existing cores so new capabilities are added without re-platforming.</p>
+      <p class="page-lead">Most banks do not have the option to start over. The coexistence path puts BIAN-aligned service domains in front of existing cores so new capabilities can be added without re-platforming. Channels, partners, and Glass speak only to the canonical contract; what sits behind it is an implementation detail.</p>
     </div></section>
-    <section class="section section--mid"><div class="container"><div class="grid-3">
-      <div class="card"><h3 class="card-title">Time to first value</h3><p class="card-text">9 months from contract to first new capability live alongside existing systems.</p></div>
-      <div class="card"><h3 class="card-title">What changes</h3><p class="card-text">Channels move to the canonical contract. Legacy cores stay where they are; Glue mediates.</p></div>
-      <div class="card"><h3 class="card-title">What does not change</h3><p class="card-text">The book of business. Operations continuity. Existing regulatory posture.</p></div>
-    </div></div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Best for</span>
+      <h2 class="page-title" style="font-size:28px;">Incumbent banks who can't replace the legacy core today.</h2>
+      <p class="page-lead" style="font-size:16px;">Banks where the existing core runs the book of business, where regulatory and operational continuity are non-negotiable, and where a multi-year core replacement is not on the table. The coexistence path delivers new capability in months while leaving the underlying core in place.</p>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Without vs With</span>
+      <h2 class="page-title" style="font-size:28px;">Two ways to add capability to a legacy estate.</h2>
+      <div class="grid-2">
+        <div class="card card--negative">
+          <div class="card-eyebrow">Without a structured approach</div>
+          <h3 class="card-title">Point-to-point integration</h3>
+          <ul style="padding-left:18px; line-height:1.75; color:var(--text-secondary); font-size:13.5px;">
+            <li>Every new channel and partner integrates directly to the legacy core</li>
+            <li>Customer and product data fragments across systems</li>
+            <li>Each new capability adds to integration debt rather than reducing it</li>
+            <li>Compliance and audit trails are reconstructed system by system</li>
+            <li>Future core replacement gets harder, not easier, with every release</li>
+          </ul>
+        </div>
+        <div class="card card--positive">
+          <div class="card-eyebrow">With BIAN-aligned coexistence</div>
+          <h3 class="card-title">Canonical contract in front</h3>
+          <ul style="padding-left:18px; line-height:1.75; color:var(--text-secondary); font-size:13.5px;">
+            <li>Channels, Glass, and partners integrate only to the canonical BIAN contract</li>
+            <li>Glue mediates between the contract and the legacy core</li>
+            <li>New capability can ship behind the contract without touching the core</li>
+            <li>One canonical event stream feeds compliance, audit, and analytics</li>
+            <li>Future replacement of the core becomes a swap behind the seam, not a rebuild</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">How it works</span>
+      <h2 class="page-title" style="font-size:28px;">Glue alongside the legacy core.</h2>
+      <div class="coexist-diagram">
+        <div class="coexist-box coexist-box--core">
+          <div class="coexist-box-label">System of record</div>
+          <div class="coexist-box-title">Legacy core</div>
+        </div>
+        <div class="coexist-box coexist-box--glue">
+          <div class="coexist-box-label">Orchestration</div>
+          <div class="coexist-box-title">FinX Glue · Canonical contract</div>
+        </div>
+        <div class="coexist-box coexist-box--new">
+          <div class="coexist-box-label">New capability</div>
+          <div class="coexist-box-title">Glass · Channels · Partners</div>
+        </div>
+      </div>
+      <div class="coexist-arrow">← legacy stays in place · canonical seam in front · new capability lands behind the contract ←</div>
+      <p class="page-lead" style="font-size:15px;">Glue exposes BIAN-aligned domains over the canonical contract. Behind those domains, adapters mediate to the legacy core for systems-of-record operations and to new fintech connectors for capabilities the core does not provide. Channels and Glass have no visibility into which side answers a given call.</p>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Migration path</span>
+      <h2 class="page-title" style="font-size:28px;">From coexistence to progressive.</h2>
+      <p class="page-lead" style="font-size:15px;">The coexistence configuration is also the foundation of the progressive path. Once the canonical contract is in place and channels speak only to it, individual BIAN domains can be migrated off the legacy core one at a time — each migration is contained behind the seam.</p>
+      <div class="timeline-list">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Step 01</div><div class="timeline-title">Wrap</div><div class="timeline-text">Glue exposes BIAN domains in front of the legacy core. Channels move to the canonical contract.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Step 02</div><div class="timeline-title">Augment</div><div class="timeline-text">New capability — IDV, AML, document directory, Glass — ships behind the contract without touching the core.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Step 03</div><div class="timeline-title">Decouple</div><div class="timeline-text">Domain by domain, the canonical contract becomes the source of truth. Legacy moves toward systems-of-record only.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Step 04</div><div class="timeline-title">Replace</div><div class="timeline-text">Optional. With the seam in place, individual domains can be migrated off legacy under the progressive path.</div></div>
+      </div>
+    </div></section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Related modernization paths</div><div class="grid-3">
+      <a href="#/modernization/greenfield" class="card card--link"><h3 class="card-title">Greenfield →</h3><p class="card-text">Skip the legacy entirely; start composable on day one.</p></a>
+      <a href="#/modernization/progressive" class="card card--link"><h3 class="card-title">Progressive →</h3><p class="card-text">Migrate one BIAN domain at a time behind the seam.</p></a>
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">Why BIAN, why composable, and what the target estate looks like.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- ============================================================ -->
+  <!-- VIEW: #/modernization/progressive                            -->
+  <!-- ============================================================ -->
   <section class="view" data-route="/modernization/progressive" data-title="Progressive Modernization — UST FinX">
     <section class="page-hero"><div class="container">
       <a href="#/modernization" class="back-link">← Back to Modernization</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/modernization">Modernization</a><span class="sep">/</span><span>Progressive</span></nav>
-      <span class="eyebrow">Path · Progressive</span>
+      <div class="preview-tags"><span class="preview-tag">Path · Progressive</span><span class="preview-tag">18—36 month programme</span></div>
       <h1 class="page-title">Migrate one domain at a time.</h1>
-      <p class="page-lead">A multi-year programme with continuous value delivery. Each BIAN service domain is migrated behind the canonical contract; channels and partners stay stable throughout.</p>
+      <p class="page-lead">A multi-year programme with continuous value delivery and reversible checkpoints. Each BIAN service domain is migrated behind the canonical contract; channels, partners, and Glass stay stable throughout. There is no big-bang cutover.</p>
     </div></section>
-    <section class="section section--mid"><div class="container"><div class="grid-3">
-      <div class="card"><h3 class="card-title">Sequencing</h3><p class="card-text">Typical order: Party Lifecycle, Document Directory, IDV/AML, Account Management, Payments.</p></div>
-      <div class="card"><h3 class="card-title">Risk model</h3><p class="card-text">Each domain swap is a contained, reversible change behind the canonical seam.</p></div>
-      <div class="card"><h3 class="card-title">Governance</h3><p class="card-text">Quarterly delivery cadence with bank, UST, and partner representation.</p></div>
-    </div></div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Best for</span>
+      <h2 class="page-title" style="font-size:28px;">Banks ready to migrate gradually over 18—36 months.</h2>
+      <p class="page-lead" style="font-size:16px;">Banks who already have a coexistence seam in place — or are willing to put one in as Step 1 — and want to retire legacy domain by domain rather than all at once. The progressive path delivers the long-run value of full modernisation without the delivery risk of a big-bang programme.</p>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Capability migration order</span>
+      <h2 class="page-title" style="font-size:28px;">A typical sequencing.</h2>
+      <p class="page-lead" style="font-size:15px;">The order below is the default UST recommendation. It moves the lowest-risk, highest-control domains first, leaving the book of business on the legacy core until late in the programme.</p>
+      <div class="timeline-list">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Wave 01</div><div class="timeline-title">Party Lifecycle</div><div class="timeline-text">Customer master and lifecycle moves to FinX. Reference data, no money movement.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Wave 02</div><div class="timeline-title">Document &amp; KYC</div><div class="timeline-text">Document Directory, IDV, AML, sanctions. Governed onboarding end-to-end on FinX.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Wave 03</div><div class="timeline-title">Account Management</div><div class="timeline-text">New accounts open on FinX; legacy accounts continue in place until the agreed window.</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Wave 04</div><div class="timeline-title">Payments</div><div class="timeline-text">Domestic and cross-border payments orchestration migrates last, once upstream domains are stable.</div></div>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Decommissioning checkpoints</span>
+      <h2 class="page-title" style="font-size:28px;">Legacy retires only after the seam holds.</h2>
+      <div class="grid-3">
+        <div class="card"><h3 class="card-title">Checkpoint 01 · Shadow</h3><p class="card-text">New domain runs in shadow behind the canonical contract for an agreed period. All traffic still served by legacy; FinX results compared offline.</p></div>
+        <div class="card"><h3 class="card-title">Checkpoint 02 · Cutover</h3><p class="card-text">FinX becomes primary for new traffic. Legacy still authoritative for historical data. Reversible by routing change at the seam.</p></div>
+        <div class="card"><h3 class="card-title">Checkpoint 03 · Decommission</h3><p class="card-text">Legacy domain is read-only, then archived. Decommissioning is gated on a clean shadow period and a successful audit cycle.</p></div>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Risk gates</span>
+      <h2 class="page-title" style="font-size:28px;">No wave starts until the previous wave is green.</h2>
+      <ul style="padding-left:18px; line-height:1.85; color:var(--text-secondary); font-size:14.5px;">
+        <li><strong>Functional parity gate</strong> — canonical contract behaviour matches legacy for the in-scope domain across the agreed test corpus.</li>
+        <li><strong>Operational gate</strong> — Glass operators have run the domain in production for a full SLA window with no Sev-1 incidents.</li>
+        <li><strong>Compliance gate</strong> — audit trail, regulatory export, and four-eyes controls are demonstrably equivalent or stronger than legacy.</li>
+        <li><strong>Reversibility gate</strong> — a documented and rehearsed routing change at the seam returns traffic to legacy within an agreed RTO.</li>
+        <li><strong>Steering gate</strong> — bank, UST, and partner steering jointly sign off before the next wave begins.</li>
+      </ul>
+    </div></section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Related modernization paths</div><div class="grid-3">
+      <a href="#/modernization/greenfield" class="card card--link"><h3 class="card-title">Greenfield →</h3><p class="card-text">No legacy in scope; everything composable on day one.</p></a>
+      <a href="#/modernization/coexistence" class="card card--link"><h3 class="card-title">Coexistence →</h3><p class="card-text">The foundation that makes progressive migration possible.</p></a>
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">The target estate every wave converges on.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- ============================================================ -->
+  <!-- VIEW: #/use-cases                                            -->
+  <!-- ============================================================ -->
   <section class="view" data-route="/use-cases" data-title="Use Cases — UST FinX">
     <section class="page-hero"><div class="container">
       <a href="#/" class="back-link">← Back to Home</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><span>Use Cases</span></nav>
       <span class="eyebrow">Use Cases</span>
       <h1 class="page-title">From architecture to outcomes.</h1>
-      <p class="page-lead">Six representative use cases that show what composable banking looks like at the level of an actual customer or operator journey.</p>
+      <p class="page-lead">Six representative use cases that show what composable banking looks like at the level of an actual customer or operator journey. Each shares the same canonical foundation; what differs is which domains, connectors, and Glass modules are foregrounded.</p>
+      <div class="hero-ctas">
+        <a href="#uc-customer-360" class="btn btn-secondary">Customer 360</a>
+        <a href="#uc-digital-lending" class="btn btn-secondary">Digital Lending</a>
+        <a href="#uc-multi-core" class="btn btn-secondary">Multi-Core Coexistence</a>
+        <a href="#uc-ai-onboarding" class="btn btn-secondary">AI Onboarding</a>
+        <a href="#uc-governance" class="btn btn-secondary">Operational Governance</a>
+        <a href="#uc-data-ai" class="btn btn-secondary">Data &amp; AI</a>
+      </div>
     </div></section>
-    <section class="section section--mid"><div class="container"><div class="grid-3">
-      <div class="card"><h3 class="card-title">Customer 360</h3><p class="card-text">A unified party view across every BIAN domain, surfaced in Glass.</p></div>
-      <div class="card"><h3 class="card-title">Digital Lending</h3><p class="card-text">Application, decisioning, and servicing on the canonical model.</p></div>
-      <div class="card"><h3 class="card-title">Multi-Core Coexistence</h3><p class="card-text">Two cores behind one canonical contract, transparent to channels.</p></div>
-      <div class="card"><h3 class="card-title">AI-Powered Onboarding</h3><p class="card-text">Document and identity decisioning with human-in-the-loop review.</p></div>
-      <div class="card"><h3 class="card-title">Operational Governance</h3><p class="card-text">Four-eyes approvals, audit trail, regulatory export.</p></div>
-      <div class="card"><h3 class="card-title">Data &amp; AI Enablement</h3><p class="card-text">Canonical events into Microsoft Fabric for governed analytics.</p></div>
-    </div></div></section>
+
+    <section class="section section--mid"><div class="container">
+
+      <div id="uc-customer-360" class="use-case-section">
+        <div class="use-case-grid">
+          <div>
+            <span class="eyebrow">Use case 01</span>
+            <h2 class="page-title" style="font-size:28px;">Customer 360</h2>
+            <p class="page-lead" style="font-size:15px;"><strong>Business problem.</strong> Customer data is fragmented across the core, the CRM, the document store, and a handful of point solutions. Operators stitch a customer view together by hand; channels surface inconsistent versions of the same fact.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How FinX solves it.</strong> The canonical party record sits in Party Lifecycle Management. Every domain — accounts, payments, documents, KYC, AML — links to that record by canonical ID. Glass surfaces a single Customer 360 view assembled from the canonical contract, not from a nightly batch.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How it evolves.</strong> Start read-only against legacy systems via Glue adapters. Move to canonical-first as domains migrate. End-state: every channel and operator reads the same Customer 360 in real time.</p>
+          </div>
+          <dl class="use-case-meta">
+            <dt>FinX components</dt><dd>Glue · Glass · PLM · Document Directory · Microsoft Dynamics 365</dd>
+            <dt>Time to value</dt><dd>4—6 months from contract</dd>
+            <dt>Risk reduction</dt><dd>Eliminates manual reconciliation across 4+ systems</dd>
+            <dt>Cost impact</dt><dd>Reduces per-case servicing time by 30—40%</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div id="uc-digital-lending" class="use-case-section">
+        <div class="use-case-grid">
+          <div>
+            <span class="eyebrow">Use case 02</span>
+            <h2 class="page-title" style="font-size:28px;">Digital Lending</h2>
+            <p class="page-lead" style="font-size:15px;"><strong>Business problem.</strong> Loan origination, decisioning, fulfilment, and servicing run on different stacks. Time-to-decision is slow, and any product change cascades into integration work across each stack.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How FinX solves it.</strong> Application, decisioning (via Zoot), and servicing all run on the canonical model. Glue orchestrates the underwriting workflow; Glass operators manage exceptions; servicing events emit on the canonical event stream.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How it evolves.</strong> Begin with one product line (e.g. unsecured retail) on FinX, fulfilment continues on legacy. Expand product lines and migrate fulfilment behind the seam.</p>
+          </div>
+          <dl class="use-case-meta">
+            <dt>FinX components</dt><dd>Glue · Glass · Zoot connector · Account Management · Document Directory</dd>
+            <dt>Time to value</dt><dd>6 months for a first product line</dd>
+            <dt>Risk reduction</dt><dd>Decisioning rules versioned and audited canonically</dd>
+            <dt>Cost impact</dt><dd>Time-to-decision reduced from days to minutes</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div id="uc-multi-core" class="use-case-section">
+        <div class="use-case-grid">
+          <div>
+            <span class="eyebrow">Use case 03</span>
+            <h2 class="page-title" style="font-size:28px;">Multi-Core Coexistence</h2>
+            <p class="page-lead" style="font-size:15px;"><strong>Business problem.</strong> The bank runs two cores — typically one retail and one commercial, or a legacy and a modern stack from an acquisition. Each new feature has to be built twice; channels deal with two contracts.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How FinX solves it.</strong> A single canonical contract sits in front of both cores. Glue routes per-account or per-product to the correct core behind the seam. Channels and Glass see one bank.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How it evolves.</strong> Day one: routing only. Over time, individual domains (PLM, Document Directory, Payments) consolidate onto FinX-native implementations behind the same contract.</p>
+          </div>
+          <dl class="use-case-meta">
+            <dt>FinX components</dt><dd>Glue · Canonical contract · Adapters per core</dd>
+            <dt>Time to value</dt><dd>9 months to a single canonical channel surface</dd>
+            <dt>Risk reduction</dt><dd>New features built once, not twice</dd>
+            <dt>Cost impact</dt><dd>Foundation for full retirement of one core over 24—36 months</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div id="uc-ai-onboarding" class="use-case-section">
+        <div class="use-case-grid">
+          <div>
+            <span class="eyebrow">Use case 04</span>
+            <h2 class="page-title" style="font-size:28px;">AI-Powered Onboarding</h2>
+            <p class="page-lead" style="font-size:15px;"><strong>Business problem.</strong> Onboarding is the highest-volume, highest-friction journey in retail banking. Document checks and KYC reviews are slow, inconsistent, and expensive when run manually.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How FinX solves it.</strong> The onboarding journey orchestrates Jumio for IDV and ComplyAdvantage for AML behind the canonical contract. AI-assisted document classification and risk scoring surface in Glass; human-in-the-loop review is mandatory for elevated risk bands.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How it evolves.</strong> Begin with deterministic IDV/AML and human review on every case. Introduce AI assistance for document and risk triage. End-state: clear-band automation with mandatory four-eyes for the elevated band.</p>
+          </div>
+          <dl class="use-case-meta">
+            <dt>FinX components</dt><dd>Glue · Glass · Jumio · ComplyAdvantage · Document Directory</dd>
+            <dt>Time to value</dt><dd>3—4 months for the first onboarding journey live</dd>
+            <dt>Risk reduction</dt><dd>Audit trail per case; consistent rule application</dd>
+            <dt>Cost impact</dt><dd>Per-case review time reduced 50—70% in the clear band</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div id="uc-governance" class="use-case-section">
+        <div class="use-case-grid">
+          <div>
+            <span class="eyebrow">Use case 05</span>
+            <h2 class="page-title" style="font-size:28px;">Operational Governance</h2>
+            <p class="page-lead" style="font-size:15px;"><strong>Business problem.</strong> Compliance evidence is reconstructed from logs across many systems. Four-eyes controls are inconsistently enforced. Regulatory export is a project, not a button.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How FinX solves it.</strong> Every action against the canonical contract emits a canonical event with actor, role, rationale, and before/after state. Glass enforces RBAC and four-eyes at the workflow level. Regulatory export reads the canonical event store.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How it evolves.</strong> Coverage starts with the domains migrated to the canonical contract. As coexistence and progressive paths advance, regulatory coverage extends with them.</p>
+          </div>
+          <dl class="use-case-meta">
+            <dt>FinX components</dt><dd>Glue · Glass · Canonical event store · Wolters Kluwer reporting</dd>
+            <dt>Time to value</dt><dd>Live with the first migrated domain</dd>
+            <dt>Risk reduction</dt><dd>Regulatory export from one canonical store</dd>
+            <dt>Cost impact</dt><dd>Audit-cycle preparation reduced from weeks to days</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div id="uc-data-ai" class="use-case-section">
+        <div class="use-case-grid">
+          <div>
+            <span class="eyebrow">Use case 06</span>
+            <h2 class="page-title" style="font-size:28px;">Data &amp; AI Enablement</h2>
+            <p class="page-lead" style="font-size:15px;"><strong>Business problem.</strong> Analytics and AI initiatives stall because the underlying data is fragmented, inconsistently named, and unstable across releases. Every model team rebuilds the same canonical view.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How FinX solves it.</strong> Canonical events from every domain stream into Microsoft Fabric. The canonical model is the data model. Governed datasets, lineage, and access control flow through Fabric; analytics and AI teams build on a stable, semantically consistent surface.</p>
+            <p class="page-lead" style="font-size:15px;"><strong>How it evolves.</strong> Start with operational reporting on canonical events. Expand to feature stores for risk and customer analytics. End-state: governed AI products that read the canonical model directly.</p>
+          </div>
+          <dl class="use-case-meta">
+            <dt>FinX components</dt><dd>Glue canonical events · Microsoft Fabric · Governed datasets</dd>
+            <dt>Time to value</dt><dd>Operational analytics live with the first domain</dd>
+            <dt>Risk reduction</dt><dd>One semantic model; no parallel data definitions</dd>
+            <dt>Cost impact</dt><dd>Data-engineering effort per AI use case reduced 40—60%</dd>
+          </dl>
+        </div>
+      </div>
+
+    </div></section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Related</div><div class="grid-3">
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">The foundation every use case is built on.</p></a>
+      <a href="#/modernization" class="card card--link"><h3 class="card-title">Modernization →</h3><p class="card-text">How banks pick a path to deliver these use cases.</p></a>
+      <a href="#/platform" class="card card--link"><h3 class="card-title">Platform →</h3><p class="card-text">Glue and Glass — the components named above.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- ============================================================ -->
+  <!-- VIEW: #/resources                                            -->
+  <!-- ============================================================ -->
   <section class="view" data-route="/resources" data-title="Resources — UST FinX">
     <section class="page-hero"><div class="container">
       <a href="#/" class="back-link">← Back to Home</a>
@@ -1700,185 +2350,863 @@
       <h1 class="page-title">White paper, glossary, FAQs.</h1>
       <p class="page-lead">Reading material for evaluators, architects, and operators. The white paper is the canonical statement; the glossary and FAQ pages distil it for quick reference.</p>
     </div></section>
-    <section class="section section--mid"><div class="container"><div class="grid-3">
-      <a href="#/architecture" class="card card--link"><div class="card-eyebrow">White paper</div><h3 class="card-title">Composable Banking at Scale →</h3><p class="card-text">The full intellectual case for the FinX approach.</p></a>
-      <a href="#/resources" class="card card--link"><div class="card-eyebrow">Reference</div><h3 class="card-title">Glossary →</h3><p class="card-text">BIAN, canonical model, service domain, coexistence — defined in plain language.</p></a>
-      <a href="#/resources" class="card card--link"><div class="card-eyebrow">FAQ</div><h3 class="card-title">Frequently asked questions →</h3><p class="card-text">Common questions from bank evaluators, partners, and architects.</p></a>
-    </div></div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">White papers</span>
+      <h2 class="page-title" style="font-size:28px;">Composable Banking at Scale.</h2>
+      <div class="card card--path" style="max-width:760px;">
+        <div class="card-eyebrow">Featured · April 2026</div>
+        <h3 class="card-title">Composable Banking at Scale — A BIAN-Aligned Approach to Progressive Modernisation</h3>
+        <p class="card-text">The full intellectual case for the FinX approach: why composable, why BIAN, what coexistence does for risk reduction, and how progressive modernisation converges on the same target estate as a greenfield build.</p>
+        <div class="card-meta">UST · Banking, Financial Services &amp; Insurance · 48 pages</div>
+        <div style="margin-top:18px;">
+          <a href="#/architecture" class="btn btn-primary">Read online →</a>
+          <a href="#/resources" class="btn btn-secondary" style="margin-left:8px;">Download PDF</a>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Architecture guides</span>
+      <h2 class="page-title" style="font-size:28px;">For architects evaluating the platform.</h2>
+      <div class="grid-3">
+        <a href="#/architecture" class="card card--link"><div class="card-eyebrow">Guide</div><h3 class="card-title">Architecture &amp; BIAN →</h3><p class="card-text">The target estate, service domains, and the canonical contract.</p></a>
+        <a href="#/docs/glue" class="card card--link"><div class="card-eyebrow">Guide</div><h3 class="card-title">BIAN service-domain reference →</h3><p class="card-text">Which BIAN domains FinX implements out of the box and how to extend.</p></a>
+        <a href="#/modernization" class="card card--link"><div class="card-eyebrow">Guide</div><h3 class="card-title">Modernization paths →</h3><p class="card-text">Greenfield, coexistence, progressive — when each one fits.</p></a>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Platform glossary</span>
+      <h2 class="page-title" style="font-size:28px;">Defined in plain language.</h2>
+      <nav class="az-jump" id="glossary-az" aria-label="Jump to letter">
+        <span class="az-label">Jump</span>
+        <button type="button" data-az="a">A</button><button type="button" data-az="b">B</button><button type="button" data-az="c">C</button>
+        <button type="button" data-az="d" disabled>D</button><button type="button" data-az="e" disabled>E</button>
+        <button type="button" data-az="f">F</button><button type="button" data-az="g" disabled>G</button>
+        <button type="button" data-az="h" disabled>H</button><button type="button" data-az="i" disabled>I</button>
+        <button type="button" data-az="j" disabled>J</button><button type="button" data-az="k" disabled>K</button>
+        <button type="button" data-az="l" disabled>L</button><button type="button" data-az="m" disabled>M</button>
+        <button type="button" data-az="n" disabled>N</button><button type="button" data-az="o">O</button>
+        <button type="button" data-az="p">P</button><button type="button" data-az="q" disabled>Q</button>
+        <button type="button" data-az="r" disabled>R</button><button type="button" data-az="s">S</button>
+        <button type="button" data-az="t" disabled>T</button><button type="button" data-az="u" disabled>U</button>
+        <button type="button" data-az="v" disabled>V</button><button type="button" data-az="w" disabled>W</button>
+        <button type="button" data-az="x" disabled>X</button><button type="button" data-az="y" disabled>Y</button>
+        <button type="button" data-az="z" disabled>Z</button>
+      </nav>
+      <div class="glossary-grid">
+        <dl class="glossary-term"><dt>BIAN</dt><dd>Banking Industry Architecture Network. An industry-standard reference model for the business capabilities of a bank, expressed as service domains.</dd></dl>
+        <dl class="glossary-term"><dt>Canonical model</dt><dd>The single, normalised representation of party, account, document, and transaction concepts that every channel and connector speaks against.</dd></dl>
+        <dl class="glossary-term"><dt>Canonical contract</dt><dd>The set of API endpoints and event streams Glue exposes against the canonical model. Stable across implementation changes.</dd></dl>
+        <dl class="glossary-term"><dt>Coexistence</dt><dd>An operating configuration in which legacy systems remain in place behind the canonical contract while new capability is added in front of them.</dd></dl>
+        <dl class="glossary-term"><dt>Composable banking</dt><dd>The practice of assembling banking capability from independently versioned, BIAN-aligned components rather than monolithic cores.</dd></dl>
+        <dl class="glossary-term"><dt>Connector</dt><dd>A configurable adapter that mediates between a BIAN service domain and a specific fintech or vendor implementation (e.g. Jumio for IDV).</dd></dl>
+        <dl class="glossary-term"><dt>Four-eyes approval</dt><dd>A control where a sensitive action initiated by one operator must be counter-signed by a second authorised operator before it takes effect.</dd></dl>
+        <dl class="glossary-term"><dt>FinX Glass</dt><dd>The operations console — the single pane of glass for CSR, compliance, supervisor, and admin roles. Built on Modyo, sits on top of Glue.</dd></dl>
+        <dl class="glossary-term"><dt>FinX Glue</dt><dd>The orchestration and integration layer. Exposes the canonical contract over BIAN-aligned service domains and mediates to legacy and fintech connectors behind it.</dd></dl>
+        <dl class="glossary-term"><dt>Orchestration</dt><dd>Coordinating a multi-step business workflow — onboarding, account opening, payment — across several service domains and external connectors.</dd></dl>
+        <dl class="glossary-term"><dt>Progressive modernisation</dt><dd>A multi-year programme that retires legacy domain by domain behind the canonical contract, with reversible checkpoints at each wave.</dd></dl>
+        <dl class="glossary-term"><dt>Service domain</dt><dd>A BIAN-aligned business capability (e.g. Party Lifecycle Management, Customer Position) with a defined set of control record actions.</dd></dl>
+      </div></div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Frequently asked questions</span>
+      <h2 class="page-title" style="font-size:28px;">Common questions from evaluators and architects.</h2>
+      <div class="faq" style="max-width:880px;">
+        <details>
+          <summary>Is FinX a core banking system?</summary>
+          <div class="faq-body">No. FinX Glue is an orchestration and integration layer, and FinX Glass is an operations console. Core banking — ledger, accounts, payments execution — is provided by partners such as Thought Machine Vault Core, sitting behind the canonical contract.</div>
+        </details>
+        <details>
+          <summary>Why BIAN, specifically?</summary>
+          <div class="faq-body">BIAN gives the platform a vendor-neutral foundation, a common language across the bank and its partners, and a model that supports incremental change. The white paper covers this in detail in Section 02.</div>
+        </details>
+        <details>
+          <summary>Do banks have to replace their core to use FinX?</summary>
+          <div class="faq-body">No. The coexistence path keeps the legacy core in place and puts the canonical contract in front of it. Most incumbent banks start there.</div>
+        </details>
+        <details>
+          <summary>How long does a typical engagement take to first value?</summary>
+          <div class="faq-body">Greenfield engagements typically reach first live customer in around six months. Coexistence engagements typically reach first new capability in around nine months. Progressive modernisation is an 18—36 month programme delivered in waves, with continuous value at each wave.</div>
+        </details>
+        <details>
+          <summary>What does the canonical contract cover today?</summary>
+          <div class="faq-body">Party Lifecycle Management, Document Directory, IDV/AML orchestration, Account Management, and Payments. The contract is BIAN-aligned and extensible.</div>
+        </details>
+        <details>
+          <summary>Which fintech connectors are supported out of the box?</summary>
+          <div class="faq-body">Jumio for IDV, ComplyAdvantage for AML and sanctions, Zoot for decisioning, Microsoft Dynamics 365 for customer engagement, Microsoft Fabric for analytics, Wolters Kluwer for regulatory reporting, Oracle NetSuite for finance, Formpipe and Thirdstream for documents and onboarding.</div>
+        </details>
+        <details>
+          <summary>How is regulatory compliance handled across coexistence?</summary>
+          <div class="faq-body">Every action against the canonical contract emits a canonical event with actor, role, rationale, and before/after state. Regulatory export reads the canonical event store. Coverage extends as more domains migrate behind the contract.</div>
+        </details>
+        <details>
+          <summary>Can banks extend the canonical model?</summary>
+          <div class="faq-body">Yes — through a controlled extensibility model documented in the Glue Developer Hub. Extensions are namespaced so they do not conflict with the canonical surface or with future platform releases.</div>
+        </details>
+        <details>
+          <summary>How is data and AI handled?</summary>
+          <div class="faq-body">Canonical events stream into Microsoft Fabric. The canonical model is the data model. AI initiatives build against governed datasets with lineage and access control inherited from Fabric.</div>
+        </details>
+        <details>
+          <summary>How do I get a sandbox tenant?</summary>
+          <div class="faq-body">Reach out via the contact details below or through your UST account team. Sandbox tenants are provisioned with synthetic data and deterministic IDV/AML connector responses for end-to-end testing.</div>
+        </details>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Diagrams &amp; visual assets</span>
+      <h2 class="page-title" style="font-size:28px;">For decks and architecture reviews.</h2>
+      <div class="grid-3">
+        <a href="#/" class="card card--link"><div class="card-eyebrow">Diagram</div><h3 class="card-title">Ecosystem diagram →</h3><p class="card-text">FinX at the centre, BIAN domains around it, fintech connectors at the perimeter.</p></a>
+        <a href="#/architecture" class="card card--link"><div class="card-eyebrow">Diagram</div><h3 class="card-title">Target architecture →</h3><p class="card-text">Layered view: channels, canonical contract, service domains, data, partners.</p></a>
+        <a href="#/modernization/coexistence" class="card card--link"><div class="card-eyebrow">Diagram</div><h3 class="card-title">Coexistence diagram →</h3><p class="card-text">Legacy core, canonical seam, and new capability in one frame.</p></a>
+      </div>
+    </div></section>
+
+    <section class="section section--mid"><div class="container">
+      <span class="eyebrow">Contact</span>
+      <h2 class="page-title" style="font-size:28px;">Talk to UST.</h2>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-eyebrow">For banks &amp; partners</div>
+          <h3 class="card-title">Banking practice — UST</h3>
+          <p class="card-text">For enquiries about engagements, sandbox tenants, and reference architectures.</p>
+          <p class="card-text" style="margin-top:8px;"><strong>finx@ust.com</strong></p>
+        </div>
+        <div class="card">
+          <div class="card-eyebrow">UST internal</div>
+          <h3 class="card-title">Internal Hub</h3>
+          <p class="card-text">Engagement playbooks, internal pricing, and partner contact directory.</p>
+          <p class="card-text" style="margin-top:8px;"><a href="#/internal">Sign in to the Internal Hub →</a></p>
+        </div>
+      </div>
+    </div></section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">The reasoning the white paper sits on.</p></a>
+      <a href="#/use-cases" class="card card--link"><h3 class="card-title">Use cases →</h3><p class="card-text">Where the platform lands first inside a bank.</p></a>
+      <a href="#/modernization" class="card card--link"><h3 class="card-title">Modernization paths →</h3><p class="card-text">Pick a path: greenfield, coexistence, progressive.</p></a>
+    </div></div></aside>
   </section>
 
-  <!-- DOCS: Glue hub -->
+  <!-- DOCS: Glue Developer Hub landing -->
   <section class="view" data-route="/docs/glue" data-layout="docs" data-section="glue" data-title="Glue Developer Hub — UST FinX">
-    <aside class="docs-sidebar"><div class="docs-nav"><div class="docs-nav-title">FinX Glue</div>
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link is-active">Overview</a>
+
       <div class="docs-nav-group">Get started</div>
       <a href="#/docs/glue" class="docs-nav-link">Quickstart</a>
-      <a href="#/docs/glue" class="docs-nav-link">Authentication</a>
+      <a href="#/docs/glue" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue" class="docs-nav-link">Environments</a>
+
       <div class="docs-nav-group">Concepts</div>
       <a href="#/docs/glue" class="docs-nav-link">BIAN service domains</a>
       <a href="#/docs/glue" class="docs-nav-link">Canonical model</a>
-      <div class="docs-nav-group">API reference</div>
+      <a href="#/docs/glue" class="docs-nav-link">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
       <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
-      <div class="docs-nav-group">Journey guides</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Account Management</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Payments</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
       <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link">Releases &amp; deprecations</a>
     </div></aside>
     <main class="docs-main">
+      <a href="#/platform/glue" class="back-link">← Back to Glue</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/platform/glue">Glue</a><span class="sep">/</span><span>Developer Hub</span></nav>
       <span class="eyebrow">FinX Glue · Developer Hub</span>
-      <h1 class="page-title">Build on the orchestration layer.</h1>
-      <p class="page-lead">A BIAN-aligned, canonical API surface for banks and partners. Authenticate, onboard a party, attach documents, run IDV/AML, and transition lifecycle — all against one contract.</p>
+      <h1 class="page-title">Build on FinX Glue.</h1>
+      <p class="page-lead">A BIAN-aligned, canonical API surface for banks and partners. Authenticate against a tenant, onboard a party, attach documents, run IDV and AML, open accounts, and move money — all against one contract, with the underlying fintech connectors swappable behind it.</p>
       <div class="hero-ctas">
         <a href="#/docs/glue/journey-onboarding" class="btn btn-primary">Walk a journey →</a>
         <a href="#/docs/glue/api-reference" class="btn btn-secondary">API Reference</a>
       </div>
+
       <h2 class="h3" style="margin-top:48px;">Quickstart</h2>
       <div class="grid-3">
-        <div class="card"><h3 class="card-title">Auth &amp; tenant headers</h3><p class="card-text">OAuth2 client credentials, tenant scoping, idempotency keys.</p></div>
-        <div class="card"><h3 class="card-title">Environments</h3><p class="card-text">Sandbox, integration, production. Synthetic data only outside production.</p></div>
-        <div class="card"><h3 class="card-title">First API call</h3><p class="card-text">Initiate a party and watch the lifecycle event surface in real time.</p></div>
+        <div class="card">
+          <div class="card-eyebrow">01 · Auth</div>
+          <h3 class="card-title">Auth &amp; tenant headers</h3>
+          <p class="card-text">OAuth2 client credentials. Every request carries an <code>X-Tenant</code> header for isolation and an <code>Idempotency-Key</code> for safe retries.</p>
+        </div>
+        <div class="card">
+          <div class="card-eyebrow">02 · Environments</div>
+          <h3 class="card-title">Environments</h3>
+          <p class="card-text">Sandbox, integration, and production. Synthetic data only outside production. Sandbox connectors return deterministic IDV/AML outcomes for testing.</p>
+        </div>
+        <div class="card">
+          <div class="card-eyebrow">03 · First call</div>
+          <h3 class="card-title">First API call</h3>
+          <p class="card-text">Initiate a party against Party Lifecycle Management. Watch the lifecycle event surface in your webhook within seconds.</p>
+        </div>
+      </div>
+
+      <h2 class="h3" style="margin-top:48px;">Featured journey guides</h2>
+      <div class="grid-3">
+        <a href="#/docs/glue/journey-onboarding" class="card card--link">
+          <div class="card-eyebrow">Onboarding</div>
+          <h3 class="card-title">Customer onboarding &amp; KYC →</h3>
+          <p class="card-text">Six calls across PLM, Document Directory, IDV, and AML. The reference path for retail and SMB onboarding.</p>
+        </a>
+        <a href="#/docs/glue" class="card card--link">
+          <div class="card-eyebrow">Servicing</div>
+          <h3 class="card-title">Account opening →</h3>
+          <p class="card-text">Open a current or savings account against an active party, with product configuration and funding mandates.</p>
+        </a>
+        <a href="#/docs/glue" class="card card--link">
+          <div class="card-eyebrow">Payments</div>
+          <h3 class="card-title">Cross-border payment →</h3>
+          <p class="card-text">Initiate, screen, settle, and reconcile an international payment through the canonical Payments surface.</p>
+        </a>
+      </div>
+
+      <h2 class="h3" style="margin-top:48px;">API surfaces</h2>
+      <div class="surface-list">
+        <a href="#/docs/glue/api-reference" class="surface-row">
+          <div><div class="surface-title">Party Lifecycle</div><div class="surface-desc">Initiate, update, and transition party records. BIAN PLM-aligned.</div></div>
+          <span class="step-tag">12 endpoints</span>
+        </a>
+        <a href="#/docs/glue/api-reference" class="surface-row">
+          <div><div class="surface-title">Account Management</div><div class="surface-desc">Open, configure, suspend, and close accounts. BIAN Customer Position.</div></div>
+          <span class="step-tag">9 endpoints</span>
+        </a>
+        <a href="#/docs/glue/api-reference" class="surface-row">
+          <div><div class="surface-title">Payments</div><div class="surface-desc">Initiate, screen, route, and reconcile domestic and cross-border payments.</div></div>
+          <span class="step-tag">14 endpoints</span>
+        </a>
+        <a href="#/docs/glue/api-reference" class="surface-row">
+          <div><div class="surface-title">Document Directory</div><div class="surface-desc">Attach, retrieve, and classify customer documents across the lifecycle.</div></div>
+          <span class="step-tag">6 endpoints</span>
+        </a>
+        <a href="#/docs/glue/api-reference" class="surface-row">
+          <div><div class="surface-title">IDV &amp; AML</div><div class="surface-desc">Initiate identity verification and AML screening through pluggable connectors.</div></div>
+          <span class="step-tag">8 endpoints</span>
+        </a>
       </div>
     </main>
-    <aside class="docs-toc"><div class="toc-title">On this page</div><a href="#" class="toc-link">Quickstart</a><a href="#" class="toc-link">Concepts</a><a href="#" class="toc-link">API Reference</a><a href="#" class="toc-link">Journey guides</a></aside>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#" class="toc-link">Quickstart</a>
+      <a href="#" class="toc-link">Featured journeys</a>
+      <a href="#" class="toc-link">API surfaces</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">Six API calls across PLM, Document Directory, IDV, and AML.</p></a>
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">API reference →</h3><p class="card-text">The full canonical surface, endpoint by endpoint.</p></a>
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">Why the API is shaped the way it is.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- DOCS: Customer Onboarding journey -->
   <section class="view" data-route="/docs/glue/journey-onboarding" data-layout="docs" data-section="glue" data-title="Customer Onboarding & KYC — Glue">
-    <aside class="docs-sidebar"><div class="docs-nav"><div class="docs-nav-title">FinX Glue</div>
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
-      <div class="docs-nav-group">Journey guides</div>
-      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link is-active">Customer onboarding &amp; KYC</a>
-      <div class="docs-nav-group">API reference</div>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
       <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Account Management</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Payments</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link is-active">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link">Releases &amp; deprecations</a>
     </div></aside>
     <main class="docs-main">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/docs/glue">Glue</a><span class="sep">/</span><a href="#/docs/glue">Journey guides</a><span class="sep">/</span><span>Customer onboarding &amp; KYC</span></nav>
+      <a href="#/docs/glue" class="back-link">← Back to Glue Developer Hub</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue">Journey guides</a><span class="sep">/</span><span>Customer onboarding &amp; KYC</span></nav>
       <h1 class="page-title">Customer onboarding and KYC journey</h1>
       <div class="preview-tags"><span class="preview-tag">6 API calls</span><span class="preview-tag">~3 min</span><span class="preview-tag">PLM · IDV · AML</span></div>
-      <p class="page-lead">A typical onboarding journey runs through six BIAN-aligned calls. The sequence below is the contract that channels and Glass compose against; the underlying fintech connectors are configurable.</p>
+      <p class="page-lead">A typical onboarding journey runs through six BIAN-aligned calls: initiate a party, attach documents, run identity verification, screen against AML watchlists, then transition the lifecycle to active. The sequence below is the contract that channels and Glass compose against — the underlying fintech connectors are configurable per tenant.</p>
+
+      <h2 class="h3" id="api-sequence">API sequence</h2>
       <div class="api-sequence">
         <div class="api-step"><span class="method method--post">POST</span><code>/v1/parties/initiate</code><span class="step-tag">PLM · BIAN</span></div>
         <div class="api-step"><span class="method method--post">POST</span><code>/v1/documents</code><span class="step-tag">Document Directory</span></div>
-        <div class="api-step"><span class="method method--post">POST</span><code>/v1/idv/initiate</code><span class="step-tag">Jumio</span></div>
+        <div class="api-step"><span class="method method--post">POST</span><code>/v1/idv/initiate</code><span class="step-tag">Jumio connector</span></div>
         <div class="api-step"><span class="method method--get">GET</span><code>/v1/idv/{id}/result</code><span class="step-tag">Poll until complete</span></div>
         <div class="api-step"><span class="method method--post">POST</span><code>/v1/aml/screen</code><span class="step-tag">ComplyAdvantage</span></div>
         <div class="api-step"><span class="method method--patch">PATCH</span><code>/v1/parties/{id}/lifecycle</code><span class="step-tag">Update to active</span></div>
       </div>
-      <div class="callout callout--amber"><strong>Polling guidance.</strong> IDV results are typically available within 90 seconds. Poll the result endpoint at 5-second intervals for up to 5 minutes, then fall back to the webhook.</div>
-      <div class="code-panel"><div class="code-bar"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-language">cURL</div><button class="code-copy" type="button">Copy</button></div><pre><code>curl -X POST https://api.ustfinx.com/v1/parties/initiate \
+
+      <div class="callout callout--amber"><strong>Polling guidance.</strong> IDV results typically resolve in 2 to 8 seconds. Poll the result endpoint every 2 seconds with exponential backoff; fall back to the webhook for outliers. Never block a customer-facing thread on a synchronous IDV result.</div>
+
+      <h2 class="h3" id="code-samples">Code sample</h2>
+      <div class="code-panel">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <div class="code-language">cURL</div>
+          <button class="code-copy" type="button">Copy</button>
+        </div>
+        <pre><code>curl -X POST https://api.ustfinx.com/v1/parties/initiate \
   -H "Authorization: Bearer $TOKEN" \
   -H "X-Tenant: bank-a" \
   -H "Idempotency-Key: $UUID" \
-  -d '{ "type": "individual", "givenName": "Sample", "familyName": "Customer" }'</code></pre></div>
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "individual",
+    "givenName": "Sample",
+    "familyName": "Customer",
+    "dateOfBirth": "1990-04-12",
+    "residency": "GB"
+  }'</code></pre>
+      </div>
+
+      <h2 class="h3" id="related-guides">Related guides</h2>
+      <div class="grid-3">
+        <a href="#/docs/glue" class="card card--link">
+          <div class="card-eyebrow">Journey</div>
+          <h3 class="card-title">Account opening →</h3>
+          <p class="card-text">Open an account for an active party, configure the product, and seed funding.</p>
+        </a>
+        <a href="#/docs/glue" class="card card--link">
+          <div class="card-eyebrow">Journey</div>
+          <h3 class="card-title">Cross-border payment →</h3>
+          <p class="card-text">End-to-end international payment, including screening and reconciliation.</p>
+        </a>
+        <a href="#/docs/glue" class="card card--link">
+          <div class="card-eyebrow">Get started</div>
+          <h3 class="card-title">Sandbox setup →</h3>
+          <p class="card-text">Provision a sandbox tenant, mint a token, and run the full onboarding journey end-to-end.</p>
+        </a>
+      </div>
     </main>
-    <aside class="docs-toc"><div class="toc-title">On this page</div><a href="#" class="toc-link">API sequence</a><a href="#" class="toc-link">Polling</a><a href="#" class="toc-link">Code sample</a></aside>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#" class="toc-link">Overview</a>
+      <a href="#api-sequence" class="toc-link">API sequence</a>
+      <a href="#" class="toc-link">Polling guidance</a>
+      <a href="#code-samples" class="toc-link">Code samples</a>
+      <a href="#related-guides" class="toc-link">Related guides</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Related guides</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">API reference →</h3><p class="card-text">Inspect each endpoint used in this journey, including request and response shapes.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Quickstart, environments, and the rest of the journey guides.</p></a>
+      <a href="#/docs/glass/task-kyc-review" class="card card--link"><h3 class="card-title">Reviewing KYC in Glass →</h3><p class="card-text">What the Compliance Officer sees once this journey lands a review task.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- DOCS: API reference (Create party) -->
   <section class="view" data-route="/docs/glue/api-reference" data-layout="docs" data-section="glue" data-title="API Reference — Glue">
-    <aside class="docs-sidebar"><div class="docs-nav"><div class="docs-nav-title">FinX Glue</div>
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
-      <div class="docs-nav-group">API reference</div>
-      <a href="#/docs/glue/api-reference" class="docs-nav-link is-active">Party Lifecycle · Create party</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link is-active">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Account Management</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Payments</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link">Releases &amp; deprecations</a>
     </div></aside>
     <main class="docs-main">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/docs/glue">Glue</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>Create party</span></nav>
+      <a href="#/docs/glue" class="back-link">← Back to Glue Developer Hub</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>Party Lifecycle</span><span class="sep">/</span><span>Create party</span></nav>
       <div class="endpoint-row"><span class="method method--post">POST</span><code>/v1/parties/initiate</code></div>
       <h1 class="page-title">Create party</h1>
-      <p class="page-lead">Initiate a new party in Party Lifecycle Management. Returns a party identifier in <code>pending_kyc</code> state; subsequent calls advance the lifecycle.</p>
-      <div class="callout callout--info"><strong>BIAN mapping.</strong> Maps to <code>Party Lifecycle Management · Initiate</code> control record action.</div>
+      <p class="page-lead">Initiate a new party in Party Lifecycle Management. Returns a party identifier in the <code>pending_kyc</code> state. Subsequent calls — document attach, IDV initiate, AML screen, lifecycle patch — advance the party through to <code>active</code>.</p>
+
+      <h2 class="h3" id="parameters">Parameters</h2>
+      <div class="params">
+        <div class="params-row">
+          <div>
+            <div class="params-name">type</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">One of <code>individual</code> or <code>organisation</code>. Determines which downstream attribute set is validated.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">givenName</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">Given name as it appears on the primary identity document. Required for <code>individual</code>.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">familyName</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">Family name as it appears on the primary identity document.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">dateOfBirth</div>
+            <div class="params-meta"><span class="params-type">date (ISO-8601)</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">Date of birth in <code>YYYY-MM-DD</code> form. Used by IDV and AML screening.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">residency</div>
+            <div class="params-meta"><span class="params-type">string (ISO-3166-1)</span><span class="params-req params-req--required">Required</span></div>
+          </div>
+          <div class="params-desc">Country of residency, two-letter code. Drives jurisdictional rule selection.</div>
+        </div>
+        <div class="params-row">
+          <div>
+            <div class="params-name">externalRef</div>
+            <div class="params-meta"><span class="params-type">string</span><span class="params-req params-req--optional">Optional</span></div>
+          </div>
+          <div class="params-desc">Caller-supplied reference for cross-system correlation. Indexed but not validated.</div>
+        </div>
+      </div>
+
+      <h2 class="h3" id="request">Request</h2>
+      <div class="code-panel">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <div class="code-language">JSON</div>
+          <button class="code-copy" type="button">Copy</button>
+        </div>
+        <pre><code>{
+  "type": "individual",
+  "givenName": "Sample",
+  "familyName": "Customer",
+  "dateOfBirth": "1990-04-12",
+  "residency": "GB",
+  "externalRef": "crm-7741-22"
+}</code></pre>
+      </div>
+
+      <h2 class="h3" id="responses">Responses</h2>
+      <div class="resp-tabs">
+        <button class="resp-tab active" type="button" data-resp="201">201 Created</button>
+        <button class="resp-tab" type="button" data-resp="400">400 Bad Request</button>
+        <button class="resp-tab" type="button" data-resp="409">409 Conflict</button>
+      </div>
+      <div class="resp-panel active" data-resp="201">
+        <div class="code-panel">
+          <div class="code-bar">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div class="code-language">JSON · 201</div>
+            <button class="code-copy" type="button">Copy</button>
+          </div>
+          <pre><code>{
+  "partyId": "ptr_01HK9X4ZQ8M2VYNB3R7W5C8D2K",
+  "type": "individual",
+  "lifecycleState": "pending_kyc",
+  "createdAt": "2026-04-29T10:14:22Z"
+}</code></pre>
+        </div>
+      </div>
+      <div class="resp-panel" data-resp="400">
+        <div class="code-panel">
+          <div class="code-bar">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div class="code-language">JSON · 400</div>
+            <button class="code-copy" type="button">Copy</button>
+          </div>
+          <pre><code>{
+  "error": "validation_failed",
+  "message": "dateOfBirth is required for type=individual",
+  "field": "dateOfBirth"
+}</code></pre>
+        </div>
+      </div>
+      <div class="resp-panel" data-resp="409">
+        <div class="code-panel">
+          <div class="code-bar">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div class="code-language">JSON · 409</div>
+            <button class="code-copy" type="button">Copy</button>
+          </div>
+          <pre><code>{
+  "error": "duplicate_party",
+  "message": "A party with this externalRef already exists.",
+  "existingPartyId": "ptr_01HK7T1V4R8KF6QWA2N9XBJ0YZ"
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This endpoint maps to the BIAN <em>Customer Position</em> service domain — specifically the <code>Party Reference Data Directory · Initiate</code> control record action. Lifecycle transitions are emitted as canonical events on the <code>parties.lifecycle</code> stream.</div>
     </main>
-    <aside class="docs-toc"><div class="toc-title">On this page</div><a href="#" class="toc-link">Parameters</a><a href="#" class="toc-link">Request</a><a href="#" class="toc-link">Responses</a></aside>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#parameters" class="toc-link">Parameters</a>
+      <a href="#request" class="toc-link">Request</a>
+      <a href="#responses" class="toc-link">Responses</a>
+      <a href="#" class="toc-link">BIAN mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">See this endpoint used in a six-step onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">How BIAN service domains shape the canonical contract.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- DOCS: Glass Operations Guide landing -->
   <section class="view" data-route="/docs/glass" data-layout="docs" data-section="glass" data-title="Glass Operations Guide — UST FinX">
-    <aside class="docs-sidebar"><div class="docs-nav"><div class="docs-nav-title">FinX Glass</div>
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link is-active">Overview</a>
+
       <div class="docs-nav-group">By role</div>
+      <a href="#/docs/glass" class="docs-nav-link">CSR / Ops Agent</a>
       <a href="#/docs/glass/role-compliance" class="docs-nav-link">Compliance Officer</a>
+      <a href="#/docs/glass" class="docs-nav-link">Supervisor</a>
+      <a href="#/docs/glass" class="docs-nav-link">Admin / Platform</a>
+
+      <div class="docs-nav-group">Compliance tasks</div>
+      <a href="#/docs/glass/task-kyc-review" class="docs-nav-link">Review KYC results</a>
+      <a href="#/docs/glass" class="docs-nav-link">Approve high-risk customer</a>
+      <a href="#/docs/glass" class="docs-nav-link">AML alert handling</a>
+      <a href="#/docs/glass" class="docs-nav-link">Sanctions screening</a>
+      <a href="#/docs/glass" class="docs-nav-link">Four-eyes approval</a>
+
+      <div class="docs-nav-group">Modules</div>
+      <a href="#/docs/glass" class="docs-nav-link">Customer &amp; Account Mgmt</a>
+      <a href="#/docs/glass" class="docs-nav-link">Task Management</a>
+      <a href="#/docs/glass" class="docs-nav-link">Workflow Console</a>
+      <a href="#/docs/glass" class="docs-nav-link">Incident &amp; Alert Centre</a>
+
+      <div class="docs-nav-group">Reference</div>
+      <a href="#/docs/glass" class="docs-nav-link">RBAC permissions</a>
+      <a href="#/docs/glass" class="docs-nav-link">FAQs</a>
     </div></aside>
     <main class="docs-main">
+      <a href="#/platform/glass" class="back-link">← Back to Glass</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/platform/glass">Glass</a><span class="sep">/</span><span>Operations Guide</span></nav>
+      <span class="eyebrow">FinX Glass · Operations Guide</span>
       <h1 class="page-title">Operations made coherent.</h1>
-      <p class="page-lead">Choose your role to see the screens, queues, and tasks shaped for your work.</p>
+      <p class="page-lead">FinX Glass is the single pane of glass that bank operations teams work in every day. This guide is organised by role, by task, and by module. Pick your role to see the screens, queues, and procedures shaped for your work.</p>
+
+      <h2 class="h3" style="margin-top:48px;">By role</h2>
       <div class="grid-2">
-        <a href="#/docs/glass/role-compliance" class="card card--link"><h3 class="card-title">Compliance Officer →</h3><p class="card-text">KYC reviews, AML alerts, sanctions screening, four-eyes approvals.</p></a>
-        <a href="#/docs/glass" class="card card--link"><h3 class="card-title">CSR / Ops Agent →</h3><p class="card-text">Customer servicing, lifecycle changes, dispute intake.</p></a>
+        <a href="#/docs/glass/role-compliance" class="card card--link">
+          <h3 class="card-title">Compliance Officer →</h3>
+          <p class="card-text">KYC reviews, AML alerts, sanctions screening, four-eyes approvals on high-risk customers.</p>
+        </a>
+        <a href="#/docs/glass" class="card card--link">
+          <h3 class="card-title">CSR / Ops Agent →</h3>
+          <p class="card-text">Customer servicing, lifecycle changes, dispute intake, day-to-day account operations.</p>
+        </a>
+        <a href="#/docs/glass" class="card card--link">
+          <h3 class="card-title">Supervisor →</h3>
+          <p class="card-text">Queue oversight, four-eyes approvals, exception handling, team performance.</p>
+        </a>
+        <a href="#/docs/glass" class="card card--link">
+          <h3 class="card-title">Admin / Platform →</h3>
+          <p class="card-text">Tenant configuration, RBAC, connector setup, environment promotion.</p>
+        </a>
+      </div>
+
+      <h2 class="h3" style="margin-top:48px;">Modules</h2>
+      <div class="surface-list">
+        <a href="#/docs/glass" class="surface-row">
+          <div><div class="surface-title">Customer &amp; Account Management</div><div class="surface-desc">Canonical party and account record, lifecycle actions, document directory.</div></div>
+          <span class="step-tag">Module</span>
+        </a>
+        <a href="#/docs/glass" class="surface-row">
+          <div><div class="surface-title">Task Management</div><div class="surface-desc">Queues, SLAs, assignments, and audit trail across all operational tasks.</div></div>
+          <span class="step-tag">Module</span>
+        </a>
+        <a href="#/docs/glass" class="surface-row">
+          <div><div class="surface-title">Workflow Console</div><div class="surface-desc">Run and monitor BIAN-aligned workflows; replay and intervene where needed.</div></div>
+          <span class="step-tag">Module</span>
+        </a>
+        <a href="#/docs/glass" class="surface-row">
+          <div><div class="surface-title">Incident &amp; Alert Centre</div><div class="surface-desc">Operational incidents, connector health, and AML/sanctions alerts in one feed.</div></div>
+          <span class="step-tag">Module</span>
+        </a>
       </div>
     </main>
-    <aside class="docs-toc"><div class="toc-title">On this page</div><a href="#" class="toc-link">By role</a><a href="#" class="toc-link">Modules</a></aside>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#" class="toc-link">By role</a>
+      <a href="#" class="toc-link">Modules</a>
+      <a href="#" class="toc-link">Reference</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glass/role-compliance" class="card card--link"><h3 class="card-title">Compliance Officer role →</h3><p class="card-text">Common tasks, permissions, and module access for compliance teams.</p></a>
+      <a href="#/docs/glass/task-kyc-review" class="card card--link"><h3 class="card-title">Review KYC results →</h3><p class="card-text">Step-by-step task walkthrough for the daily review queue.</p></a>
+      <a href="#/platform/glass" class="card card--link"><h3 class="card-title">FinX Glass overview →</h3><p class="card-text">The product context behind the operations guide.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- DOCS: Compliance Officer role -->
   <section class="view" data-route="/docs/glass/role-compliance" data-layout="docs" data-section="glass" data-title="Compliance Officer — Glass">
-    <aside class="docs-sidebar"><div class="docs-nav"><div class="docs-nav-title">FinX Glass</div>
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link">Overview</a>
+
       <div class="docs-nav-group">By role</div>
+      <a href="#/docs/glass" class="docs-nav-link">CSR / Ops Agent</a>
       <a href="#/docs/glass/role-compliance" class="docs-nav-link is-active">Compliance Officer</a>
-      <div class="docs-nav-sub">
-        <a href="#/docs/glass/task-kyc-review" class="docs-nav-link docs-nav-link--sub">Review KYC results</a>
-      </div>
+      <a href="#/docs/glass" class="docs-nav-link">Supervisor</a>
+      <a href="#/docs/glass" class="docs-nav-link">Admin / Platform</a>
+
+      <div class="docs-nav-group">Compliance tasks</div>
+      <a href="#/docs/glass/task-kyc-review" class="docs-nav-link is-active">Review KYC results</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Approve high-risk customer</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">AML alert handling</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Sanctions screening</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Four-eyes approval</a>
+
+      <div class="docs-nav-group">Modules</div>
+      <a href="#/docs/glass" class="docs-nav-link">Customer &amp; Account Mgmt</a>
+      <a href="#/docs/glass" class="docs-nav-link">Task Management</a>
+      <a href="#/docs/glass" class="docs-nav-link">Workflow Console</a>
+      <a href="#/docs/glass" class="docs-nav-link">Incident &amp; Alert Centre</a>
+
+      <div class="docs-nav-group">Reference</div>
+      <a href="#/docs/glass" class="docs-nav-link">RBAC permissions</a>
+      <a href="#/docs/glass" class="docs-nav-link">FAQs</a>
     </div></aside>
     <main class="docs-main">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/docs/glass">Glass</a><span class="sep">/</span><span>By role</span><span class="sep">/</span><span>Compliance Officer</span></nav>
+      <a href="#/docs/glass" class="back-link">← Back to Glass Operations Guide</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glass">Glass Operations Guide</a><span class="sep">/</span><span>By role</span><span class="sep">/</span><span>Compliance Officer</span></nav>
       <h1 class="page-title">Compliance Officer</h1>
-      <p class="page-lead">The Compliance Officer reviews KYC outcomes, handles AML alerts, applies sanctions screening, and approves high-risk customers under four-eyes governance.</p>
-      <h2 class="h3">Common tasks</h2>
+      <p class="page-lead">The Compliance Officer is the human checkpoint between automated KYC/AML signals and a customer's lifecycle state. They review IDV outcomes, disposition AML alerts, run sanctions screening, and apply four-eyes governance on high-risk approvals. Every action is captured against the canonical party record.</p>
+
+      <h2 class="h3" id="common-tasks">Common tasks</h2>
       <div class="task-list">
-        <a href="#/docs/glass/task-kyc-review" class="task-item"><strong>Review KYC results →</strong><span>Triage the daily inbound queue.</span></a>
-        <a href="#/docs/glass/role-compliance" class="task-item"><strong>Approve high-risk customer →</strong><span>Four-eyes path for elevated risk.</span></a>
-        <a href="#/docs/glass/role-compliance" class="task-item"><strong>AML alert handling →</strong><span>Investigate, dismiss, or escalate.</span></a>
-        <a href="#/docs/glass/role-compliance" class="task-item"><strong>Sanctions screening →</strong><span>Hit review and disposition.</span></a>
+        <a href="#/docs/glass/task-kyc-review" class="task-item"><strong>Review KYC results →</strong><span>Triage the daily inbound queue. Inspect IDV and AML side by side and disposition each case.</span></a>
+        <a href="#/docs/glass/role-compliance" class="task-item"><strong>Approve high-risk customer →</strong><span>Four-eyes path for elevated risk customers, with mandatory rationale and audit trail.</span></a>
+        <a href="#/docs/glass/role-compliance" class="task-item"><strong>AML alert handling →</strong><span>Investigate, dismiss, or escalate AML watchlist hits from the connector feed.</span></a>
+        <a href="#/docs/glass/role-compliance" class="task-item"><strong>Sanctions screening →</strong><span>Hit review and disposition for sanctions matches across PEP and watchlist sources.</span></a>
+        <a href="#/docs/glass/role-compliance" class="task-item"><strong>Four-eyes approval →</strong><span>Counter-sign sensitive lifecycle changes initiated by another officer.</span></a>
       </div>
+
+      <h2 class="h3" id="permissions">Required permissions</h2>
+      <ul>
+        <li><code>compliance.kyc.review</code> — read and disposition KYC review tasks</li>
+        <li><code>compliance.kyc.approve</code> — approve or reject KYC outcomes</li>
+        <li><code>compliance.aml.review</code> — read and disposition AML alerts</li>
+        <li><code>compliance.sanctions.review</code> — review sanctions and PEP hits</li>
+        <li><code>compliance.foureyes</code> — counter-sign on four-eyes approvals</li>
+      </ul>
+
+      <h2 class="h3" id="modules">Module access</h2>
+      <ul>
+        <li><strong>Task Management</strong> — primary working surface; KYC, AML, and sanctions queues</li>
+        <li><strong>Customer &amp; Account Management</strong> — read access to canonical party and document records</li>
+        <li><strong>Incident &amp; Alert Centre</strong> — view AML/sanctions alerts and connector health</li>
+        <li><strong>Workflow Console</strong> — read-only view of in-flight onboarding and lifecycle workflows</li>
+      </ul>
     </main>
-    <aside class="docs-toc"><div class="toc-title">On this page</div><a href="#" class="toc-link">Common tasks</a><a href="#" class="toc-link">Permissions</a></aside>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#common-tasks" class="toc-link">Common tasks</a>
+      <a href="#permissions" class="toc-link">Required permissions</a>
+      <a href="#modules" class="toc-link">Module access</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glass/task-kyc-review" class="card card--link"><h3 class="card-title">Review KYC results →</h3><p class="card-text">Walk through the canonical KYC review task end-to-end.</p></a>
+      <a href="#/docs/glass" class="card card--link"><h3 class="card-title">Glass Operations Guide →</h3><p class="card-text">All roles, modules, and reference material in one place.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Onboarding journey (Glue) →</h3><p class="card-text">The upstream API path that produces the review tasks.</p></a>
+    </div></div></aside>
   </section>
 
+  <!-- DOCS: KYC review task walkthrough -->
   <section class="view" data-route="/docs/glass/task-kyc-review" data-layout="docs" data-section="glass" data-title="Review KYC Results — Glass">
-    <aside class="docs-sidebar"><div class="docs-nav"><div class="docs-nav-title">FinX Glass</div>
-      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Compliance Officer</a>
-      <div class="docs-nav-sub">
-        <a href="#/docs/glass/task-kyc-review" class="docs-nav-link docs-nav-link--sub is-active">Review KYC results</a>
-      </div>
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glass</div>
+      <a href="#/docs/glass" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">By role</div>
+      <a href="#/docs/glass" class="docs-nav-link">CSR / Ops Agent</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link is-active">Compliance Officer</a>
+      <a href="#/docs/glass" class="docs-nav-link">Supervisor</a>
+      <a href="#/docs/glass" class="docs-nav-link">Admin / Platform</a>
+
+      <div class="docs-nav-group">Compliance tasks</div>
+      <a href="#/docs/glass/task-kyc-review" class="docs-nav-link is-active">Review KYC results</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Approve high-risk customer</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">AML alert handling</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Sanctions screening</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Four-eyes approval</a>
+
+      <div class="docs-nav-group">Modules</div>
+      <a href="#/docs/glass" class="docs-nav-link">Customer &amp; Account Mgmt</a>
+      <a href="#/docs/glass" class="docs-nav-link">Task Management</a>
+      <a href="#/docs/glass" class="docs-nav-link">Workflow Console</a>
+      <a href="#/docs/glass" class="docs-nav-link">Incident &amp; Alert Centre</a>
+
+      <div class="docs-nav-group">Reference</div>
+      <a href="#/docs/glass" class="docs-nav-link">RBAC permissions</a>
+      <a href="#/docs/glass" class="docs-nav-link">FAQs</a>
     </div></aside>
     <main class="docs-main">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/docs/glass/role-compliance">Compliance Officer</a><span class="sep">/</span><a href="#/docs/glass/role-compliance">Compliance tasks</a><span class="sep">/</span><span>Review KYC results</span></nav>
+      <a href="#/docs/glass/role-compliance" class="back-link">← Back to Compliance Officer</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glass">Glass</a><span class="sep">/</span><a href="#/docs/glass/role-compliance">Compliance Officer</a><span class="sep">/</span><span>Review KYC results</span></nav>
       <h1 class="page-title">Reviewing KYC results for a new customer</h1>
       <div class="preview-tags"><span class="preview-tag">5 min read</span><span class="preview-tag">Module: Customer &amp; Account Mgmt</span></div>
-      <p class="page-lead">Triage the daily KYC review queue, inspect the IDV/AML evidence, and disposition each case.</p>
+      <p class="page-lead">Triage the daily KYC review queue, inspect IDV and AML evidence side by side, and disposition each case. This walkthrough covers the standard happy-path review for a new individual customer.</p>
+
+      <h2 class="h3" id="steps">Steps</h2>
       <ol class="step-list">
-        <li><strong>Open the Task Management console.</strong> The KYC review queue appears under <em>Compliance · Pending review</em>.</li>
-        <li><strong>Review the customer profile.</strong> Open a case to see the canonical party record, attached documents, IDV outcome, and AML hits side by side.</li>
-        <li><strong>Make your decision.</strong> Approve, request more information, or escalate for four-eyes review. Every action is captured in the audit trail.</li>
+        <li>
+          <strong>Open the Task Management console.</strong>
+          From the Glass home, select <em>Task Management → Compliance · Pending review</em>. The KYC review queue lists every party in <code>pending_kyc</code> state with completed IDV and AML evidence, sorted by SLA. Each row shows party reference, residency, risk band, and time in queue.
+        </li>
+        <li>
+          <strong>Review the customer profile.</strong>
+          Open a case to land on the <em>KYC tab</em> of the Customer &amp; Account Management module. The IDV outcome (document type, liveness score, match confidence) and the AML screening result (PEP hits, sanctions hits, adverse media) are shown side by side, with the canonical party record and attached documents one click away.
+        </li>
+        <li>
+          <strong>Make your decision.</strong>
+          Choose <em>Approve</em>, <em>Request more information</em>, or <em>Escalate to Supervisor</em>. Approve transitions the party to <code>active</code>; Request more information opens a templated message to the channel; Escalate routes the case to a four-eyes queue. Every action — and the rationale entered — is written to the audit trail.
+        </li>
       </ol>
-      <div class="callout callout--info"><strong>Permission required.</strong> <code>compliance.kyc.review</code> · escalations require <code>compliance.kyc.approve</code>.</div>
+
+      <div class="callout callout--info"><strong>Permission required.</strong> The <em>Compliance Officer</em> role is required to disposition KYC reviews. Approving a high-risk band customer additionally requires <code>compliance.foureyes</code>.</div>
+
+      <h2 class="h3" id="related">Related tasks</h2>
+      <div class="grid-3">
+        <a href="#/docs/glass/role-compliance" class="card card--link">
+          <div class="card-eyebrow">Compliance task</div>
+          <h3 class="card-title">Approve high-risk customer →</h3>
+          <p class="card-text">Four-eyes path for customers in the elevated risk band.</p>
+        </a>
+        <a href="#/docs/glass/role-compliance" class="card card--link">
+          <div class="card-eyebrow">Compliance task</div>
+          <h3 class="card-title">AML alert handling →</h3>
+          <p class="card-text">Disposition AML alerts raised after onboarding.</p>
+        </a>
+        <a href="#/docs/glass/role-compliance" class="card card--link">
+          <div class="card-eyebrow">Compliance task</div>
+          <h3 class="card-title">Sanctions screening →</h3>
+          <p class="card-text">Review and disposition sanctions and PEP hits.</p>
+        </a>
+      </div>
     </main>
-    <aside class="docs-toc"><div class="toc-title">On this page</div><a href="#" class="toc-link">Steps</a><a href="#" class="toc-link">Permissions</a></aside>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#steps" class="toc-link">Steps</a>
+      <a href="#" class="toc-link">Permissions</a>
+      <a href="#related" class="toc-link">Related tasks</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glass/role-compliance" class="card card--link"><h3 class="card-title">Compliance Officer role →</h3><p class="card-text">Permissions, modules, and the rest of the compliance task list.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Onboarding journey (Glue) →</h3><p class="card-text">How the IDV and AML signals you reviewed are produced upstream.</p></a>
+      <a href="#/docs/glass" class="card card--link"><h3 class="card-title">Glass Operations Guide →</h3><p class="card-text">Other roles and modules in the operations console.</p></a>
+    </div></div></aside>
   </section>
 
   <!-- INTERNAL (gated) -->
   <section class="view" data-route="/internal" data-gated="true" data-palette="internal" data-title="UST Internal Hub">
-    <div class="internal-stripe">UST Internal · Confidential</div>
+    <div class="internal-stripe">UST Internal · Confidential — This content is for UST employees only and is not visible to bank clients</div>
     <section class="page-hero">
       <div class="container">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><span>Internal</span> · <a href="#" data-action="signout">Sign out</a></nav>
+        <button type="button" class="signout-btn" data-action="signout" aria-label="Sign out of UST Internal">Sign out ↗</button>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><span>Internal</span></nav>
         <span class="eyebrow eyebrow--internal">UST Internal</span>
         <h1 class="page-title">UST FinX Internal Hub</h1>
-        <p class="page-lead">Engagement playbooks, sales enablement, architecture deep-dives, delivery references, client engagements, and product requirements. UST staff only.</p>
+        <p class="page-lead">Engagement playbooks, sales enablement, architecture deep-dives, delivery references, client engagements, and product requirements — everything UST teams need to position, design, and deliver FinX. UST staff only.</p>
       </div>
     </section>
-    <section class="section section--mid"><div class="container"><div class="grid-3">
-      <div class="card"><div class="card-eyebrow">Playbooks</div><h3 class="card-title">Engagement Playbooks</h3><p class="card-text">Greenfield, Coexistence, Progressive — structured engagement patterns.</p><div class="card-meta">12 playbooks · Last updated 22 Apr</div></div>
-      <div class="card"><div class="card-eyebrow">Sales</div><h3 class="card-title">Sales Enablement</h3><p class="card-text">Battle cards, ROI calculator, proposal templates.</p><div class="card-meta">28 assets</div></div>
-      <div class="card"><div class="card-eyebrow">Architecture</div><h3 class="card-title">Architecture Deep-Dives</h3><p class="card-text">Internal ADRs, design decisions, integration recipes.</p><div class="card-meta">40 documents</div></div>
-      <div class="card"><div class="card-eyebrow">Delivery</div><h3 class="card-title">Delivery References</h3><p class="card-text">Implementation patterns, integration recipes, runbooks.</p><div class="card-meta">22 references</div></div>
-      <div class="card"><div class="card-eyebrow">Engagements</div><h3 class="card-title">Client Engagements</h3><p class="card-text">Bank A, Bank C, plus active pipeline.</p><div class="card-meta">5 active</div></div>
-      <div class="card"><div class="card-eyebrow">Product</div><h3 class="card-title">Product Requirements</h3><p class="card-text">Roadmap items, RFCs, partner intakes.</p><div class="card-meta">14 in review</div></div>
-    </div></div></section>
+    <section class="section section--mid"><div class="container">
+      <div class="grid-3 internal-grid">
+        <a href="#" class="card card--link card--internal">
+          <div class="internal-icon" aria-hidden="true">📘</div>
+          <div class="card-eyebrow">Playbooks</div>
+          <h3 class="card-title">Engagement Playbooks</h3>
+          <p class="card-text">Greenfield, Coexistence, and Progressive engagement patterns with steering models, RACI, and phase gates.</p>
+          <div class="card-meta">12 playbooks · Last updated 22 Apr</div>
+        </a>
+        <a href="#" class="card card--link card--internal">
+          <div class="internal-icon" aria-hidden="true">📊</div>
+          <div class="card-eyebrow">Sales</div>
+          <h3 class="card-title">Sales Enablement</h3>
+          <p class="card-text">Battle cards, ROI calculator, proposal templates, and discovery scripts for bank conversations.</p>
+          <div class="card-meta">28 assets · Last updated 24 Apr</div>
+        </a>
+        <a href="#" class="card card--link card--internal">
+          <div class="internal-icon" aria-hidden="true">🏗</div>
+          <div class="card-eyebrow">Architecture</div>
+          <h3 class="card-title">Architecture Deep-Dives</h3>
+          <p class="card-text">Internal ADRs, BIAN service-domain mappings, integration recipes, and reference architectures.</p>
+          <div class="card-meta">47 ADRs · Last updated 18 Apr</div>
+        </a>
+        <a href="#" class="card card--link card--internal">
+          <div class="internal-icon" aria-hidden="true">🔧</div>
+          <div class="card-eyebrow">Delivery</div>
+          <h3 class="card-title">Delivery References</h3>
+          <p class="card-text">Implementation patterns, runbooks, environment topology, and partner integration playbooks.</p>
+          <div class="card-meta">34 references · Last updated 25 Apr</div>
+        </a>
+        <a href="#" class="card card--link card--internal">
+          <div class="internal-icon" aria-hidden="true">💼</div>
+          <div class="card-eyebrow">Engagements</div>
+          <h3 class="card-title">Client Engagements</h3>
+          <p class="card-text">Active and pipeline engagements with current phase, steering notes, and reference materials.</p>
+          <div class="card-meta">9 active · 3 in pipeline</div>
+        </a>
+        <a href="#" class="card card--link card--internal">
+          <div class="internal-icon" aria-hidden="true">📋</div>
+          <div class="card-eyebrow">Product</div>
+          <h3 class="card-title">Product Requirements</h3>
+          <p class="card-text">Roadmap items, RFCs, partner intakes, and prioritisation notes for upcoming FinX releases.</p>
+          <div class="card-meta">Roadmap Q3–Q4 2026</div>
+        </a>
+      </div>
+      <div class="internal-return"><a href="#/" class="back-link">← Return to public docs</a></div>
+    </div></section>
   </section>
 
   <!-- 404 -->
   <section class="view" data-route="*" data-title="Not found — UST FinX">
     <section class="page-hero"><div class="container">
       <span class="eyebrow">404</span>
-      <h1 class="page-title">That page does not exist.</h1>
-      <p class="page-lead">The route you followed isn't part of this mockup. <a href="#/">Return to the homepage →</a></p>
+      <h1 class="page-title">Page not found.</h1>
+      <p class="page-lead">The route you followed isn't part of this mockup. Try one of the popular pages below, or search for what you need.</p>
+      <div class="notfound-actions">
+        <a href="#/" class="btn btn-primary">Go to homepage →</a>
+        <button type="button" class="btn btn-secondary" data-action="open-search">Search for what you need</button>
+      </div>
+    </div></section>
+    <section class="section section--mid"><div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Popular pages</span>
+        <h2 class="h2">Where most people land.</h2>
+      </div>
+      <div class="grid-3 notfound-suggest">
+        <a href="#/" class="card card--link"><div class="card-eyebrow">Start here</div><h3 class="card-title">Homepage →</h3><p class="card-text">The platform overview, target architecture, and modernization paths in one page.</p></a>
+        <a href="#/platform" class="card card--link"><div class="card-eyebrow">Platform</div><h3 class="card-title">Glue &amp; Glass →</h3><p class="card-text">The orchestration layer and the operations console that sit on top of it.</p></a>
+        <a href="#/docs/glue" class="card card--link"><div class="card-eyebrow">Documentation</div><h3 class="card-title">Developer hub →</h3><p class="card-text">API reference, journey guides, and concepts for the Glue platform.</p></a>
+      </div>
     </div></section>
   </section>
 
@@ -1931,12 +3259,27 @@
           </ul>
         </div>
       </div>
+
+      <!-- Newsletter signup (decorative) -->
+      <div class="footer-newsletter" id="footer-newsletter">
+        <div class="footer-newsletter-copy">
+          <div class="nl-title">Stay informed about FinX updates.</div>
+          <div class="nl-sub">White papers, release notes, and engagement insights — quarterly, no spam.</div>
+        </div>
+        <form class="footer-newsletter-form" id="footer-newsletter-form" autocomplete="off">
+          <label class="visually-hidden" for="nl-email" style="position:absolute;left:-10000px;">Email address</label>
+          <input id="nl-email" type="email" placeholder="Your work email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="nl-thanks">Thanks for subscribing. We'll be in touch.</div>
+      </div>
+
       <div class="footer-bottom">
         <div>© 2026 UST Global. All rights reserved.</div>
         <div class="footer-legal">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Security</a>
+          <a href="#/resources">Privacy</a>
+          <a href="#/resources">Terms</a>
+          <a href="#/resources">Security</a>
         </div>
         <div class="footer-staff">
           <a href="#" id="staff-signin-link" data-action="signin">UST staff sign in →</a>
@@ -1948,13 +3291,45 @@
   <!-- 6.10 State indicator -->
   <div class="state-indicator" id="state-indicator">
     <span class="dot"></span>
-    <span class="state-label">Public view (no sign-in)</span>
+    <span class="state-label">Public view</span>
+  </div>
+
+  <!-- Search modal (decorative, Cmd/Ctrl+K) -->
+  <div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-labelledby="search-modal-input" aria-hidden="true">
+    <div class="search-modal">
+      <div class="search-modal-input-wrap">
+        <span class="ico" aria-hidden="true">⌕</span>
+        <input id="search-modal-input" class="search-modal-input" type="search" placeholder="Search documentation" autocomplete="off">
+        <span class="kbd">esc</span>
+      </div>
+      <div class="search-modal-section">
+        <div class="search-modal-eyebrow">Recent pages</div>
+        <ul class="search-modal-list">
+          <li><a href="#/architecture"><span class="pre">ARCH</span><span>Why BIAN. Why composable. Why now.</span></a></li>
+          <li><a href="#/docs/glue/journey-onboarding"><span class="pre">DOCS</span><span>Customer Onboarding &amp; KYC journey</span></a></li>
+          <li><a href="#/modernization/coexistence"><span class="pre">PATH</span><span>Coexistence — Glue alongside legacy core</span></a></li>
+        </ul>
+      </div>
+      <div class="search-modal-section">
+        <div class="search-modal-eyebrow">Popular searches</div>
+        <ul class="search-modal-list">
+          <li><a href="#/docs/glue/api-reference"><span class="pre">API</span><span>POST /v1/parties/initiate</span></a></li>
+          <li><a href="#/docs/glass/role-compliance"><span class="pre">GLASS</span><span>Compliance Officer permissions</span></a></li>
+          <li><a href="#/use-cases"><span class="pre">CASE</span><span>AI-powered customer onboarding</span></a></li>
+          <li><a href="#/resources"><span class="pre">FAQ</span><span>Is FinX a core banking system?</span></a></li>
+        </ul>
+      </div>
+      <div class="search-modal-footer">
+        <span class="cmdk-hint"><span class="kbd">↵</span> to open</span>
+        <span class="cmdk-hint"><span class="kbd">⌘</span><span class="kbd">K</span> to toggle</span>
+      </div>
+    </div>
   </div>
 
   <!-- 6.7 Sign-in modal -->
   <div id="signin-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signin-title" aria-hidden="true">
     <div class="modal">
-      <button class="modal-close" type="button" aria-label="Close sign-in dialog">×</button>
+      <button class="modal-close" type="button" aria-label="Close sign-in dialog">&times;</button>
       <div class="modal-header">
         <div class="modal-title" id="signin-title">UST Staff Sign In</div>
         <div class="modal-sub">Access internal engagement playbooks, sales enablement, and architecture references.</div>
@@ -1974,5 +3349,118 @@
   </div>
 
   <script src="assets/js/main.js" defer></script>
+  <script>
+    /* Docs page interactions: response-tab switching + copy buttons. */
+    document.addEventListener('click', function (e) {
+      var tab = e.target.closest && e.target.closest('.resp-tab');
+      if (tab) {
+        var key = tab.getAttribute('data-resp');
+        var scope = tab.closest('.docs-main') || document;
+        scope.querySelectorAll('.resp-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-resp') === key); });
+        scope.querySelectorAll('.resp-panel').forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-resp') === key); });
+        return;
+      }
+      var copyBtn = e.target.closest && e.target.closest('.code-copy');
+      if (copyBtn) {
+        var pre = copyBtn.closest('.code-panel') && copyBtn.closest('.code-panel').querySelector('pre');
+        if (pre && navigator.clipboard) {
+          navigator.clipboard.writeText(pre.innerText).then(function () {
+            var orig = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            setTimeout(function () { copyBtn.textContent = orig; }, 1400);
+          }).catch(function () { /* no-op */ });
+        }
+      }
+    });
+
+    /* ---------------------------------------------------------------
+       Polish pass: search modal (Cmd/Ctrl+K), newsletter, A-Z jump,
+       404 "Search" trigger.
+       --------------------------------------------------------------- */
+    (function () {
+      var overlay = document.getElementById('search-overlay');
+      var input   = document.getElementById('search-modal-input');
+
+      function openSearch() {
+        if (!overlay) return;
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        if (input) setTimeout(function () { input.focus(); input.select(); }, 30);
+      }
+      function closeSearch() {
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+      }
+
+      // Cmd/Ctrl + K toggles search
+      document.addEventListener('keydown', function (e) {
+        var meta = e.metaKey || e.ctrlKey;
+        if (meta && (e.key === 'k' || e.key === 'K')) {
+          e.preventDefault();
+          if (overlay && overlay.classList.contains('active')) closeSearch();
+          else openSearch();
+          return;
+        }
+        if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
+          closeSearch();
+        }
+      });
+      // Click outside closes
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) closeSearch();
+        });
+        // Closing when a result is clicked
+        overlay.addEventListener('click', function (e) {
+          var a = e.target.closest && e.target.closest('a');
+          if (a) closeSearch();
+        });
+      }
+      // Top-nav fake search input opens modal on focus
+      var navSearch = document.getElementById('nav-search');
+      if (navSearch) {
+        navSearch.addEventListener('focus', function (e) {
+          e.preventDefault();
+          navSearch.blur();
+          openSearch();
+        });
+      }
+      // 404 "Search for what you need" button + any data-action="open-search"
+      document.addEventListener('click', function (e) {
+        var t = e.target.closest && e.target.closest('[data-action="open-search"]');
+        if (t) { e.preventDefault(); openSearch(); }
+      });
+
+      /* Newsletter (decorative) */
+      var nlForm = document.getElementById('footer-newsletter-form');
+      var nlWrap = document.getElementById('footer-newsletter');
+      if (nlForm && nlWrap) {
+        nlForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          nlWrap.classList.add('is-subscribed');
+        });
+      }
+
+      /* A-Z jump scrolls to first glossary term starting with that letter */
+      var az = document.getElementById('glossary-az');
+      if (az) {
+        az.addEventListener('click', function (e) {
+          var btn = e.target.closest && e.target.closest('button[data-az]');
+          if (!btn || btn.disabled) return;
+          var letter = btn.getAttribute('data-az').toLowerCase();
+          var section = btn.closest('section');
+          var terms = section ? section.querySelectorAll('.glossary-term dt') : [];
+          for (var i = 0; i < terms.length; i++) {
+            var first = (terms[i].textContent || '').trim().charAt(0).toLowerCase();
+            if (first === letter) {
+              terms[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+              return;
+            }
+          }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
