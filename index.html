@@ -865,7 +865,7 @@
   <!-- ============================================================ -->
   <!-- VIEW: Homepage                                               -->
   <!-- ============================================================ -->
-  <section class="view view--home is-active" data-route="/" data-title="UST FinX · Composable Banking at Scale">
+  <section class="view view--home is-active" data-route="/" data-title="Composable Banking at Scale · UST FinX">
 
   <!-- 1. Hero -->
   <section class="hero" id="top">
@@ -1840,7 +1840,7 @@
   <!-- ============================================================ -->
   <!-- VIEW: #/architecture  (PRIORITY 3)                           -->
   <!-- ============================================================ -->
-  <section class="view" data-route="/architecture" data-title="Architecture & BIAN · UST FinX">
+  <section class="view" data-route="/architecture" data-title="Architecture · UST FinX">
     <section class="page-hero">
       <div class="x-watermark x-watermark--small" aria-hidden="true">X</div>
       <div class="container">
@@ -2289,7 +2289,7 @@
   <!-- ============================================================ -->
   <!-- VIEW: #/modernization/progressive                            -->
   <!-- ============================================================ -->
-  <section class="view" data-route="/modernization/progressive" data-title="Progressive Modernization · UST FinX">
+  <section class="view" data-route="/modernization/progressive" data-title="Progressive · UST FinX">
     <section class="page-hero"><div class="container">
       <a href="#/modernization" class="back-link">← Back to Modernization</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/modernization">Modernization</a><span class="sep">/</span><span>Progressive</span></nav>
@@ -2646,8 +2646,8 @@
 
       <div class="docs-nav-group">Get started</div>
       <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Authentication setup, OAuth flows, and tenant header reference">Auth &amp; tenant headers</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Sandbox, integration, and production environment setup">Environments</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
 
       <div class="docs-nav-group">Concepts</div>
       <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
@@ -2755,15 +2755,15 @@
   </section>
 
   <!-- DOCS: Glue Quickstart -->
-  <section class="view" data-route="/docs/glue/quickstart" data-layout="docs" data-section="glue" data-title="Quickstart · Glue">
+  <section class="view" data-route="/docs/glue/quickstart" data-layout="docs" data-section="glue" data-title="Quickstart · Glue Developer Hub · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
 
       <div class="docs-nav-group">Get started</div>
       <a href="#/docs/glue/quickstart" class="docs-nav-link is-active">Quickstart</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Authentication setup, OAuth flows, and tenant header reference">Auth &amp; tenant headers</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Sandbox, integration, and production environment setup">Environments</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
 
       <div class="docs-nav-group">Concepts</div>
       <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
@@ -2923,7 +2923,7 @@ Content-Type: application/json</code></pre>
           <h3 class="card-title">API Reference →</h3>
           <p class="card-text">Every endpoint, parameter, and response shape in the canonical Glue surface.</p>
         </a>
-        <a href="#/docs/glue" class="card card--link" title="Planned: Sandbox, integration, and production environment setup">
+        <a href="#/docs/glue/environments" class="card card--link">
           <div class="card-eyebrow">Configuration</div>
           <h3 class="card-title">Environments →</h3>
           <p class="card-text">Sandbox, integration, and production environment setup and connector configuration.</p>
@@ -2946,16 +2946,230 @@ Content-Type: application/json</code></pre>
     </div></div></aside>
   </section>
 
-  <!-- DOCS: Customer Onboarding journey -->
-  <section class="view" data-route="/docs/glue/journey-onboarding" data-layout="docs" data-section="glue" data-title="Customer Onboarding & KYC · Glue">
+  <!-- DOCS: Glue Authentication -->
+  <section class="view" data-route="/docs/glue/auth" data-layout="docs" data-section="glue" data-title="Authentication · Glue Developer Hub · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
 
       <div class="docs-nav-group">Get started</div>
       <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Authentication setup, OAuth flows, and tenant header reference">Auth &amp; tenant headers</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Sandbox, integration, and production environment setup">Environments</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link is-active">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Account Management API reference">Account Management</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Payments API reference">Payments</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Document Directory API reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue" class="back-link">← Back to Glue Developer Hub</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue">Get started</a><span class="sep">/</span><span>Auth &amp; tenant headers</span></nav>
+      <span class="eyebrow">Get started</span>
+      <h1 class="page-title">Authentication and tenant headers</h1>
+      <p class="page-lead">Glue uses OAuth2 client credentials with tenant-scoped tokens. This page covers the full authentication flow, the required headers on every request, and how multi-tenant isolation works at the API surface.</p>
+
+      <h2 class="h3" id="oauth2">OAuth2 client credentials</h2>
+      <p>Every Glue integration is backed by a registered OAuth2 client. The client exchanges its ID and secret for a short-lived access token at the tenant token endpoint, then sends that token on every API call.</p>
+      <div class="code-panel">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <div class="code-language">cURL</div>
+          <button class="code-copy" type="button">Copy</button>
+        </div>
+        <pre><code>curl -X POST https://auth.sandbox.ustfinx.com/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=$CLIENT_ID" \
+  -d "client_secret=$CLIENT_SECRET" \
+  -d "scope=glue:read glue:write"</code></pre>
+      </div>
+
+      <h2 class="h3" id="token-scope">Token scope and expiry</h2>
+      <p>Access tokens are valid for one hour. Request only the scopes you need: <code>glue:read</code> for read-only callers, <code>glue:write</code> for write-capable integrations, plus domain-specific scopes such as <code>glue:payments</code> when relevant.</p>
+      <p>Refresh proactively by exchanging client credentials again before the existing token expires. Never wait for a 401 in production: the round trip costs the customer-facing latency budget.</p>
+      <div class="callout callout--info"><strong>Caching guidance.</strong> Cache access tokens at the integration layer with a TTL of 50 minutes. If your service is multi-instance, share the cache through Redis or an equivalent so you do not mint a token per pod.</div>
+
+      <h2 class="h3" id="required-headers">Required headers on every request</h2>
+      <ul>
+        <li><code>Authorization: Bearer &lt;token&gt;</code>: The access token from the OAuth2 exchange.</li>
+        <li><code>X-Tenant: &lt;tenant-id&gt;</code>: Identifies which bank tenant the request applies to. Required even when the token is single-tenant, for explicit isolation.</li>
+        <li><code>Idempotency-Key: &lt;uuid&gt;</code>: Required on all writes. Glue stores the response for 24 hours so retries return the original result without duplicating side effects.</li>
+        <li><code>Content-Type: application/json</code>: All request and response bodies are JSON.</li>
+      </ul>
+
+      <h2 class="h3" id="multi-tenant">Multi-tenant isolation</h2>
+      <p>Glue is built for multi-tenant operation. Tokens, data, configuration, connectors, and audit trails are all scoped to a tenant. Cross-tenant reads are not possible through the canonical API surface.</p>
+      <p>What crosses the tenant boundary: platform release notes, shared connector versions, the BIAN canonical model itself. What does not: any customer data, party records, account records, document references, audit events, or operator activity.</p>
+
+      <h2 class="h3" id="errors">Errors and recovery</h2>
+      <ul>
+        <li><strong>401 Unauthorized</strong>: Token missing, malformed, or expired. Refresh and retry.</li>
+        <li><strong>403 Forbidden</strong>: Token is valid but lacks the required scope, or the X-Tenant header does not match the token's tenant. Check scope grants in client registration.</li>
+        <li><strong>409 Conflict (idempotency)</strong>: A request with the same Idempotency-Key has already completed with a different body. Generate a new key for genuinely new requests; reuse the original key for safe retries.</li>
+        <li><strong>429 Too Many Requests</strong>: Tenant rate limit hit. Honour the <code>Retry-After</code> header.</li>
+      </ul>
+
+      <h2 class="h3" id="related">Related</h2>
+      <div class="grid-3">
+        <a href="#/docs/glue/quickstart" class="card card--link">
+          <div class="card-eyebrow">Get started</div>
+          <h3 class="card-title">Quickstart →</h3>
+          <p class="card-text">Five-step walkthrough from token to first webhook delivery.</p>
+        </a>
+        <a href="#/docs/glue/environments" class="card card--link">
+          <div class="card-eyebrow">Get started</div>
+          <h3 class="card-title">Environments →</h3>
+          <p class="card-text">Sandbox, integration, pre-production, and production base URLs.</p>
+        </a>
+        <a href="#/docs/glue/api-reference" class="card card--link">
+          <div class="card-eyebrow">Reference</div>
+          <h3 class="card-title">API Reference →</h3>
+          <p class="card-text">The full canonical surface, endpoint by endpoint.</p>
+        </a>
+      </div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#oauth2" class="toc-link">OAuth2 client credentials</a>
+      <a href="#token-scope" class="toc-link">Token scope and expiry</a>
+      <a href="#required-headers" class="toc-link">Required headers</a>
+      <a href="#multi-tenant" class="toc-link">Multi-tenant isolation</a>
+      <a href="#errors" class="toc-link">Errors and recovery</a>
+      <a href="#related" class="toc-link">Related</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/quickstart" class="card card--link"><h3 class="card-title">Quickstart →</h3><p class="card-text">Five-step walkthrough from token to first webhook delivery.</p></a>
+      <a href="#/docs/glue/environments" class="card card--link"><h3 class="card-title">Environments →</h3><p class="card-text">Sandbox, integration, pre-production, and production.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Overview, featured journeys, and API surfaces at a glance.</p></a>
+    </div></div></aside>
+  </section>
+
+  <!-- DOCS: Glue Environments -->
+  <section class="view" data-route="/docs/glue/environments" data-layout="docs" data-section="glue" data-title="Environments · Glue Developer Hub · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link is-active">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Account Management API reference">Account Management</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Payments API reference">Payments</a>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Document Directory API reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue" class="back-link">← Back to Glue Developer Hub</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue">Get started</a><span class="sep">/</span><span>Environments</span></nav>
+      <span class="eyebrow">Get started</span>
+      <h1 class="page-title">Environments</h1>
+      <p class="page-lead">FinX Glue runs in three environments: sandbox, integration, and production. Each has different data semantics, connector behaviour, and rate limits. Pick the right environment for the work you are doing.</p>
+
+      <h2 class="h3" id="sandbox">Sandbox</h2>
+      <p>Synthetic data only. IDV and AML connectors return deterministic outcomes keyed off the input payload, so end-to-end testing is reproducible without depending on third-party fintechs. No customer data, no real money movement, no production traffic. Free for any registered partner. The right place for early development, exploration, and CI integration tests.</p>
+
+      <h2 class="h3" id="integration">Integration</h2>
+      <p>Shared environment for partner testing across UST and bank teams. Anonymised data with realistic scale and shape. Near-production rate limits. Connectors point at vendor sandboxes (Jumio sandbox, ComplyAdvantage test, and so on). Ideal for partner integration testing, pre-UAT smoke runs, and performance shake-out.</p>
+
+      <h2 class="h3" id="preproduction">Pre-production</h2>
+      <p>Mirrors production architecturally. Tenant-isolated per bank. Used for user acceptance testing, soak testing, and dry-run cutover rehearsals. Connectors can be configured to point at production fintech endpoints with throttled traffic, or to vendor staging environments.</p>
+
+      <h2 class="h3" id="production">Production</h2>
+      <p>Real customer data, real money movement. Audit-tracked, regulated, and operated under the bank's compliance regime. Production access is gated and provisioned per tenant by UST and the bank's platform team. Production tokens cannot be minted from sandbox client registrations; environments are fully separated at the auth boundary.</p>
+
+      <h2 class="h3" id="promotion">Promotion path</h2>
+      <p>Code, configuration, and connector versions move through the environments in the same order: sandbox to integration to pre-production to production. Each promotion is a deliberate step: artefacts are versioned, signed, and tracked. There is no automatic promotion from sandbox to production; pre-production is always the gate before production release.</p>
+
+      <h2 class="h3" id="urls">Environment-specific URLs</h2>
+      <table class="comparison" style="margin-top:8px;">
+        <thead>
+          <tr><th scope="col">Environment</th><th scope="col">API base</th><th scope="col">Auth base</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sandbox</td><td><code>api.sandbox.ustfinx.com</code></td><td><code>auth.sandbox.ustfinx.com</code></td></tr>
+          <tr><td>Integration</td><td><code>api.integration.ustfinx.com</code></td><td><code>auth.integration.ustfinx.com</code></td></tr>
+          <tr><td>Pre-production</td><td><code>api.preprod.&lt;tenant&gt;.ustfinx.com</code></td><td><code>auth.preprod.&lt;tenant&gt;.ustfinx.com</code></td></tr>
+          <tr><td>Production</td><td><code>api.&lt;tenant&gt;.ustfinx.com</code></td><td><code>auth.&lt;tenant&gt;.ustfinx.com</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="h3" id="related">Related</h2>
+      <div class="grid-3">
+        <a href="#/docs/glue/auth" class="card card--link">
+          <div class="card-eyebrow">Get started</div>
+          <h3 class="card-title">Authentication →</h3>
+          <p class="card-text">OAuth2 flow, required headers, and tenant isolation.</p>
+        </a>
+        <a href="#/docs/glue/quickstart" class="card card--link">
+          <div class="card-eyebrow">Get started</div>
+          <h3 class="card-title">Quickstart →</h3>
+          <p class="card-text">Five-step walkthrough from token to first webhook delivery.</p>
+        </a>
+        <a href="#/docs/glue" class="card card--link">
+          <div class="card-eyebrow">Hub</div>
+          <h3 class="card-title">Glue Developer Hub →</h3>
+          <p class="card-text">Overview, featured journeys, and API surfaces.</p>
+        </a>
+      </div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#sandbox" class="toc-link">Sandbox</a>
+      <a href="#integration" class="toc-link">Integration</a>
+      <a href="#preproduction" class="toc-link">Pre-production</a>
+      <a href="#production" class="toc-link">Production</a>
+      <a href="#promotion" class="toc-link">Promotion path</a>
+      <a href="#urls" class="toc-link">Environment URLs</a>
+      <a href="#related" class="toc-link">Related</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/auth" class="card card--link"><h3 class="card-title">Authentication →</h3><p class="card-text">OAuth2 flow, required headers, and tenant isolation.</p></a>
+      <a href="#/docs/glue/quickstart" class="card card--link"><h3 class="card-title">Quickstart →</h3><p class="card-text">Five-step walkthrough from token to first webhook.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Overview and journey guides.</p></a>
+    </div></div></aside>
+  </section>
+
+  <!-- DOCS: Customer Onboarding journey -->
+  <section class="view" data-route="/docs/glue/journey-onboarding" data-layout="docs" data-section="glue" data-title="Customer onboarding &amp; KYC · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
 
       <div class="docs-nav-group">Concepts</div>
       <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
@@ -3051,15 +3265,15 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: API reference (Create party) -->
-  <section class="view" data-route="/docs/glue/api-reference" data-layout="docs" data-section="glue" data-title="API Reference · Glue">
+  <section class="view" data-route="/docs/glue/api-reference" data-layout="docs" data-section="glue" data-title="API Reference · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
 
       <div class="docs-nav-group">Get started</div>
       <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Authentication setup, OAuth flows, and tenant header reference">Auth &amp; tenant headers</a>
-      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Sandbox, integration, and production environment setup">Environments</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
 
       <div class="docs-nav-group">Concepts</div>
       <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
@@ -3223,7 +3437,7 @@ Content-Type: application/json</code></pre>
       <a href="#/docs/glass" class="docs-nav-link is-active">Overview</a>
 
       <div class="docs-nav-group">By role</div>
-      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Customer Service Representative role guide">CSR / Ops Agent</a>
+      <a href="#/docs/glass/role-csr" class="docs-nav-link">CSR / Ops Agent</a>
       <a href="#/docs/glass/role-compliance" class="docs-nav-link">Compliance Officer</a>
       <a href="#/docs/glass" class="docs-nav-link" title="Planned: Supervisor role guide">Supervisor</a>
       <a href="#/docs/glass" class="docs-nav-link" title="Planned: Platform Admin role guide">Admin / Platform</a>
@@ -3304,14 +3518,106 @@ Content-Type: application/json</code></pre>
     </div></div></aside>
   </section>
 
-  <!-- DOCS: Compliance Officer role -->
-  <section class="view" data-route="/docs/glass/role-compliance" data-layout="docs" data-section="glass" data-title="Compliance Officer · Glass">
+  <!-- DOCS: CSR / Ops Agent role -->
+  <section class="view" data-route="/docs/glass/role-csr" data-layout="docs" data-section="glass" data-title="CSR / Ops Agent · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link">Overview</a>
 
       <div class="docs-nav-group">By role</div>
-      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Customer Service Representative role guide">CSR / Ops Agent</a>
+      <a href="#/docs/glass/role-csr" class="docs-nav-link is-active">CSR / Ops Agent</a>
+      <a href="#/docs/glass/role-compliance" class="docs-nav-link">Compliance Officer</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Supervisor role guide">Supervisor</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Platform Admin role guide">Admin / Platform</a>
+
+      <div class="docs-nav-group">Compliance tasks</div>
+      <a href="#/docs/glass/task-kyc-review" class="docs-nav-link">Review KYC results</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Four-eyes approval task for high-risk customers">Approve high-risk customer</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: AML alert investigation and disposition">AML alert handling</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Sanctions and PEP hit review">Sanctions screening</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Counter-signing sensitive lifecycle changes">Four-eyes approval</a>
+
+      <div class="docs-nav-group">Modules</div>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Customer &amp; Account Management module reference">Customer &amp; Account Mgmt</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Task Management module reference">Task Management</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Workflow Console module reference">Workflow Console</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Incident &amp; Alert Centre module reference">Incident &amp; Alert Centre</a>
+
+      <div class="docs-nav-group">Reference</div>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Full RBAC permission reference for all roles">RBAC permissions</a>
+      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Glass operations FAQs">FAQs</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glass" class="back-link">← Back to Glass Operations Guide</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glass">Glass Operations Guide</a><span class="sep">/</span><span>By role</span><span class="sep">/</span><span>CSR / Ops Agent</span></nav>
+      <h1 class="page-title">CSR / Ops Agent</h1>
+      <p class="page-lead">The Customer Service Representative is the front-line operator. They handle customer enquiries, lifecycle changes, dispute intake, and day-to-day account servicing. CSRs work primarily in the Customer &amp; Account Management module with the Task Management queue feeding them inbound work.</p>
+
+      <h2 class="h3" id="common-tasks">Common tasks</h2>
+      <div class="task-list">
+        <a href="#/docs/glass" class="task-item" title="Planned: Customer enquiries task walkthrough"><strong>Customer enquiries →</strong><span>Look up a customer, review canonical state, answer questions about accounts, transactions, and lifecycle status.</span></a>
+        <a href="#/docs/glass" class="task-item" title="Planned: Update customer details task walkthrough"><strong>Update customer details →</strong><span>Update name, address, contact, or preferences with audit-tracked, canonical writes.</span></a>
+        <a href="#/docs/glass" class="task-item" title="Planned: Account servicing task walkthrough"><strong>Account servicing →</strong><span>Routine servicing actions: statements, beneficiaries, standing orders, account state changes.</span></a>
+        <a href="#/docs/glass" class="task-item" title="Planned: Dispute intake task walkthrough"><strong>Dispute intake →</strong><span>Capture transaction disputes against the canonical record and route to the dispute workflow.</span></a>
+        <a href="#/docs/glass" class="task-item" title="Planned: Card servicing task walkthrough"><strong>Card servicing →</strong><span>Block, replace, reissue, or update PIN on cards with the appropriate four-eyes flow where required.</span></a>
+      </div>
+
+      <h2 class="h3" id="permissions">Required permissions</h2>
+      <ul>
+        <li><code>csr.customer.read</code>: read canonical customer and account records</li>
+        <li><code>csr.customer.update</code>: update customer details with audit tracking</li>
+        <li><code>csr.account.servicing</code>: routine account servicing operations</li>
+        <li><code>csr.dispute.create</code>: open transaction dispute cases</li>
+        <li><code>csr.card.servicing</code>: card lifecycle actions (block, replace, reissue, PIN)</li>
+      </ul>
+
+      <h2 class="h3" id="modules">Module access</h2>
+      <ul>
+        <li><strong>Customer &amp; Account Management</strong>: primary working surface; full read and scoped-write access to canonical records</li>
+        <li><strong>Task Management</strong>: read and write access to the agent's own queue, including reassignment within the team</li>
+        <li><strong>Workflow Console</strong>: read-only view of in-flight workflows the agent has touched</li>
+      </ul>
+
+      <h2 class="h3" id="related">Related</h2>
+      <div class="grid-3">
+        <a href="#/docs/glass/role-compliance" class="card card--link">
+          <div class="card-eyebrow">Role</div>
+          <h3 class="card-title">Compliance Officer →</h3>
+          <p class="card-text">The role downstream of CSR for KYC, AML, and four-eyes governance.</p>
+        </a>
+        <a href="#/docs/glass" class="card card--link">
+          <div class="card-eyebrow">Hub</div>
+          <h3 class="card-title">Glass Operations Guide →</h3>
+          <p class="card-text">All roles, modules, and reference material in one place.</p>
+        </a>
+        <a href="#/docs/glue/journey-onboarding" class="card card--link">
+          <div class="card-eyebrow">Glue</div>
+          <h3 class="card-title">Customer onboarding journey →</h3>
+          <p class="card-text">The upstream API path producing the customer records CSRs service.</p>
+        </a>
+      </div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#common-tasks" class="toc-link">Common tasks</a>
+      <a href="#permissions" class="toc-link">Required permissions</a>
+      <a href="#modules" class="toc-link">Module access</a>
+      <a href="#related" class="toc-link">Related</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glass/role-compliance" class="card card--link"><h3 class="card-title">Compliance Officer →</h3><p class="card-text">Downstream role for KYC, AML, and four-eyes governance.</p></a>
+      <a href="#/docs/glass" class="card card--link"><h3 class="card-title">Glass Operations Guide →</h3><p class="card-text">All roles, modules, and reference material.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Onboarding journey (Glue) →</h3><p class="card-text">Upstream API path for the records CSRs service.</p></a>
+    </div></div></aside>
+  </section>
+
+  <!-- DOCS: Compliance Officer role -->
+  <section class="view" data-route="/docs/glass/role-compliance" data-layout="docs" data-section="glass" data-title="Compliance Officer · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glass</div>
+      <a href="#/docs/glass" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">By role</div>
+      <a href="#/docs/glass/role-csr" class="docs-nav-link">CSR / Ops Agent</a>
       <a href="#/docs/glass/role-compliance" class="docs-nav-link is-active">Compliance Officer</a>
       <a href="#/docs/glass" class="docs-nav-link" title="Planned: Supervisor role guide">Supervisor</a>
       <a href="#/docs/glass" class="docs-nav-link" title="Planned: Platform Admin role guide">Admin / Platform</a>
@@ -3378,13 +3684,13 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: KYC review task walkthrough -->
-  <section class="view" data-route="/docs/glass/task-kyc-review" data-layout="docs" data-section="glass" data-title="Review KYC Results · Glass">
+  <section class="view" data-route="/docs/glass/task-kyc-review" data-layout="docs" data-section="glass" data-title="Reviewing KYC results · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link">Overview</a>
 
       <div class="docs-nav-group">By role</div>
-      <a href="#/docs/glass" class="docs-nav-link" title="Planned: Customer Service Representative role guide">CSR / Ops Agent</a>
+      <a href="#/docs/glass/role-csr" class="docs-nav-link">CSR / Ops Agent</a>
       <a href="#/docs/glass/role-compliance" class="docs-nav-link is-active">Compliance Officer</a>
       <a href="#/docs/glass" class="docs-nav-link" title="Planned: Supervisor role guide">Supervisor</a>
       <a href="#/docs/glass" class="docs-nav-link" title="Planned: Platform Admin role guide">Admin / Platform</a>
@@ -3463,7 +3769,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- INTERNAL (gated) -->
-  <section class="view" data-route="/internal" data-gated="true" data-palette="internal" data-title="UST Internal Hub">
+  <section class="view" data-route="/internal" data-gated="true" data-palette="internal" data-title="UST Internal Hub · UST FinX">
     <div class="internal-stripe">UST Internal · Confidential. This content is for UST employees only and is not visible to bank clients</div>
     <section class="page-hero">
       <div class="container">
@@ -3524,7 +3830,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- 404 -->
-  <section class="view" data-route="*" data-title="Not found · UST FinX">
+  <section class="view" data-route="*" data-title="Page not found · UST FinX">
     <section class="page-hero"><div class="container">
       <span class="eyebrow">404</span>
       <h1 class="page-title">Page not found.</h1>

@@ -155,10 +155,26 @@ a:hover {
   color: var(--cyan-bright);
 }
 
-/* Placeholder links: dotted underline on hover signals "Planned:" tooltip */
+/* Placeholder links: visual cue + dotted underline on hover signals "Planned:" tooltip */
+a[title^="Planned:"] {
+  cursor: help;
+  position: relative;
+}
+a[title^="Planned:"]::after {
+  content: "○";
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 0.75em;
+  color: var(--text-muted);
+  vertical-align: super;
+  opacity: 0.7;
+}
 a[title^="Planned:"]:hover {
   text-decoration: underline dotted;
   text-underline-offset: 3px;
+}
+a[title^="Planned:"]:hover::after {
+  opacity: 1;
 }
 
 button {
