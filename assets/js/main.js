@@ -62,14 +62,11 @@
     var view = findView(route);
     if (!view) return;
 
-    // Gate check for internal routes
+    // Gate check for internal routes: keep the URL on the gated route
+    // but render the homepage underneath while the sign-in modal is open.
     if (view.getAttribute('data-gated') === 'true' && !isUnlocked()) {
-      // Bounce to homepage and open sign-in modal
-      if (location.hash !== '#/') {
-        location.hash = '#/';
-      } else {
-        showView(findView(DEFAULT_ROUTE));
-      }
+      var home = findView(DEFAULT_ROUTE);
+      if (home) showView(home);
       setTimeout(openModal, 30);
       return;
     }
@@ -147,7 +144,16 @@
       try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
       closeModal();
       updateStateIndicator();
-      location.hash = '#/internal';
+      updateStaffLinks();
+      // If the URL already targets a gated route, render it now.
+      // Otherwise, send the user into the internal hub.
+      var parsed = parseHash();
+      var target = findView(parsed.route);
+      if (target && target.getAttribute('data-gated') === 'true') {
+        showView(target);
+      } else {
+        location.hash = '#/internal';
+      }
     } else if (err) {
       err.textContent = 'Incorrect password. Try the demo password shown below.';
     }
@@ -156,7 +162,20 @@
   function signOut() {
     try { sessionStorage.removeItem(STORAGE_KEY); } catch (_) {}
     updateStateIndicator();
+    updateStaffLinks();
     location.hash = '#/';
+  }
+
+  // ---------- Staff-link state (top nav + footer) ----------
+  function updateStaffLinks() {
+    var unlocked = isUnlocked();
+    $$('.nav-staff-link').forEach(function (a) {
+      a.classList.toggle('is-unlocked', unlocked);
+      a.textContent = unlocked ? 'UST Internal \u2713' : 'UST staff \u2197';
+      a.setAttribute('title', unlocked
+        ? 'Signed in. Open the Internal Hub.'
+        : 'UST employees: access internal playbooks, sales enablement, and architecture references');
+    });
   }
 
   // ---------- State indicator ----------
@@ -229,7 +248,17 @@
       var t = e.target.closest && e.target.closest('[data-action]');
       if (!t) return;
       var action = t.getAttribute('data-action');
-      if (action === 'signin') { e.preventDefault(); openModal(); }
+      if (action === 'signin') {
+        e.preventDefault();
+        // If the user is already unlocked and clicked the staff link,
+        // jump straight to the internal hub instead of reopening the modal.
+        if (isUnlocked() && t.classList && t.classList.contains('nav-staff-link')) {
+          if (location.hash !== '#/internal') location.hash = '#/internal';
+          else navigate('/internal');
+          return;
+        }
+        openModal();
+      }
       else if (action === 'signout') { e.preventDefault(); signOut(); }
     });
 
@@ -268,6 +297,7 @@
 
     // Initial state
     updateStateIndicator();
+    updateStaffLinks();
     handleHashChange();
   });
 

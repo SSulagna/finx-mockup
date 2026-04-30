@@ -854,7 +854,11 @@
       </div>
       <div class="nav-actions">
         <label class="visually-hidden" for="nav-search" style="position:absolute;left:-10000px;">Search documentation</label>
-        <input id="nav-search" class="search-input" type="search" placeholder="Search documentation" autocomplete="off">
+        <div class="search-wrap">
+          <input id="nav-search" class="search-input" type="search" placeholder="Search documentation" autocomplete="off">
+          <kbd class="search-kbd" aria-hidden="true">⌘K</kbd>
+        </div>
+        <a class="nav-staff-link" href="javascript:void(0)" data-action="signin" title="UST employees: sign in to access internal engagement playbooks, sales enablement, and architecture references">UST staff &#8599;</a>
         <button class="nav-cta" type="button">Talk to us</button>
       </div>
     </div>
@@ -2057,25 +2061,29 @@
             <div class="card-eyebrow">Path 01</div>
             <h3 class="card-title">Greenfield →</h3>
             <p class="card-text">Stand up a new bank or new line of business on FinX from day one. Target architecture and implementation architecture are the same.</p>
-            <div class="card-meta">~6 months to first customer</div>
+            <div class="card-meta">Time to first value: 6 months</div>
+            <div class="card-meta-scope">Scope: First customer in production</div>
           </a>
           <a href="#/modernization/coexistence" class="card card--link card--path">
             <div class="card-eyebrow">Path 02</div>
             <h3 class="card-title">Coexistence →</h3>
             <p class="card-text">Wrap legacy cores behind BIAN-aligned domains and add new capabilities alongside. The book of business stays put.</p>
-            <div class="card-meta">~9 months to first new capability</div>
+            <div class="card-meta">Time to first value: 9 months</div>
+            <div class="card-meta-scope">Scope: First complete new capability</div>
           </a>
           <a href="#/modernization/progressive" class="card card--link card--path">
             <div class="card-eyebrow">Path 03</div>
             <h3 class="card-title">Progressive →</h3>
             <p class="card-text">Migrate domain by domain over an 18 to 36 month horizon with continuous value delivery and reversible checkpoints.</p>
-            <div class="card-meta">18 to 36 month programme</div>
+            <div class="card-meta">Time to first value: 9 months</div>
+            <div class="card-meta-scope">Scope: First migrated domain (programme: 18 to 36 months)</div>
           </a>
-          <a href="#/modernization" class="card card--link card--path" aria-disabled="true" style="opacity:0.7;">
-            <div class="card-eyebrow">Path 04 · Coming soon</div>
-            <h3 class="card-title">Full Modernization</h3>
+          <a href="#/modernization" class="card card--link card--path" title="Planned: Full Modernization detail page covering end-state replacement of the core estate">
+            <div class="card-eyebrow">Path 04</div>
+            <h3 class="card-title">Full Modernization →</h3>
             <p class="card-text">End-state replacement of the core estate. The longest path; the cleanest target architecture.</p>
-            <div class="card-meta">Strategic horizon</div>
+            <div class="card-meta">Time to full cutover: 36+ months</div>
+            <div class="card-meta-scope">Scope: Complete legacy retirement</div>
           </a>
         </div>
       </div>
@@ -2743,9 +2751,9 @@
       </div>
     </main>
     <aside class="docs-toc"><div class="toc-title">On this page</div>
-      <a href="#" class="toc-link">Quickstart</a>
-      <a href="#" class="toc-link">Featured journeys</a>
-      <a href="#" class="toc-link">API surfaces</a>
+      <a href="javascript:void(0)" class="toc-link">Quickstart</a>
+      <a href="javascript:void(0)" class="toc-link">Featured journeys</a>
+      <a href="javascript:void(0)" class="toc-link">API surfaces</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
       <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">Six API calls across PLM, Document Directory, IDV, and AML.</p></a>
@@ -3251,9 +3259,9 @@ Content-Type: application/json</code></pre>
       </div>
     </main>
     <aside class="docs-toc"><div class="toc-title">On this page</div>
-      <a href="#" class="toc-link">Overview</a>
+      <a href="javascript:void(0)" class="toc-link">Overview</a>
       <a href="#api-sequence" class="toc-link">API sequence</a>
-      <a href="#" class="toc-link">Polling guidance</a>
+      <a href="javascript:void(0)" class="toc-link">Polling guidance</a>
       <a href="#code-samples" class="toc-link">Code samples</a>
       <a href="#related-guides" class="toc-link">Related guides</a>
     </aside>
@@ -3421,7 +3429,7 @@ Content-Type: application/json</code></pre>
       <a href="#parameters" class="toc-link">Parameters</a>
       <a href="#request" class="toc-link">Request</a>
       <a href="#responses" class="toc-link">Responses</a>
-      <a href="#" class="toc-link">BIAN mapping</a>
+      <a href="javascript:void(0)" class="toc-link">BIAN mapping</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
       <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">See this endpoint used in a six-step onboarding flow.</p></a>
@@ -3472,15 +3480,15 @@ Content-Type: application/json</code></pre>
           <h3 class="card-title">Compliance Officer →</h3>
           <p class="card-text">KYC reviews, AML alerts, sanctions screening, four-eyes approvals on high-risk customers.</p>
         </a>
-        <a href="#/docs/glass" class="card card--link">
+        <a href="#/docs/glass/role-csr" class="card card--link">
           <h3 class="card-title">CSR / Ops Agent →</h3>
           <p class="card-text">Customer servicing, lifecycle changes, dispute intake, day-to-day account operations.</p>
         </a>
-        <a href="#/docs/glass" class="card card--link">
+        <a href="javascript:void(0)" class="card card--link" title="Planned: Supervisor role guide covering queue oversight, four-eyes approvals, and exception handling">
           <h3 class="card-title">Supervisor →</h3>
           <p class="card-text">Queue oversight, four-eyes approvals, exception handling, team performance.</p>
         </a>
-        <a href="#/docs/glass" class="card card--link">
+        <a href="javascript:void(0)" class="card card--link" title="Planned: Admin / Platform role guide covering tenant configuration, RBAC, and connector setup">
           <h3 class="card-title">Admin / Platform →</h3>
           <p class="card-text">Tenant configuration, RBAC, connector setup, environment promotion.</p>
         </a>
@@ -3507,9 +3515,9 @@ Content-Type: application/json</code></pre>
       </div>
     </main>
     <aside class="docs-toc"><div class="toc-title">On this page</div>
-      <a href="#" class="toc-link">By role</a>
-      <a href="#" class="toc-link">Modules</a>
-      <a href="#" class="toc-link">Reference</a>
+      <a href="javascript:void(0)" class="toc-link">By role</a>
+      <a href="javascript:void(0)" class="toc-link">Modules</a>
+      <a href="javascript:void(0)" class="toc-link">Reference</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
       <a href="#/docs/glass/role-compliance" class="card card--link"><h3 class="card-title">Compliance Officer role →</h3><p class="card-text">Common tasks, permissions, and module access for compliance teams.</p></a>
@@ -3758,7 +3766,7 @@ Content-Type: application/json</code></pre>
     </main>
     <aside class="docs-toc"><div class="toc-title">On this page</div>
       <a href="#steps" class="toc-link">Steps</a>
-      <a href="#" class="toc-link">Permissions</a>
+      <a href="javascript:void(0)" class="toc-link">Permissions</a>
       <a href="#related" class="toc-link">Related tasks</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
@@ -3782,42 +3790,42 @@ Content-Type: application/json</code></pre>
     </section>
     <section class="section section--mid"><div class="container">
       <div class="grid-3 internal-grid">
-        <a href="#" class="card card--link card--internal" title="Planned: 12 engagement playbooks for greenfield, coexistence, and progressive paths">
+        <a href="javascript:void(0)" class="card card--link card--internal" title="Planned: 12 engagement playbooks for greenfield, coexistence, and progressive paths">
           <div class="internal-icon" aria-hidden="true">📘</div>
           <div class="card-eyebrow">Playbooks</div>
           <h3 class="card-title">Engagement Playbooks</h3>
           <p class="card-text">Greenfield, Coexistence, and Progressive engagement patterns with steering models, RACI, and phase gates.</p>
           <div class="card-meta">12 playbooks · Last updated 22 Apr</div>
         </a>
-        <a href="#" class="card card--link card--internal" title="Planned: Battle cards, ROI calculator, proposal templates">
+        <a href="javascript:void(0)" class="card card--link card--internal" title="Planned: Battle cards, ROI calculator, proposal templates">
           <div class="internal-icon" aria-hidden="true">📊</div>
           <div class="card-eyebrow">Sales</div>
           <h3 class="card-title">Sales Enablement</h3>
           <p class="card-text">Battle cards, ROI calculator, proposal templates, and discovery scripts for bank conversations.</p>
           <div class="card-meta">28 assets · Last updated 24 Apr</div>
         </a>
-        <a href="#" class="card card--link card--internal" title="Planned: 47 ADRs and reference architectures">
+        <a href="javascript:void(0)" class="card card--link card--internal" title="Planned: 47 ADRs and reference architectures">
           <div class="internal-icon" aria-hidden="true">🏗</div>
           <div class="card-eyebrow">Architecture</div>
           <h3 class="card-title">Architecture Deep-Dives</h3>
           <p class="card-text">Internal ADRs, BIAN service-domain mappings, integration recipes, and reference architectures.</p>
           <div class="card-meta">47 ADRs · Last updated 18 Apr</div>
         </a>
-        <a href="#" class="card card--link card--internal" title="Planned: Implementation patterns, runbooks, partner integration playbooks">
+        <a href="javascript:void(0)" class="card card--link card--internal" title="Planned: Implementation patterns, runbooks, partner integration playbooks">
           <div class="internal-icon" aria-hidden="true">🔧</div>
           <div class="card-eyebrow">Delivery</div>
           <h3 class="card-title">Delivery References</h3>
           <p class="card-text">Implementation patterns, runbooks, environment topology, and partner integration playbooks.</p>
           <div class="card-meta">34 references · Last updated 25 Apr</div>
         </a>
-        <a href="#" class="card card--link card--internal" title="Planned: Active and pipeline engagement details">
+        <a href="javascript:void(0)" class="card card--link card--internal" title="Planned: Active and pipeline engagement details">
           <div class="internal-icon" aria-hidden="true">💼</div>
           <div class="card-eyebrow">Engagements</div>
           <h3 class="card-title">Client Engagements</h3>
           <p class="card-text">Active and pipeline engagements with current phase, steering notes, and reference materials.</p>
           <div class="card-meta">9 active · 3 in pipeline</div>
         </a>
-        <a href="#" class="card card--link card--internal" title="Planned: Roadmap items, RFCs, partner intakes">
+        <a href="javascript:void(0)" class="card card--link card--internal" title="Planned: Roadmap items, RFCs, partner intakes">
           <div class="internal-icon" aria-hidden="true">📋</div>
           <div class="card-eyebrow">Product</div>
           <h3 class="card-title">Product Requirements</h3>
@@ -3886,19 +3894,19 @@ Content-Type: application/json</code></pre>
         <div class="footer-col">
           <div class="footer-col-title">Company</div>
           <ul>
-            <li><a href="#" title="Planned: About UST corporate page">About UST</a></li>
-            <li><a href="#" title="Planned: FinX banking practice overview">FinX Practice</a></li>
-            <li><a href="#" title="Planned: UST FinX careers">Careers</a></li>
-            <li><a href="#" title="Planned: Press releases and media">Press</a></li>
+            <li><a href="javascript:void(0)" title="Planned: About UST corporate page">About UST</a></li>
+            <li><a href="javascript:void(0)" title="Planned: FinX banking practice overview">FinX Practice</a></li>
+            <li><a href="javascript:void(0)" title="Planned: UST FinX careers">Careers</a></li>
+            <li><a href="javascript:void(0)" title="Planned: Press releases and media">Press</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <div class="footer-col-title">Engage</div>
           <ul>
-            <li><a href="#" title="Planned: Contact form for prospective clients">Talk to us</a></li>
-            <li><a href="#" title="Planned: Fintech and integrator partner programme">Partner programme</a></li>
-            <li><a href="#" title="Planned: Conferences, webinars, and FinX events">Events</a></li>
-            <li><a href="#" title="Planned: Contact directory">Contact</a></li>
+            <li><a href="javascript:void(0)" title="Planned: Contact form for prospective clients">Talk to us</a></li>
+            <li><a href="javascript:void(0)" title="Planned: Fintech and integrator partner programme">Partner programme</a></li>
+            <li><a href="javascript:void(0)" title="Planned: Conferences, webinars, and FinX events">Events</a></li>
+            <li><a href="javascript:void(0)" title="Planned: Contact directory">Contact</a></li>
           </ul>
         </div>
       </div>
@@ -3924,8 +3932,9 @@ Content-Type: application/json</code></pre>
           <a href="#/resources" title="Planned: Terms of service">Terms</a>
           <a href="#/resources" title="Planned: Security and compliance posture">Security</a>
         </div>
-        <div class="footer-staff">
-          <a href="#" id="staff-signin-link" data-action="signin">UST staff sign in →</a>
+        <div class="footer-staff-signin">
+          <span class="footer-staff-signin-label">UST employees</span>
+          <a href="javascript:void(0)" id="staff-signin-link" data-action="signin" class="footer-staff-signin-link">Sign in to the Internal Hub &#8599;</a>
         </div>
       </div>
     </div>
