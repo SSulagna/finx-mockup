@@ -71,7 +71,7 @@ Verified on 29 Apr 2026 against the 18 items in SPEC.md §12.
 - Sign-in modal is keyboard-operable: ESC closes; the password input receives focus on open; Enter submits.
 - Focus indicators rely on the browser default cyan outline (not removed in `main.css`).
 
-### Known mockup-only behaviours
+### Known mockup-only behaviors
 
 - The search input is decorative (no JS handler) — explicitly out of scope per SPEC §2.4.
 - The password gate is client-side only and trivially bypassable; production gating is delegated to the host platform per SPEC §9.2.

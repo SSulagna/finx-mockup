@@ -279,14 +279,14 @@ These are non-negotiable visual moments that anchor the brand:
 2. **Hero section**
    - Background: `var(--gradient-hero)` plus the X watermark plus the grid pattern
    - Eyebrow: "Composable Banking at Scale"
-   - Title: "Modernise the bank.<br>Without the bang." — second line in cyan
+   - Title: "Modernize the bank.<br>Without the bang." — second line in cyan
    - Subtitle: One paragraph from the white paper introduction
    - Two CTAs: primary cyan "Explore the platform →", secondary "Read the white paper"
    - Metrics row at the bottom: 6-9 months to first value · 33,000+ UST employees · $2B+ revenue · BIAN aligned
 
 3. **Problem section** (background `--bg-mid`)
    - Eyebrow: "The Problem"
-   - Title: "Modernisation has been broken for too long."
+   - Title: "Modernization has been broken for too long."
    - Lead paragraph from the white paper
    - Two cards side by side: "Big-bang transformation" and "Point solutions" with explanatory text from the white paper
 
@@ -297,7 +297,7 @@ These are non-negotiable visual moments that anchor the brand:
 
 5. **Platform / Ecosystem section** (background `--bg-mid`)
    - Eyebrow: "The Platform"
-   - Title: "FinX Glue at the centre.<br>Everything else composable around it."
+   - Title: "FinX Glue at the center.<br>Everything else composable around it."
    - The ecosystem diagram (see section 6.2 for the full spec of this component)
 
 6. **Products section** (background `--bg-deep`)
@@ -426,7 +426,7 @@ These are non-negotiable visual moments that anchor the brand:
 
 2. **Choose your role section** — four cards: CSR / Ops Agent, Compliance Officer, Supervisor, Admin / Platform. Each card has a colored dot, role name, brief description of what they do, list of common tasks. The Compliance Officer card links to `role-compliance.html`.
 
-3. **Modules section** — six cards: Customer & Account Management, Task Management, Workflow Console, Incident & Alert Centre, Service Orchestration Console, Fintech Connector SPAs. Each describes what the module does.
+3. **Modules section** — six cards: Customer & Account Management, Task Management, Workflow Console, Incident & Alert Center, Service Orchestration Console, Fintech Connector SPAs. Each describes what the module does.
 
 4. **Reference section** — RBAC permissions, FAQs, troubleshooting.
 
@@ -728,7 +728,7 @@ A small "Mockup · Not live" pill in the top-right corner of every page. Cyan-ti
 
 ### 7.1 Source material
 
-All copy on the public pages should be drawn from or aligned with the UST FinX white paper *Composable Banking at Scale: A BIAN-Aligned Approach to Progressive Modernisation*. The white paper provides:
+All copy on the public pages should be drawn from or aligned with the UST FinX white paper *Composable Banking at Scale: A BIAN-Aligned Approach to Progressive Modernization*. The white paper provides:
 
 - The problem framing (Section 01)
 - The BIAN argument (Section 02)
