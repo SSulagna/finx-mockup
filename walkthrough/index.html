@@ -333,7 +333,7 @@
   // Scene definitions: id, label, narration text, fallback duration in seconds.
   // The fallback duration is used only if the audio file fails to load.
   var scenes = [
-    { id: "01-intro",        label: "Intro",                  fallback: 28, text: "Hi, welcome to a six-minute walkthrough of the proposed UST FinX documentation portal. The mockup is live at finx-mockup.vercel.app. I'll cover the public marketing layer, the documentation layer for developers and bank operators, and the internal hub for UST staff. I'll also explain how the three tiers are structured, and where the authentication question fits." },
+    { id: "01-intro",        label: "Intro",                  fallback: 28, text: "Hi, welcome to an approximately six-minute walkthrough of the proposed UST FinX documentation portal. The mockup is live at finx-mockup.vercel.app. I'll cover the public marketing layer, the documentation layer for developers and bank operators, and the internal hub for UST staff. I'll also explain how the three tiers are structured, and where the authentication question fits." },
     { id: "02-public",       label: "The public layer",       fallback: 80,
       cues: [
         { at: 2,  selector: ".hero",       label: "Homepage hero: entry point" },
@@ -343,7 +343,7 @@
         { at: 52, selector: "#products",   label: "Ecosystem diagram" },
         { at: 65, selector: "#cta",        label: "Closing pitch & contact" }
       ],
-      text: "The homepage is the entry point for bank evaluators, CIOs, and architects. They land here from a Google search or a sales conversation. It opens with the core argument from the white paper: the problem with big-bang transformation and point solutions, then the FinX response. The Approach section maps to white paper sections one through three: BIAN-aligned, iterative, coexistence-first. The Innovation section comes from white paper section seven: architectural standards don't slow innovation, they compound it. The Why UST section surfaces the partnership argument: thirty-three thousand employees, two billion dollars in annual revenue, managed services beyond programme delivery. The ecosystem diagram is taken directly from the FinX sales deck: Glue at the centre, the connector ecosystem around it, the cores below. The homepage closes with the white paper's Section 11 structure: what you gain, next steps, a closing pitch, the contact line." },
+      text: "The homepage is the entry point for bank evaluators, CIOs, and architects. They land here from a Google search or a sales conversation. It opens with the core argument from the white paper: the problem with big-bang transformation and point solutions, then the FinX response. The Approach section maps to white paper sections one through three: BIAN-aligned, iterative, coexistence-first. The Innovation section comes from white paper section seven: architectural standards don't slow innovation, they compound it. The Why UST section surfaces the partnership argument: thirty-three thousand employees, two billion dollars in annual revenue, managed services beyond programme delivery. The ecosystem diagram is taken directly from the FinX sales deck: Glue at the center, the connector ecosystem around it, the cores below. The homepage closes with the white paper's Section 11 structure: what you gain, next steps, a closing pitch, the contact line." },
     { id: "03-nav",          label: "Navigation",             fallback: 14,
       cues: [
         { at: 1, selector: ".site-header, header", label: "Top navigation: five public sections" }
@@ -372,10 +372,10 @@
         { at: 30, selector: "#before-you-start, #authenticate, .docs-main h2", label: "Quickstart: zero to integration" },
         { at: 50, selector: "#initiate-party, #attach-document, .docs-main", label: "Onboarding journey: six-call sequence" }
       ],
-      text: "Now the documentation layer. This is Tier 2 in the proposed access model: fully public, no login required. The same decision Stripe, Plaid, and Twilio have all made: open documentation works as a sales asset. The Glue Developer Hub has a three-column layout: sidebar navigation on the left, content in the centre, On this page anchors on the right. Five real pages are built. Quickstart walks a developer from zero to a working integration in thirty minutes: authentication, tenant context, first API call, webhook verification. The journey guides are the heart of the developer documentation. The onboarding guide walks the six-call sequence: party initiation, document upload, identity verification, AML screening, and lifecycle promotion. Placeholder links are clearly marked. Hovering shows exactly what each will contain in production." },
+      text: "Now the documentation layer. This is Tier 2 in the proposed access model: fully public, no login required. The same decision Stripe, Plaid, and Twilio have all made: open documentation works as a sales asset. The Glue Developer Hub has a three-column layout: sidebar navigation on the left, content in the center, On this page anchors on the right. Five real pages are built. Quickstart walks a developer from zero to a working integration in thirty minutes: authentication, tenant context, first API call, webhook verification. The journey guides are the heart of the developer documentation. The onboarding guide walks the six-call sequence: party initiation, document upload, identity verification, AML screening, and lifecycle promotion. Placeholder links are clearly marked. Hovering shows exactly what each will contain in production." },
     { id: "06b-glass-docs",  label: "Glass documentation",    fallback: 46,
       cues: [
-        { at: 2,  selector: ".docs-sidebar", label: "Sidebar: organised by role" },
+        { at: 2,  selector: ".docs-sidebar", label: "Sidebar: organized by role" },
         { at: 18, selector: "#common-tasks, .docs-main", label: "Role landing: common tasks" },
         { at: 30, selector: "#steps, .docs-main", label: "Step-by-step task walkthroughs" }
       ],
