@@ -88,6 +88,52 @@
   .tier.t3 { border-left-color: var(--internal); }
   .tier.t3 .num { color: var(--internal); }
 
+  /* Highlight overlay (animated box + arrow + label drawn over the iframe) */
+  .hl-layer {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  }
+  .hl-box {
+    position: absolute; border: 2px solid var(--cyan);
+    border-radius: 8px;
+    box-shadow: 0 0 0 4px rgba(0,212,212,0.18), 0 0 24px rgba(0,212,212,0.45);
+    background: rgba(0,212,212,0.05);
+    transition: top 600ms cubic-bezier(.2,.8,.2,1), left 600ms cubic-bezier(.2,.8,.2,1),
+                width 600ms cubic-bezier(.2,.8,.2,1), height 600ms cubic-bezier(.2,.8,.2,1),
+                opacity 300ms;
+    opacity: 0;
+    animation: hlPulse 1.6s ease-in-out infinite;
+  }
+  .hl-box.show { opacity: 1; }
+  @keyframes hlPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(0,212,212,0.18), 0 0 24px rgba(0,212,212,0.45); }
+    50%      { box-shadow: 0 0 0 8px rgba(0,212,212,0.10), 0 0 36px rgba(0,212,212,0.65); }
+  }
+  .hl-arrow {
+    position: absolute; opacity: 0;
+    transition: top 600ms cubic-bezier(.2,.8,.2,1), left 600ms cubic-bezier(.2,.8,.2,1),
+                opacity 300ms;
+    color: var(--cyan);
+    filter: drop-shadow(0 0 8px rgba(0,212,212,0.7));
+    animation: hlBob 1.4s ease-in-out infinite;
+  }
+  .hl-arrow.show { opacity: 1; }
+  @keyframes hlBob {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(-8px); }
+  }
+  .hl-label {
+    position: absolute; opacity: 0;
+    background: var(--cyan); color: var(--bg-deep);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    padding: 6px 10px; border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    transition: top 600ms cubic-bezier(.2,.8,.2,1), left 600ms cubic-bezier(.2,.8,.2,1),
+                opacity 300ms;
+    white-space: nowrap;
+    max-width: 280px; overflow: hidden; text-overflow: ellipsis;
+  }
+  .hl-label.show { opacity: 1; }
+
   /* Caption strip */
   .caption {
     position: absolute; left: 24px; right: 24px; bottom: 24px;
@@ -244,6 +290,16 @@
     <div id="cap-text">Loading…</div>
   </div>
 
+  <!-- Highlight overlay (drawn above iframe, below caption/start) -->
+  <div class="hl-layer" id="hl-layer">
+    <div class="hl-box" id="hl-box"></div>
+    <svg class="hl-arrow" id="hl-arrow" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="20" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <div class="hl-label" id="hl-label"></div>
+  </div>
+
   <!-- Start overlay (browser autoplay policies require a click to start audio) -->
   <div class="start-overlay" id="start-overlay">
     <div class="start-card">
@@ -277,16 +333,62 @@
   // Scene definitions: id, label, narration text, fallback duration in seconds.
   // The fallback duration is used only if the audio file fails to load.
   var scenes = [
-    { id: "01-intro",        label: "Intro",                  fallback: 28, text: "Hi Veselina. This is a four minute walkthrough of the proposed UST FinX documentation portal. The mockup is live at finx-mockup.vercel.app. I'll cover the public marketing layer, the documentation layer for developers and bank operators, and the internal hub for UST staff. I'll also explain how the three tiers are structured, and where the authentication question fits." },
-    { id: "02-public",       label: "The public layer",       fallback: 80, text: "The homepage is the entry point for bank evaluators, CIOs, and architects. They land here from a Google search or a sales conversation. It opens with the core argument from the white paper: the problem with big-bang transformation and point solutions, then the FinX response. The Approach section maps to white paper sections one through three — BIAN-aligned, iterative, coexistence-first. The Innovation section comes from white paper section seven: architectural standards don't slow innovation, they compound it. The Why UST section surfaces the partnership argument: thirty-three thousand employees, two billion dollars in annual revenue, managed services beyond programme delivery. The ecosystem diagram is taken directly from the FinX sales deck — Glue at the centre, the connector ecosystem around it, the cores below. The homepage closes with the white paper's Section 11 structure: what you gain, next steps, a closing pitch, the contact line." },
-    { id: "03-nav",          label: "Navigation",             fallback: 14, text: "The top navigation covers five public sections: Architecture, Platform, Modernization, Use cases, and Resources. Each one is a fully built page with real content from the white paper." },
-    { id: "04-platform",     label: "Platform",               fallback: 25, text: "The Platform section introduces FinX Glue and FinX Glass as separate products. Glue is the orchestration layer for developers. Glass is the operations console for bank staff. Each product page has four capability cards, an ecosystem overview, and two clear calls to action — one into the documentation, one into the architecture guide." },
-    { id: "05-modernization",label: "Modernization paths",    fallback: 40, text: "The Modernization section is where FinX makes a specific claim about time to value. Four paths, two metrics each, so they can be honestly compared. Greenfield: six months to first customer. Coexistence: nine months to first new capability. Progressive: nine months per domain, eighteen to thirty-six month programme total. Full Modernization: thirty-six plus months to complete legacy retirement. Each path has a detail page showing the phased timeline and a link forward into the documentation." },
-    { id: "06a-glue-docs",   label: "Glue documentation",     fallback: 66, text: "Now the documentation layer. This is Tier 2 in the proposed access model: fully public, no login required. The same decision Stripe, Plaid, and Twilio have all made — open documentation works as a sales asset. The Glue Developer Hub has a three-column layout: sidebar navigation on the left, content in the centre, On this page anchors on the right. Five real pages are built. Quickstart walks a developer from zero to a working integration in thirty minutes — authentication, tenant context, first API call, webhook verification. The journey guides are the heart of the developer documentation. The onboarding guide walks the six-call sequence: party initiation, document upload, identity verification, AML screening, and lifecycle promotion. Placeholder links are clearly marked — hovering shows exactly what each will contain in production." },
-    { id: "06b-glass-docs",  label: "Glass documentation",    fallback: 46, text: "The Glass Operations Guide has the same three-column structure, but organized by role. Bank operations staff navigate by what they do, not by what the API does. Each role has a landing page listing common tasks. Each task is a step-by-step walkthrough — numbered steps, a permission callout, related tasks at the bottom. This mirrors how Stripe and Twilio organise operator-facing documentation: bank staff find what they need by job function, not by endpoint name. The result is faster onboarding for operations teams, and fewer support tickets back to UST delivery." },
-    { id: "07-internal",     label: "Internal hub",           fallback: 40, text: "The internal hub is Tier 3 — UST employees only. The entry point is a small pill in the top navigation that says UST staff. Clicking it opens a sign-in modal. In production this would authenticate against UST's Microsoft Entra ID. For the demo, the password is finx2026. After sign-in, the nav pill turns purple and says UST Internal. The hub has six categories: engagement playbooks, sales enablement, architecture deep-dives, delivery references, client engagements, and product requirements." },
+    { id: "01-intro",        label: "Intro",                  fallback: 28, text: "Hi, welcome to a four-minute walkthrough of the proposed UST FinX documentation portal. The mockup is live at finx-mockup.vercel.app. I'll cover the public marketing layer, the documentation layer for developers and bank operators, and the internal hub for UST staff. I'll also explain how the three tiers are structured, and where the authentication question fits." },
+    { id: "02-public",       label: "The public layer",       fallback: 80,
+      cues: [
+        { at: 2,  selector: ".hero",       label: "Homepage hero — entry point" },
+        { at: 14, selector: "#approach",   label: "Approach (white paper §1–3)" },
+        { at: 28, selector: "#innovation", label: "Innovation (white paper §7)" },
+        { at: 40, selector: "#why-ust",    label: "Why UST" },
+        { at: 52, selector: "#products",   label: "Ecosystem diagram" },
+        { at: 65, selector: "#cta",        label: "Closing pitch & contact" }
+      ],
+      text: "The homepage is the entry point for bank evaluators, CIOs, and architects. They land here from a Google search or a sales conversation. It opens with the core argument from the white paper: the problem with big-bang transformation and point solutions, then the FinX response. The Approach section maps to white paper sections one through three — BIAN-aligned, iterative, coexistence-first. The Innovation section comes from white paper section seven: architectural standards don't slow innovation, they compound it. The Why UST section surfaces the partnership argument: thirty-three thousand employees, two billion dollars in annual revenue, managed services beyond programme delivery. The ecosystem diagram is taken directly from the FinX sales deck — Glue at the centre, the connector ecosystem around it, the cores below. The homepage closes with the white paper's Section 11 structure: what you gain, next steps, a closing pitch, the contact line." },
+    { id: "03-nav",          label: "Navigation",             fallback: 14,
+      cues: [
+        { at: 1, selector: ".site-header, header", label: "Top navigation — five public sections" }
+      ],
+      text: "The top navigation covers five public sections: Architecture, Platform, Modernization, Use cases, and Resources. Each one is a fully built page with real content from the white paper." },
+    { id: "04-platform",     label: "Platform",               fallback: 25,
+      cues: [
+        { at: 1,  selector: ".hero, .hero-content",  label: "FinX Glue — orchestration for developers" },
+        { at: 12, selector: ".capabilities, .capability-grid, .cards, main section:nth-of-type(2)", label: "Four capability cards" },
+        { at: 20, selector: ".hero-ctas, .ctas, .cta-row", label: "Two calls to action" }
+      ],
+      text: "The Platform section introduces FinX Glue and FinX Glass as separate products. Glue is the orchestration layer for developers. Glass is the operations console for bank staff. Each product page has four capability cards, an ecosystem overview, and two clear calls to action — one into the documentation, one into the architecture guide." },
+    { id: "05-modernization",label: "Modernization paths",    fallback: 40,
+      cues: [
+        { at: 1,  selector: ".hero, .hero-content", label: "Four paths, two metrics each" },
+        { at: 10, selector: ".paths, .path-grid, main section:nth-of-type(2)", label: "Greenfield · 6 months" },
+        { at: 18, selector: ".paths, .path-grid, main section:nth-of-type(2)", label: "Coexistence · 9 months" },
+        { at: 26, selector: ".paths, .path-grid, main section:nth-of-type(2)", label: "Progressive · 9 mo / domain" },
+        { at: 33, selector: ".paths, .path-grid, main section:nth-of-type(2)", label: "Full Modernization · 36+ months" }
+      ],
+      text: "The Modernization section is where FinX makes a specific claim about time to value. Four paths, two metrics each, so they can be honestly compared. Greenfield: six months to first customer. Coexistence: nine months to first new capability. Progressive: nine months per domain, eighteen to thirty-six month programme total. Full Modernization: thirty-six plus months to complete legacy retirement. Each path has a detail page showing the phased timeline and a link forward into the documentation." },
+    { id: "06a-glue-docs",   label: "Glue documentation",     fallback: 66,
+      cues: [
+        { at: 2,  selector: ".docs-sidebar", label: "Sidebar navigation" },
+        { at: 18, selector: ".docs-main, main", label: "Three-column docs layout" },
+        { at: 30, selector: "#before-you-start, #authenticate, .docs-main h2", label: "Quickstart — zero to integration" },
+        { at: 50, selector: "#initiate-party, #attach-document, .docs-main", label: "Onboarding journey — six-call sequence" }
+      ],
+      text: "Now the documentation layer. This is Tier 2 in the proposed access model: fully public, no login required. The same decision Stripe, Plaid, and Twilio have all made — open documentation works as a sales asset. The Glue Developer Hub has a three-column layout: sidebar navigation on the left, content in the centre, On this page anchors on the right. Five real pages are built. Quickstart walks a developer from zero to a working integration in thirty minutes — authentication, tenant context, first API call, webhook verification. The journey guides are the heart of the developer documentation. The onboarding guide walks the six-call sequence: party initiation, document upload, identity verification, AML screening, and lifecycle promotion. Placeholder links are clearly marked — hovering shows exactly what each will contain in production." },
+    { id: "06b-glass-docs",  label: "Glass documentation",    fallback: 46,
+      cues: [
+        { at: 2,  selector: ".docs-sidebar", label: "Sidebar — organised by role" },
+        { at: 18, selector: "#common-tasks, .docs-main", label: "Role landing — common tasks" },
+        { at: 30, selector: "#steps, .docs-main", label: "Step-by-step task walkthroughs" }
+      ],
+      text: "The Glass Operations Guide has the same three-column structure, but organized by role. Bank operations staff navigate by what they do, not by what the API does. Each role has a landing page listing common tasks. Each task is a step-by-step walkthrough — numbered steps, a permission callout, related tasks at the bottom. This mirrors how Stripe and Twilio organise operator-facing documentation: bank staff find what they need by job function, not by endpoint name. The result is faster onboarding for operations teams, and fewer support tickets back to UST delivery." },
+    { id: "07-internal",     label: "Internal hub",           fallback: 40,
+      cues: [
+        { at: 2,  selector: ".nav-staff-link", label: "UST Internal — purple pill" },
+        { at: 16, selector: "#state-indicator", label: "Signed in: UST Internal" },
+        { at: 24, selector: ".hub-grid, .category-grid, main section:nth-of-type(2)", label: "Six internal categories" }
+      ],
+      text: "The internal hub is Tier 3 — UST employees only. The entry point is a small pill in the top navigation that says UST staff. Clicking it opens a sign-in modal. In production this would authenticate against UST's Microsoft Entra ID. For the demo, the password is finx2026. After sign-in, the nav pill turns purple and says UST Internal. The hub has six categories: engagement playbooks, sales enablement, architecture deep-dives, delivery references, client engagements, and product requirements." },
     { id: "08-three-tier",   label: "The three-tier model",   fallback: 50, text: "To summarise the architecture: three tiers under one brand. Tier one is the fully public marketing layer. Tier two is the public documentation. Tier three is UST internal, gated by single sign-on. In production these would be three separate hosting properties: ustfinx.com for the marketing site, docs.ustfinx.com for the documentation, internal.ustfinx.com or inside the UST intranet for the internal layer. The mockup compresses all three into one URL to show the unified experience. The documentation layer has eight fully built example pages. The remaining navigation items show planned destinations on hover." },
-    { id: "09-outro",        label: "Outro",                  fallback: 21, text: "I'd value your perspective on three things: whether the three-tier model maps to how UST actually wants to operate; whether SSO via Entra ID is the right authentication path; and whether this is ready to walk through with FinX leadership. Happy to discuss whenever works. Thanks Veselina." }
+    { id: "09-outro",        label: "Outro",                  fallback: 28, text: "That concludes the walkthrough. Three tiers under one brand: the public marketing layer, the public documentation, and the UST internal hub gated by single sign-on. Open questions to align on: whether the three-tier model maps to how UST wants to operate; whether SSO via Entra ID is the right authentication path; and whether this is ready to walk through with FinX leadership. Thank you for watching." }
   ];
 
   // Mockup base URL: when this page is hosted at /walkthrough/index.html on the
@@ -309,11 +411,138 @@
   var capToggle = document.getElementById('cap-toggle');
   var startOverlay = document.getElementById('start-overlay');
   var startBtn = document.getElementById('start-btn');
+  var hlBox = document.getElementById('hl-box');
+  var hlArrow = document.getElementById('hl-arrow');
+  var hlLabel = document.getElementById('hl-label');
+  var hlLayer = document.getElementById('hl-layer');
 
   var idx = 0;
   var paused = false;
   var fallbackTimer = null;
   var progressTimer = null;
+  var cueTimers = [];
+  var firedCues = {};
+
+  function clearCueTimers() {
+    cueTimers.forEach(function (t) { clearTimeout(t); });
+    cueTimers = [];
+    firedCues = {};
+  }
+
+  function hideHighlight() {
+    hlBox.classList.remove('show');
+    hlArrow.classList.remove('show');
+    hlLabel.classList.remove('show');
+  }
+
+  function placeHighlight(rect, labelText) {
+    // rect is in stage-relative pixels
+    var pad = 8;
+    var left = Math.max(4, rect.left - pad);
+    var top  = Math.max(4, rect.top  - pad);
+    var w    = Math.min(hlLayer.clientWidth - left - 4, rect.width + pad * 2);
+    var h    = Math.min(hlLayer.clientHeight - top - 4, rect.height + pad * 2);
+    hlBox.style.left = left + 'px';
+    hlBox.style.top  = top  + 'px';
+    hlBox.style.width  = Math.max(40, w) + 'px';
+    hlBox.style.height = Math.max(28, h) + 'px';
+    hlBox.classList.add('show');
+
+    // Arrow points right-to-left at the box from outside, fallback to inside if no room
+    var arrowSize = 56;
+    var arrowLeft = left - arrowSize - 6;
+    var arrowTop  = top + Math.max(0, (h - arrowSize) / 2);
+    if (arrowLeft < 8) { arrowLeft = left + Math.max(0, w + 6); /* mirror not implemented; keep on right */ }
+    hlArrow.style.left = arrowLeft + 'px';
+    hlArrow.style.top  = arrowTop  + 'px';
+    hlArrow.classList.add('show');
+
+    if (labelText) {
+      hlLabel.textContent = labelText;
+      var labelTop = Math.max(4, top - 30);
+      hlLabel.style.left = left + 'px';
+      hlLabel.style.top  = labelTop + 'px';
+      hlLabel.classList.add('show');
+    } else {
+      hlLabel.classList.remove('show');
+    }
+  }
+
+  function findInIframe(iframeEl, selectorList) {
+    try {
+      var doc = iframeEl.contentDocument;
+      if (!doc) return null;
+      var selectors = selectorList.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+      for (var i = 0; i < selectors.length; i++) {
+        // Restrict to the active view inside the SPA when possible
+        var scoped = doc.querySelector('.view.is-active ' + selectors[i]) || doc.querySelector(selectors[i]);
+        if (scoped) return scoped;
+      }
+    } catch (_) { /* cross-origin or not ready */ }
+    return null;
+  }
+
+  function fireCue(sceneEl, cue) {
+    var iframe = sceneEl.querySelector('iframe');
+    if (!iframe) {
+      // Static scene — just show a label centered
+      hlLabel.textContent = cue.label || '';
+      hlLabel.style.left = '50%';
+      hlLabel.style.top  = '24px';
+      hlLabel.style.transform = 'translateX(-50%)';
+      hlLabel.classList.add('show');
+      return;
+    }
+    // reset transform in case static cue ran first
+    hlLabel.style.transform = '';
+
+    var target = findInIframe(iframe, cue.selector);
+    if (!target) {
+      // No element found — show floating label only
+      hideHighlight();
+      hlLabel.textContent = cue.label || '';
+      hlLabel.style.left = '24px';
+      hlLabel.style.top  = '24px';
+      hlLabel.classList.add('show');
+      return;
+    }
+
+    try {
+      // Smooth-scroll inside the iframe so the target sits in the upper third of the view
+      var win = iframe.contentWindow;
+      var doc = iframe.contentDocument;
+      var rect = target.getBoundingClientRect();
+      var desiredTop = Math.max(0, rect.top + (win.pageYOffset || doc.documentElement.scrollTop || 0) - 120);
+      win.scrollTo({ top: desiredTop, behavior: 'smooth' });
+
+      // After scroll settles, measure rect and place highlight
+      setTimeout(function () {
+        try {
+          var iframeRect = iframe.getBoundingClientRect();
+          var stageRect  = hlLayer.getBoundingClientRect();
+          var r = target.getBoundingClientRect();
+          // Convert to stage-relative coords
+          var stageLeft = (iframeRect.left - stageRect.left) + r.left;
+          var stageTop  = (iframeRect.top  - stageRect.top ) + r.top;
+          placeHighlight({ left: stageLeft, top: stageTop, width: r.width, height: r.height }, cue.label);
+        } catch (_) { /* ignore */ }
+      }, 650);
+    } catch (_) { /* ignore */ }
+  }
+
+  function scheduleCues(scene, sceneEl) {
+    clearCueTimers();
+    hideHighlight();
+    var cues = scene.cues || [];
+    cues.forEach(function (cue, i) {
+      var t = setTimeout(function () {
+        if (firedCues[i]) return;
+        firedCues[i] = true;
+        fireCue(sceneEl, cue);
+      }, Math.max(0, cue.at * 1000));
+      cueTimers.push(t);
+    });
+  }
 
   function getSceneEl(i) {
     return sceneEls.find(function (el) { return el.getAttribute('data-scene') === scenes[i].id; });
@@ -348,6 +577,7 @@
   function clearTimers() {
     if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
     if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+    clearCueTimers();
   }
 
   function updateProgress(elapsed, total) {
@@ -357,6 +587,7 @@
 
   function playScene(i) {
     clearTimers();
+    hideHighlight();
     if (i < 0 || i >= scenes.length) return;
     idx = i;
     activateScene(i);
@@ -374,6 +605,11 @@
     if (playPromise && playPromise.catch) {
       playPromise.catch(function () { /* will fall back to timer */ });
     }
+
+    // Schedule timed highlight cues for this scene. We give iframes a brief
+    // moment to start loading before firing the first cue.
+    var sceneEl = getSceneEl(i);
+    setTimeout(function () { scheduleCues(s, sceneEl); }, 400);
 
     audio.onloadedmetadata = function () {
       if (!isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 1) {
