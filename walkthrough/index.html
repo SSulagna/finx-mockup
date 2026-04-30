@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UST FinX — 4-Minute Walkthrough</title>
+<meta name="description" content="Narrated walkthrough of the UST FinX documentation portal mockup." />
+<style>
+  :root {
+    --bg-deep: #062229;
+    --bg-mid:  #0a3036;
+    --cyan:    #00D4D4;
+    --cyan-dim:rgba(0,212,212,0.6);
+    --cyan-soft:rgba(0,212,212,0.12);
+    --internal:#B493F4;
+    --text:    #E8F0F2;
+    --text-muted: rgba(232,240,242,0.7);
+    --border-dim: rgba(168,196,204,0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--bg-deep); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { display: flex; flex-direction: column; }
+
+  /* Top bar */
+  .player-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px; border-bottom: 1px solid var(--border-dim);
+    flex-shrink: 0;
+  }
+  .player-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: 0.02em; }
+  .player-brand .dot { width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 8px var(--cyan); }
+  .player-meta { font-size: 12px; color: var(--text-muted); }
+
+  /* Stage */
+  .stage {
+    position: relative;
+    flex: 1; min-height: 0;
+    background: var(--bg-deep);
+    overflow: hidden;
+  }
+  .scene {
+    position: absolute; inset: 0;
+    opacity: 0; transition: opacity 600ms ease;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .scene.active { opacity: 1; pointer-events: auto; }
+  .scene iframe {
+    width: 100%; height: 100%; border: 0; background: white;
+  }
+
+  /* Static cards (intro / outro / three-tier diagram) */
+  .static-card {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 40px;
+    background: radial-gradient(1200px 600px at 50% 40%, rgba(0,212,212,0.08), transparent 60%), var(--bg-deep);
+  }
+  .static-card .logo {
+    font-size: 64px; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .static-card .logo .accent { color: var(--cyan); }
+  .static-card .underline {
+    width: 80px; height: 3px; background: var(--cyan); border-radius: 2px;
+    margin: 8px 0 28px;
+  }
+  .static-card .lede { font-size: 22px; color: var(--text-muted); max-width: 720px; line-height: 1.5; }
+  .static-card .url { font-size: 14px; color: var(--cyan); margin-top: 28px; letter-spacing: 0.04em; }
+
+  /* Three-tier diagram */
+  .tier-diagram {
+    display: flex; flex-direction: column; gap: 18px;
+    width: min(720px, 90%);
+  }
+  .tier {
+    display: grid; grid-template-columns: 90px 1fr auto;
+    gap: 16px; align-items: center;
+    padding: 22px 26px;
+    border: 1px solid var(--border-dim);
+    border-left: 3px solid var(--cyan);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .tier .num { font-size: 12px; color: var(--cyan); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+  .tier .name { font-size: 18px; font-weight: 600; }
+  .tier .domain { font-size: 13px; color: var(--text-muted); font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+  .tier.t3 { border-left-color: var(--internal); }
+  .tier.t3 .num { color: var(--internal); }
+
+  /* Caption strip */
+  .caption {
+    position: absolute; left: 24px; right: 24px; bottom: 24px;
+    background: rgba(6,34,41,0.85); backdrop-filter: blur(10px);
+    border: 1px solid var(--border-dim);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 14px; line-height: 1.5; color: var(--text);
+    max-height: 35%; overflow-y: auto;
+    transition: opacity 300ms;
+  }
+  .caption.hidden { opacity: 0; pointer-events: none; }
+  .caption .label { color: var(--cyan); font-weight: 600; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+
+  /* Bottom controls */
+  .controls {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 24px; border-top: 1px solid var(--border-dim);
+    background: var(--bg-deep); flex-shrink: 0;
+  }
+  .btn {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border-dim); border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; cursor: pointer;
+    transition: all 200ms;
+    font-family: inherit;
+  }
+  .btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn.primary { background: var(--cyan); color: var(--bg-deep); border-color: var(--cyan); font-weight: 600; }
+  .btn.primary:hover { background: white; color: var(--bg-deep); }
+  .progress { flex: 1; height: 4px; background: var(--border-dim); border-radius: 2px; overflow: hidden; }
+  .progress .bar { height: 100%; background: var(--cyan); width: 0%; transition: width 200ms linear; }
+  .scene-label { font-size: 12px; color: var(--text-muted); min-width: 110px; text-align: right; }
+  .toggle-cap { font-size: 12px; color: var(--text-muted); cursor: pointer; user-select: none; }
+  .toggle-cap input { vertical-align: middle; margin-right: 4px; }
+
+  /* Start overlay */
+  .start-overlay {
+    position: absolute; inset: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(6,34,41,0.96); backdrop-filter: blur(4px);
+    cursor: pointer;
+  }
+  .start-overlay .start-card {
+    text-align: center; max-width: 540px; padding: 40px;
+  }
+  .start-overlay .start-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--cyan-soft); border: 2px solid var(--cyan);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .start-overlay h1 { font-size: 28px; margin: 0 0 10px; }
+  .start-overlay p { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin: 0 0 24px; }
+  .start-overlay .start-btn {
+    background: var(--cyan); color: var(--bg-deep);
+    border: 0; padding: 14px 28px; border-radius: 8px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    font-family: inherit;
+  }
+  .start-overlay .hint { font-size: 12px; color: var(--text-muted); margin-top: 14px; }
+
+  @media (max-width: 720px) {
+    .static-card .logo { font-size: 44px; }
+    .static-card .lede { font-size: 16px; }
+    .caption { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="player-top">
+  <div class="player-brand"><span class="dot"></span> UST FinX · Walkthrough</div>
+  <div class="player-meta">~6 minutes · narrated</div>
+</div>
+
+<div class="stage" id="stage">
+
+  <!-- Scene 1: Intro -->
+  <div class="scene" data-scene="01-intro">
+    <div class="static-card">
+      <div class="logo">UST <span class="accent">FinX</span></div>
+      <div class="underline"></div>
+      <div class="lede">A 4-minute walkthrough of the proposed documentation portal.</div>
+      <div class="url">finx-mockup.vercel.app</div>
+    </div>
+  </div>
+
+  <!-- Scene 2: Public layer -->
+  <div class="scene" data-scene="02-public" data-iframe="/#/"></div>
+
+  <!-- Scene 3: Navigation -->
+  <div class="scene" data-scene="03-nav" data-iframe="/#/"></div>
+
+  <!-- Scene 4: Platform -->
+  <div class="scene" data-scene="04-platform" data-iframe="/#/platform/glue"></div>
+
+  <!-- Scene 5: Modernization -->
+  <div class="scene" data-scene="05-modernization" data-iframe="/#/modernization"></div>
+
+  <!-- Scene 6a: Glue docs -->
+  <div class="scene" data-scene="06a-glue-docs" data-iframe="/#/docs/glue"></div>
+
+  <!-- Scene 6b: Glass docs -->
+  <div class="scene" data-scene="06b-glass-docs" data-iframe="/#/docs/glass"></div>
+
+  <!-- Scene 7: Internal hub -->
+  <div class="scene" data-scene="07-internal" data-iframe="/?demo-unlock=1#/internal"></div>
+
+  <!-- Scene 8: Three-tier diagram -->
+  <div class="scene" data-scene="08-three-tier">
+    <div class="static-card">
+      <div class="tier-diagram">
+        <div class="tier t1">
+          <div class="num">Tier 1</div>
+          <div>
+            <div class="name">Public marketing</div>
+            <div class="domain">ustfinx.com</div>
+          </div>
+          <div></div>
+        </div>
+        <div class="tier t2">
+          <div class="num">Tier 2</div>
+          <div>
+            <div class="name">Public documentation</div>
+            <div class="domain">docs.ustfinx.com</div>
+          </div>
+          <div></div>
+        </div>
+        <div class="tier t3">
+          <div class="num">Tier 3</div>
+          <div>
+            <div class="name">UST internal · gated by SSO</div>
+            <div class="domain">internal.ustfinx.com</div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 9: Outro -->
+  <div class="scene" data-scene="09-outro">
+    <div class="static-card">
+      <div class="logo">UST <span class="accent">FinX</span></div>
+      <div class="underline"></div>
+      <div class="lede">Three tiers, one brand. Ready for your perspective.</div>
+      <div class="url">finx-mockup.vercel.app</div>
+    </div>
+  </div>
+
+  <!-- Caption -->
+  <div class="caption" id="caption">
+    <div class="label" id="cap-label">Scene</div>
+    <div id="cap-text">Loading…</div>
+  </div>
+
+  <!-- Start overlay (browser autoplay policies require a click to start audio) -->
+  <div class="start-overlay" id="start-overlay">
+    <div class="start-card">
+      <div class="start-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00D4D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </div>
+      <h1>UST FinX · 4-minute walkthrough</h1>
+      <p>Narrated overview of the documentation portal mockup. Scenes auto-advance with voice narration.</p>
+      <button class="start-btn" id="start-btn">Start walkthrough</button>
+      <div class="hint">Audio will play. Use the bottom bar to pause, skip, or toggle captions.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="controls">
+  <button class="btn" id="prev-btn">← Prev</button>
+  <button class="btn primary" id="play-btn">Pause</button>
+  <button class="btn" id="next-btn">Skip →</button>
+  <div class="progress"><div class="bar" id="prog-bar"></div></div>
+  <label class="toggle-cap"><input type="checkbox" id="cap-toggle" checked> Captions</label>
+  <div class="scene-label" id="scene-label">— / —</div>
+</div>
+
+<audio id="narrator" preload="auto"></audio>
+
+<script>
+(function () {
+  // Scene definitions: id, label, narration text, fallback duration in seconds.
+  // The fallback duration is used only if the audio file fails to load.
+  var scenes = [
+    { id: "01-intro",        label: "Intro",                  fallback: 28, text: "Hi Veselina. This is a four minute walkthrough of the proposed UST FinX documentation portal. The mockup is live at finx-mockup.vercel.app. I'll cover the public marketing layer, the documentation layer for developers and bank operators, and the internal hub for UST staff. I'll also explain how the three tiers are structured, and where the authentication question fits." },
+    { id: "02-public",       label: "The public layer",       fallback: 80, text: "The homepage is the entry point for bank evaluators, CIOs, and architects. They land here from a Google search or a sales conversation. It opens with the core argument from the white paper: the problem with big-bang transformation and point solutions, then the FinX response. The Approach section maps to white paper sections one through three — BIAN-aligned, iterative, coexistence-first. The Innovation section comes from white paper section seven: architectural standards don't slow innovation, they compound it. The Why UST section surfaces the partnership argument: thirty-three thousand employees, two billion dollars in annual revenue, managed services beyond programme delivery. The ecosystem diagram is taken directly from the FinX sales deck — Glue at the centre, the connector ecosystem around it, the cores below. The homepage closes with the white paper's Section 11 structure: what you gain, next steps, a closing pitch, the contact line." },
+    { id: "03-nav",          label: "Navigation",             fallback: 14, text: "The top navigation covers five public sections: Architecture, Platform, Modernization, Use cases, and Resources. Each one is a fully built page with real content from the white paper." },
+    { id: "04-platform",     label: "Platform",               fallback: 25, text: "The Platform section introduces FinX Glue and FinX Glass as separate products. Glue is the orchestration layer for developers. Glass is the operations console for bank staff. Each product page has four capability cards, an ecosystem overview, and two clear calls to action — one into the documentation, one into the architecture guide." },
+    { id: "05-modernization",label: "Modernization paths",    fallback: 40, text: "The Modernization section is where FinX makes a specific claim about time to value. Four paths, two metrics each, so they can be honestly compared. Greenfield: six months to first customer. Coexistence: nine months to first new capability. Progressive: nine months per domain, eighteen to thirty-six month programme total. Full Modernization: thirty-six plus months to complete legacy retirement. Each path has a detail page showing the phased timeline and a link forward into the documentation." },
+    { id: "06a-glue-docs",   label: "Glue documentation",     fallback: 66, text: "Now the documentation layer. This is Tier 2 in the proposed access model: fully public, no login required. The same decision Stripe, Plaid, and Twilio have all made — open documentation works as a sales asset. The Glue Developer Hub has a three-column layout: sidebar navigation on the left, content in the centre, On this page anchors on the right. Five real pages are built. Quickstart walks a developer from zero to a working integration in thirty minutes — authentication, tenant context, first API call, webhook verification. The journey guides are the heart of the developer documentation. The onboarding guide walks the six-call sequence: party initiation, document upload, identity verification, AML screening, and lifecycle promotion. Placeholder links are clearly marked — hovering shows exactly what each will contain in production." },
+    { id: "06b-glass-docs",  label: "Glass documentation",    fallback: 46, text: "The Glass Operations Guide has the same three-column structure, but organized by role. Bank operations staff navigate by what they do, not by what the API does. Each role has a landing page listing common tasks. Each task is a step-by-step walkthrough — numbered steps, a permission callout, related tasks at the bottom. This mirrors how Stripe and Twilio organise operator-facing documentation: bank staff find what they need by job function, not by endpoint name. The result is faster onboarding for operations teams, and fewer support tickets back to UST delivery." },
+    { id: "07-internal",     label: "Internal hub",           fallback: 40, text: "The internal hub is Tier 3 — UST employees only. The entry point is a small pill in the top navigation that says UST staff. Clicking it opens a sign-in modal. In production this would authenticate against UST's Microsoft Entra ID. For the demo, the password is finx2026. After sign-in, the nav pill turns purple and says UST Internal. The hub has six categories: engagement playbooks, sales enablement, architecture deep-dives, delivery references, client engagements, and product requirements." },
+    { id: "08-three-tier",   label: "The three-tier model",   fallback: 50, text: "To summarise the architecture: three tiers under one brand. Tier one is the fully public marketing layer. Tier two is the public documentation. Tier three is UST internal, gated by single sign-on. In production these would be three separate hosting properties: ustfinx.com for the marketing site, docs.ustfinx.com for the documentation, internal.ustfinx.com or inside the UST intranet for the internal layer. The mockup compresses all three into one URL to show the unified experience. The documentation layer has eight fully built example pages. The remaining navigation items show planned destinations on hover." },
+    { id: "09-outro",        label: "Outro",                  fallback: 21, text: "I'd value your perspective on three things: whether the three-tier model maps to how UST actually wants to operate; whether SSO via Entra ID is the right authentication path; and whether this is ready to walk through with FinX leadership. Happy to discuss whenever works. Thanks Veselina." }
+  ];
+
+  // Mockup base URL: when this page is hosted at /walkthrough/index.html on the
+  // same domain as the mockup, '..' resolves to the mockup root. Override via
+  // ?mockup=https://example.com if needed.
+  var qp = new URLSearchParams(location.search);
+  var mockupBase = qp.get('mockup') || (location.origin + location.pathname.replace(/\/walkthrough\/?.*$/, '/'));
+
+  var stage = document.getElementById('stage');
+  var sceneEls = Array.prototype.slice.call(document.querySelectorAll('.scene'));
+  var audio = document.getElementById('narrator');
+  var capLabel = document.getElementById('cap-label');
+  var capText = document.getElementById('cap-text');
+  var captionEl = document.getElementById('caption');
+  var prevBtn = document.getElementById('prev-btn');
+  var nextBtn = document.getElementById('next-btn');
+  var playBtn = document.getElementById('play-btn');
+  var progBar = document.getElementById('prog-bar');
+  var sceneLabel = document.getElementById('scene-label');
+  var capToggle = document.getElementById('cap-toggle');
+  var startOverlay = document.getElementById('start-overlay');
+  var startBtn = document.getElementById('start-btn');
+
+  var idx = 0;
+  var paused = false;
+  var fallbackTimer = null;
+  var progressTimer = null;
+
+  function getSceneEl(i) {
+    return sceneEls.find(function (el) { return el.getAttribute('data-scene') === scenes[i].id; });
+  }
+
+  function activateScene(i) {
+    sceneEls.forEach(function (el) { el.classList.remove('active'); });
+    var el = getSceneEl(i);
+    if (!el) return;
+    el.classList.add('active');
+
+    // Lazy-init iframe so we don't load 7 mockups at once
+    var src = el.getAttribute('data-iframe');
+    if (src && !el.querySelector('iframe')) {
+      var f = document.createElement('iframe');
+      f.src = mockupBase.replace(/\/$/, '') + src;
+      f.setAttribute('loading', 'lazy');
+      f.setAttribute('title', scenes[i].label);
+      el.appendChild(f);
+    }
+  }
+
+  function setCaption(i) {
+    capLabel.textContent = "Scene " + (i + 1) + " of " + scenes.length + " · " + scenes[i].label;
+    capText.textContent = scenes[i].text;
+  }
+
+  function setSceneLabel(i) {
+    sceneLabel.textContent = (i + 1) + " / " + scenes.length;
+  }
+
+  function clearTimers() {
+    if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+    if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+  }
+
+  function updateProgress(elapsed, total) {
+    var pct = Math.min(100, (elapsed / total) * 100);
+    progBar.style.width = pct + "%";
+  }
+
+  function playScene(i) {
+    clearTimers();
+    if (i < 0 || i >= scenes.length) return;
+    idx = i;
+    activateScene(i);
+    setCaption(i);
+    setSceneLabel(i);
+    progBar.style.width = "0%";
+
+    var s = scenes[i];
+    audio.src = "audio/" + s.id + ".wav";
+    audio.load();
+    var startedAt = Date.now();
+    var totalSec = s.fallback;
+
+    var playPromise = audio.play();
+    if (playPromise && playPromise.catch) {
+      playPromise.catch(function () { /* will fall back to timer */ });
+    }
+
+    audio.onloadedmetadata = function () {
+      if (!isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 1) {
+        totalSec = audio.duration;
+      }
+    };
+    audio.onended = function () {
+      clearTimers();
+      if (!paused) advance();
+    };
+    audio.onerror = function () {
+      // Fall back to timer-based advance.
+      clearTimers();
+      fallbackTimer = setTimeout(function () { if (!paused) advance(); }, s.fallback * 1000);
+    };
+
+    progressTimer = setInterval(function () {
+      var elapsed;
+      if (!isNaN(audio.duration) && audio.duration > 0 && audio.currentTime > 0) {
+        elapsed = audio.currentTime;
+        totalSec = audio.duration;
+      } else {
+        elapsed = (Date.now() - startedAt) / 1000;
+      }
+      updateProgress(elapsed, totalSec);
+    }, 200);
+
+    // Safety net: if neither onended nor onerror fires (some browsers),
+    // schedule a fallback advance at fallback duration + 5s grace.
+    fallbackTimer = setTimeout(function () {
+      if (!paused && audio.paused) advance();
+    }, (s.fallback + 5) * 1000);
+  }
+
+  function advance() {
+    if (idx + 1 < scenes.length) playScene(idx + 1);
+    else finish();
+  }
+
+  function finish() {
+    clearTimers();
+    progBar.style.width = "100%";
+    playBtn.textContent = "Replay";
+    paused = true;
+  }
+
+  prevBtn.addEventListener('click', function () {
+    if (idx > 0) playScene(idx - 1);
+  });
+  nextBtn.addEventListener('click', function () {
+    if (idx + 1 < scenes.length) playScene(idx + 1);
+  });
+  playBtn.addEventListener('click', function () {
+    if (playBtn.textContent === "Replay") { paused = false; playScene(0); playBtn.textContent = "Pause"; return; }
+    paused = !paused;
+    if (paused) { audio.pause(); playBtn.textContent = "Resume"; }
+    else { audio.play().catch(function(){}); playBtn.textContent = "Pause"; }
+  });
+  capToggle.addEventListener('change', function () {
+    captionEl.classList.toggle('hidden', !capToggle.checked);
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') nextBtn.click();
+    else if (e.key === 'ArrowLeft') prevBtn.click();
+    else if (e.key === ' ' || e.key === 'k') { e.preventDefault(); playBtn.click(); }
+    else if (e.key === 'c') capToggle.click();
+  });
+
+  function start() {
+    startOverlay.style.display = 'none';
+    playBtn.textContent = "Pause";
+    paused = false;
+    playScene(0);
+  }
+  startBtn.addEventListener('click', start);
+  startOverlay.addEventListener('click', function (e) { if (e.target === startOverlay) start(); });
+
+  // Pre-render scene labels into UI so it's ready before start
+  setSceneLabel(0);
+  capLabel.textContent = "Press Start to begin";
+  capText.textContent = "A narrated overview of the UST FinX documentation portal — public layer, documentation layer, and the UST internal hub.";
+})();
+</script>
+</body>
+</html>

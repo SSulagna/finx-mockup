@@ -210,6 +210,16 @@
 
   // ---------- Boot ----------
   document.addEventListener('DOMContentLoaded', function () {
+    // Demo-mode helper for screenshot/walkthrough capture: ?demo-unlock=1
+    // unlocks the internal tier without going through the modal. The demo
+    // password is already publicly visible in the sign-in modal, so this
+    // changes nothing about real security posture.
+    try {
+      if (/[?&]demo-unlock=1\b/.test(location.search)) {
+        sessionStorage.setItem(STORAGE_KEY, '1');
+      }
+    } catch (_) {}
+
     // Modal wiring
     var m = modalEl();
     if (m) {
