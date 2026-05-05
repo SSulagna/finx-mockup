@@ -531,12 +531,6 @@
     } catch (_) { /* ignore */ }
   }
 
-  function scheduleCues(scene, sceneEl) {
-    clearCueTimers();
-    hideHighlight();
-    // Cues are fired by the progress interval keyed to audio.currentTime,
-    // so they stay in sync even when audio buffers.
-  }
 
   function getSceneEl(i) {
     return sceneEls.find(function (el) { return el.getAttribute('data-scene') === scenes[i].id; });
@@ -600,9 +594,10 @@
       playPromise.catch(function () { /* will fall back to timer */ });
     }
 
-    // Reset highlight cues for this scene (cues fire from progress interval).
+    // Reset highlight state; cues fire from the progress interval via audio.currentTime.
     var sceneEl = getSceneEl(i);
-    scheduleCues(s, sceneEl);
+    clearCueTimers();
+    hideHighlight();
 
     audio.onloadedmetadata = function () {
       if (!isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 1) {

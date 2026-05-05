@@ -169,8 +169,7 @@ async def main() -> None:
     os.makedirs(OUT_DIR, exist_ok=True)
     print(f"Voice: {VOICE}  Rate: {RATE}")
     print(f"Output: {os.path.abspath(OUT_DIR)}\n")
-    for scene in SCENES:
-        await generate_scene(scene)
+    await asyncio.gather(*[generate_scene(scene) for scene in SCENES])
     print("\nDone.")
 
 
