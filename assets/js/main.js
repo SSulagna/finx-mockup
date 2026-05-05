@@ -24,6 +24,7 @@
   // ---------- Constants ----------
   var DEMO_PASSWORD   = 'finx2026';
   var STORAGE_KEY     = 'finx-internal-unlocked';
+  var THEME_KEY       = 'finx-theme';
   var DEFAULT_ROUTE   = '/';
   var SIGNIN_HASH_RE  = /^#\/?signin$/i;
 
@@ -31,6 +32,37 @@
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function isUnlocked() { try { return sessionStorage.getItem(STORAGE_KEY) === '1'; } catch (_) { return false; } }
+
+  // ---------- Theme toggle ----------
+  function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem(THEME_KEY, theme); } catch (_) {}
+    var label = $('#mobile-theme-label');
+    if (label) label.textContent = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
+  }
+
+  function toggleTheme() { applyTheme(currentTheme() === 'dark' ? 'light' : 'dark'); }
+
+  // ---------- Mobile menu ----------
+  function closeMobileMenu() {
+    var m = $('#mobile-menu'), h = $('#nav-hamburger');
+    if (m) { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); }
+    if (h) { h.classList.remove('is-open'); h.setAttribute('aria-expanded', 'false'); }
+  }
+
+  function openMobileMenu() {
+    var m = $('#mobile-menu'), h = $('#nav-hamburger');
+    if (m) { m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); }
+    if (h) { h.classList.add('is-open'); h.setAttribute('aria-expanded', 'true'); }
+  }
+
+  function toggleMobileMenu() {
+    var m = $('#mobile-menu');
+    if (!m) return;
+    if (m.classList.contains('is-open')) closeMobileMenu(); else openMobileMenu();
+  }
 
   // ---------- Routing ----------
   function parseHash() {
@@ -83,6 +115,9 @@
 
     var route = view.getAttribute('data-route');
     updateActiveNav(route);
+
+    // Close mobile menu on navigation
+    closeMobileMenu();
 
     // Scroll to top
     window.scrollTo(0, 0);
@@ -166,10 +201,10 @@
     location.hash = '#/';
   }
 
-  // ---------- Staff-link state (top nav + footer) ----------
+  // ---------- Staff-link state (top nav + footer + mobile) ----------
   function updateStaffLinks() {
     var unlocked = isUnlocked();
-    $$('.nav-staff-link').forEach(function (a) {
+    $$('.nav-staff-link, .mobile-staff-link').forEach(function (a) {
       a.classList.toggle('is-unlocked', unlocked);
       a.textContent = unlocked ? 'UST Internal \u2713' : 'UST staff \u2197';
       a.setAttribute('title', unlocked
@@ -304,6 +339,37 @@
 
     // Tabs
     bindTabs();
+
+    // Theme: restore saved preference
+    try {
+      var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+      applyTheme(savedTheme);
+    } catch (_) { applyTheme('dark'); }
+
+    // Theme toggle buttons (desktop + mobile)
+    $$('#theme-toggle, #theme-toggle-mobile').forEach(function (btn) {
+      btn.addEventListener('click', toggleTheme);
+    });
+
+    // Hamburger / mobile menu
+    var hamburger = $('#nav-hamburger');
+    if (hamburger) hamburger.addEventListener('click', toggleMobileMenu);
+
+    // Close mobile menu when clicking a link inside it
+    var mobileMenuEl = $('#mobile-menu');
+    if (mobileMenuEl) {
+      mobileMenuEl.addEventListener('click', function (e) {
+        var link = e.target.closest('a[href]');
+        if (link && link.getAttribute('href') !== 'javascript:void(0)') {
+          closeMobileMenu();
+        }
+      });
+    }
+
+    // ESC closes mobile menu too
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
 
     // Initial state
     updateStateIndicator();
