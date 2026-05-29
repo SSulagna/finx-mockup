@@ -58,7 +58,7 @@ Sorted by Priority (P0 → P2), then by Target tier (Public → Auth → Interna
 | 21 | finx-mockup | `index.html#/docs/glass/task-kyc-review` | Reviewing KYC results for a new customer | `index.html#/docs/glass/task-kyc-review` | Auth | Migrate as-is | P0 | Stays. |
 | 22 | finx-mockup | `index.html#/internal` | UST FinX Internal Hub | `index.html#/internal` | Internal | Migrate as-is | P0 | Stays. Card targets filled by new writes (rows 56–61). |
 | 23 | finx-onboarding-docs | `docs/executive/brief.md` | Executive Brief — FinX Client Onboarding | `index.html#/executive-brief` | Public | Migrate and rewrite | P0 | New marketing-adjacent route. See Open question 2. |
-| 24 | finx-onboarding-docs | `docs/glossary.md` | Glossary | `index.html#/resources/glossary` | Public | Migrate as-is | P0 | Linked from `/resources`. Replaces the current "Planned: glossary" link. |
+| 24 | finx-onboarding-docs | `docs/glossary.md` | Glossary | `index.html#/resources/glossary` | Public | Migrated 29 May 2026 | P0 | Linked from `/resources`. Replaces the current "Planned: glossary" link. |
 | 25 | finx-onboarding-docs | `docs/partner-integration/auth-gateway.md` | Partner Integration Guide (parent) | `index.html#/partners` | Auth | Split | P0 | Parent landing for new top-level Partners section. Sibling row 36 carries the Authentication & Gateway body. See Open question 1. |
 | 26 | finx-onboarding-docs | `docs/partner-integration/api-contracts.md` | API Contracts | `index.html#/partners/api-contracts` | Auth | Migrate as-is | P0 | Under new Partners section. |
 | 27 | finx-onboarding-docs | `docs/partner-integration/sandbox-postman.md` | Sandbox & Postman | `index.html#/partners/sandbox` | Auth | Migrate as-is | P0 | Under new Partners section. |
