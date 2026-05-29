@@ -1907,6 +1907,17 @@ body[data-route-palette="internal"] {
 .glossary-term dd { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 0; }
 @media (max-width: 720px) { .glossary-grid { grid-template-columns: 1fr; } }
 
+/* Full glossary at /resources/glossary: stacked list, no grid */
+.glossary-list { margin: 0 0 24px; padding: 0; }
+.glossary-list dt { font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 18px 0 6px; scroll-margin-top: 100px; }
+.glossary-list dt:first-of-type { margin-top: 8px; }
+.glossary-list dd { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 4px; padding-left: 14px; border-left: 2px solid var(--border-dark); }
+.glossary-list dd p { margin: 0 0 8px; }
+.glossary-list dd ul { margin: 6px 0 8px 0; padding-left: 18px; }
+.glossary-list dd ul li { margin-bottom: 4px; color: var(--text-secondary); }
+.glossary-list dd code { font-size: 12.5px; }
+.glossary-src { font-size: 11.5px; color: var(--text-muted); font-style: italic; margin-top: 6px !important; }
+
 .use-case-section { padding: 40px 0; border-top: 1px solid var(--border-dark); }
 .use-case-section:first-of-type { border-top: none; }
 .use-case-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: start; }

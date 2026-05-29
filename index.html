@@ -2978,6 +2978,7 @@
     <section class="section section--mid"><div class="container">
       <span class="eyebrow">Platform glossary</span>
       <h2 class="page-title" style="font-size:28px;">Defined in plain language.</h2>
+      <p class="page-lead" style="font-size:15px;">A curated set of the most common terms below. For the full A-Z reference covering BIAN operations, adapters, environments, governance roles, and third-party integrations, see the <a href="#/resources/glossary">full glossary →</a></p>
       <nav class="az-jump" id="glossary-az" aria-label="Jump to letter">
         <span class="az-label">Jump</span>
         <button type="button" data-az="a">A</button><button type="button" data-az="b">B</button><button type="button" data-az="c">C</button>
@@ -3107,6 +3108,281 @@
       <a href="#/use-cases" class="card card--link"><h3 class="card-title">Use cases →</h3><p class="card-text">Where the platform lands first inside a bank.</p></a>
       <a href="#/modernization" class="card card--link"><h3 class="card-title">Modernization paths →</h3><p class="card-text">Pick a path: greenfield, coexistence, progressive.</p></a>
     </div></div></aside>
+  </section>
+
+  <!-- RESOURCES: Full glossary -->
+  <section class="view" data-route="/resources/glossary" data-layout="docs" data-section="resources" data-title="Glossary · Resources · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">Resources</div>
+      <a href="#/resources" class="docs-nav-link">Overview</a>
+      <a href="#/resources/glossary" class="docs-nav-link is-active">Glossary</a>
+
+      <div class="docs-nav-group">Jump to letter</div>
+      <a href="#letter-a" class="docs-nav-link">A</a>
+      <a href="#letter-b" class="docs-nav-link">B</a>
+      <a href="#letter-c" class="docs-nav-link">C</a>
+      <a href="#letter-d" class="docs-nav-link">D</a>
+      <a href="#letter-e" class="docs-nav-link">E</a>
+      <a href="#letter-f" class="docs-nav-link">F</a>
+      <a href="#letter-g" class="docs-nav-link">G</a>
+      <a href="#letter-h" class="docs-nav-link">H</a>
+      <a href="#letter-i" class="docs-nav-link">I</a>
+      <a href="#letter-j" class="docs-nav-link">J</a>
+      <a href="#letter-k" class="docs-nav-link">K</a>
+      <a href="#letter-m" class="docs-nav-link">M</a>
+      <a href="#letter-n" class="docs-nav-link">N</a>
+      <a href="#letter-o" class="docs-nav-link">O</a>
+      <a href="#letter-p" class="docs-nav-link">P</a>
+      <a href="#letter-q" class="docs-nav-link">Q</a>
+      <a href="#letter-s" class="docs-nav-link">S</a>
+      <a href="#letter-t" class="docs-nav-link">T</a>
+      <a href="#letter-v" class="docs-nav-link">V</a>
+      <a href="#letter-x" class="docs-nav-link">X</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/resources" class="back-link">← Back to Resources</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/resources">Resources</a><span class="sep">/</span><span>Glossary</span></nav>
+      <span class="eyebrow">Resources / Glossary</span>
+      <h1 class="page-title">Glossary</h1>
+      <p class="page-lead">The full A-Z reference for FinX platform, BIAN, architecture, integration, and governance terminology. Definitions are sourced from FinX engineering and product documentation.</p>
+
+      <h2 class="h3" id="letter-a">A</h2>
+      <dl class="glossary-list">
+        <dt id="term-adapter">Adapter</dt>
+        <dd><p>A provider connector that maps canonical (BIAN) payloads to target systems (cores, fintechs, CRM) and protocols, enabling independent evolution. One adapter per target system. Adapters execute a five-step pipeline: read target config, transform request, call target API, handle response, transform response. Governed by the canonical model, with no direct service-domain-to-system coupling. Two primary adapters today: <code>finx-glue-cif-adapter-service</code> (target: FinX-CIF) and <code>finx-glue-tm-account-adapter-service</code> (target: TM Vault Core).</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context); FinX Glue Architecture; FinX Glue Services and Adapter details.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-b">B</h2>
+      <dl class="glossary-list">
+        <dt id="term-behavior-qualifier">Behavior Qualifier (BQ)</dt>
+        <dd><p>A subdivision of a Control Record describing a specific aspect or behavior (for example KYC, Statements, Amount Block). BQs appear as nested resources and operations in APIs. FinX may add sub-qualifiers while keeping alignment to the parent BQ semantics.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+
+        <dt id="term-bian-api">BIAN API</dt>
+        <dd><p>A canonical, service-domain-scoped business API that adheres to BIAN semantics using the BIAN generic operation verbs. The full set of BIAN v14 generic operations is: <strong>initiate</strong> (create a new service-domain instance), <strong>retrieve</strong> (return details), <strong>update</strong> (modify), <strong>record</strong> (capture information), <strong>execute</strong> (perform an activity), <strong>evaluate</strong> (assess or score), <strong>control</strong> (apply a control action), <strong>register</strong> (register a new entry), <strong>notify</strong> (send a state-change notification), <strong>request</strong> (make a formal request), <strong>grant</strong> (authorise access or permission), <strong>provide</strong> (supply information on demand), <strong>feedback</strong> (submit review or outcome), and <strong>exchange</strong> (two-way data exchange). Not every operation applies to every service domain. The applicable operations are determined by the service domain's Functional Pattern. FinX Glue exposes initiate, retrieve, update, record, execute, evaluate, control, register, and notify across its published Glue service APIs. BIAN APIs are the contract of record in FinX. Platform and tenant variability is expressed via governed extensions, not API shape changes.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+
+        <dt id="term-bian-bom">BIAN BOM (Business Object Model)</dt>
+        <dd><p>The canonical, BIAN-aligned business information model that standardizes attributes and relationships across service domains. The BOM drives canonical schemas in the Schema Registry and powers transformations between canonical payloads and target systems. All BIAN implementations must treat the BOM as the authoritative source for data definitions, relationships, and constraints (ADR-FINX-CIF-001).</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context); ADR, FinX CIF.</p></dd>
+
+        <dt id="term-bian-business-scenario">BIAN Business Scenario</dt>
+        <dd><p>A BIAN-defined end-to-end transaction pattern that sequences interactions across multiple service domains to accomplish a specific business goal. Business Scenarios serve as blueprints for the FinX Business Abstraction Layer. Key onboarding-relevant scenarios include: <strong>Retail Customer Onboarding</strong> (Party Reference Data Directory → Know Your Customer → Customer Agreement → Savings Account); <strong>Account Opening</strong> (Customer Product and Service Directory → Current Account or Savings Account → Position Keeping); <strong>KYC Refresh</strong> (Know Your Customer → Party Reference Data Directory update). FinX Business APIs (target state) expose these multi-service-domain sequences as single callable endpoints.</p><p class="glossary-src">Source: BIAN v14 Specification.</p></dd>
+
+        <dt id="term-bian-landscape">BIAN Landscape</dt>
+        <dd><p>The complete taxonomy of approximately 325 BIAN service domains organized into 20 Business Areas that together cover the full operational scope of a bank. Business Areas include Financial Institutions, Sales and Service, Operations and Execution, Risk and Compliance, Business Direction and Support, and others. FinX Glue implements a targeted subset of service domains relevant to onboarding, account management, and payments. The scope is extended per client engagement by adding BIAN-aligned Glue services for additional service domains. The Landscape is the primary reference for identifying which service domain owns a given capability when scoping new integrations.</p><p class="glossary-src">Source: BIAN v14 Specification.</p></dd>
+
+        <dt id="term-bian-team">BIAN Team</dt>
+        <dd><p>Owns specification domain knowledge, drives schema customizations, and raises PRs for schema changes. Responsible for identifying service-domain candidates, downloading base BIAN specs, and customizing on feature branches.</p><p class="glossary-src">Source: Schema Registry and SoP for onboarding new BIAN services in Glue.</p></dd>
+
+        <dt id="term-bal">Business Abstraction Layer (BAL)</dt>
+        <dd><p>The new architectural layer being introduced on top of the existing BIAN Service APIs and Adapter Framework. It exposes business capabilities, specifically Account Opening and Customer Onboarding, as single-call Business APIs. Responsibilities: orchestration, policy enforcement, state management, and unified response. Today, channels must orchestrate multiple BIAN API calls per journey. In the target state, channels call one Business API and FinX Glue handles all orchestration internally. BIAN APIs remain intact and are used internally.</p><p class="glossary-src">Source: Transitioning FinX Glue to a Business Capability Platform, current and target states.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-c">C</h2>
+      <dl class="glossary-list">
+        <dt id="term-canonical-model">Canonical Model</dt>
+        <dd><p>The unified, BIAN-aligned representation of business data used across APIs, events, and transformations to avoid point-to-point models. Realized through the BIAN BOM and enforced by the Schema Registry and CI policies.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+
+        <dt id="term-cif">CIF (Customer Information File)</dt>
+        <dd><p>The FinX-CIF application and database that serves as the customer master data store. The <code>finx-glue-cif-adapter-service</code> integrates with FinX-CIF for customer creation, customer search, and customer updates. It also maintains Document Directory data, Customer Agreement data, and Customer Product Services data in the FinX-CIF database as different collections. CIF is the adapter target for Party Reference Data Directory, Customer Product &amp; Service Directory, Customer Agreement, and Document Directory service domains. ADR decisions (ADR-FINX-CIF-001 through ADR-FINX-CIF-006) govern how the BIAN BOM maps to CIF data models.</p><p class="glossary-src">Source: FinX Glue Services and Adapter details; ADR, FinX CIF.</p></dd>
+
+        <dt id="term-complyadvantage">ComplyAdvantage (CA) / Mesh</dt>
+        <dd><p>The KYC and AML screening provider integrated via <code>finx-amln-fraud-detection-adapter</code>. Supports individual, corporate, and beneficiary entity screening through the ComplyAdvantage Mesh API. Uses a create-and-screen synchronous workflow with webhook callbacks (CASE_CREATED, CASE_STATE_UPDATED, WORKFLOW_COMPLETED). Screens against OFAC, sanctions lists, PEPs, and adverse media. Transaction screening is handled separately by <code>finx-complyadvantage-transaction</code>. Webhook subscription is performed manually by contacting CA support.</p><p class="glossary-src">Source: FinX Microservices Details; FBSA-20.</p></dd>
+
+        <dt id="term-conductor-oss">Conductor OSS</dt>
+        <dd><p>The orchestration backbone of FinX Glue, enhanced to support BPMN-compliant workflow definitions (JSON or YAML). Orchestrates microservices, APIs, events, human tasks, and UI steps. Supports process states such as wait, resume, parallelization, branching, timers, retries, and escalations. Note: per TRD §5.4, orchestration is currently hand-coded in microservices. Conductor-driven runtime is the target state.</p><p class="glossary-src">Source: Process &amp; Orchestration; FinX Glue Testing Requirements for QA and Test Team.</p></dd>
+
+        <dt id="term-control-record">Control Record (CR)</dt>
+        <dd><p>The primary business object managed by a service domain and the focal point for operations (for example Customer, Current Account). Control Records define top-level resources in OpenAPI specs and anchor persistence, orchestration, and policy tagging.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-d">D</h2>
+      <dl class="glossary-list">
+        <dt id="term-demo">DEMO</dt>
+        <dd><p>The production-equivalent environment for customers. All platform releases are deployed here after passing earlier validation stages. Functions as the customer-facing environment.</p><p class="glossary-src">Source: FinX Environments.</p></dd>
+
+        <dt id="term-dev">DEV</dt>
+        <dd><p>Development environment for feature development, integration work, and early-stage testing. Frequent CI/CD deployments. Some Kafka consumers and transforms run only in Dev. Infrastructure may be scaled down.</p><p class="glossary-src">Source: FinX Environments.</p></dd>
+
+        <dt id="term-docusign">DocuSign</dt>
+        <dd><p>E-signature and document management provider integrated via <code>finx-celta-docusign-security</code>. Capabilities: S3 document upload with signed URLs, MSD document CRUD, DocuSign template sending, envelope status tracking, and webhook callbacks via AWS Lambda (<code>celta-docusign-s3-demo</code>). Database: <code>finx_docusign_db</code> (Liquibase). Note: this is a platform capability but is not currently wired into the retail savings onboarding Jira scope (FBSA).</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-e">E</h2>
+      <dl class="glossary-list">
+        <dt id="term-extension-registry">Extension Registry</dt>
+        <dd><p>The catalog of approved platform and tenant extension schemas with metadata (namespace, version, searchable fields, PII tags). Enforced at request and response time to prevent schema drift and data leaks. Platform extensions: <code>platform:ustfinx.{domain}.{cr/bq}</code>. Tenant extensions: <code>tenant:{tenantId}.{domain}.{cr/bq}</code>.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-f">F</h2>
+      <dl class="glossary-list">
+        <dt id="term-finx-glass">FinX Glass</dt>
+        <dd><p>The central operations interface for banks adopting composable and progressively modernized architectures through FinX Glue. Built on Modyo's composable front-end platform, FinX Glass serves as a single operational cockpit where bank users can monitor, manage, and orchestrate all components and services integrated into FinX Glue, including APIs, workflows, fintech integrations, compliance controls, and observability dashboards. Each capability in FinX Glue is surfaced as a micro front-end application (MFE / SPA) inside FinX Glass. Glass is a bank operator portal, currently targeting Customer &amp; Account Management (CAM) and Task Management (TM).</p><p class="glossary-src">Source: Introduction to FinX Glass.</p></dd>
+
+        <dt id="term-finx-glue">FinX Glue</dt>
+        <dd><p>A next-generation banking integration and interoperability platform: a BIAN-aligned, cloud-native framework that accelerates digital transformation for banks and fintechs. It enables institutions to build, deploy, and operate secure, composable, and host-agnostic banking systems by unifying API management, event-driven data exchange, observability, and governance within a single ecosystem. At its core, FinX Glue abstracts the complexity of integrating with legacy cores, fintech platforms, and modern cloud services by offering pre-built accelerators, protocol adapters, and canonical data models that ensure interoperability and compliance.</p><p class="glossary-src">Source: FinX Glue.</p></dd>
+
+        <dt id="term-functional-pattern">Functional Pattern</dt>
+        <dd><p>The structural archetype assigned to each BIAN service domain that determines its behavior and the set of applicable generic operations. BIAN v14 defines the following core patterns used in FinX:</p>
+        <ul>
+          <li><strong>Fulfill:</strong> manages the complete product or service lifecycle for a customer (for example Current Account, Savings Account, Term Deposit). Supports initiate, retrieve, update, execute, and record.</li>
+          <li><strong>Administer:</strong> manages reference or configuration data with long-term persistence (for example Party Reference Data Directory, Customer Agreement, Document Directory, Customer Product and Service Directory). Supports initiate, retrieve, update, register, and record.</li>
+          <li><strong>Process:</strong> orchestrates a complex, multi-step business process to a conclusion (for example Know Your Customer). Supports initiate, retrieve, update, record, and execute.</li>
+          <li><strong>Monitor:</strong> observes and reports on a business state or position (for example Position Keeping). Supports retrieve, update, record, and notify.</li>
+          <li><strong>Transact:</strong> executes a discrete, atomic business action with immediate completion (for example Payment Order). Supports initiate, retrieve, and record.</li>
+        </ul>
+        <p>Knowing the Functional Pattern of a service domain tells engineers which BIAN operations to expect and helps partners predict API shape before consulting the OpenAPI spec.</p>
+        <p class="glossary-src">Source: BIAN v14 Specification.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-g">G</h2>
+      <dl class="glossary-list">
+        <dt id="term-glue-team">Glue Team</dt>
+        <dd><p>Owns the GitHub Schema Registry, performs the initial V0 commit of base BIAN specs, reviews PRs, and enforces technical standards. Responsible for CI pipeline configuration and deployment promotion.</p><p class="glossary-src">Source: Schema Registry and SoP for onboarding new BIAN services in Glue.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-h">H</h2>
+      <dl class="glossary-list">
+        <dt id="term-hitl">HITL (Human-in-the-Loop)</dt>
+        <dd><p>Workflow task types in Conductor OSS that support human interventions for approvals, reviews, escalations, exception handling, and compliance-driven interventions. Features: SLA timers, auto-escalation, delegation, audit history; Workflow Workbench UI for review, approve, and reject; role-based routing, assignment, queueing, and segregation-of-duties-aware dual approvals. In onboarding: manual review queue for KYC matches.</p><p class="glossary-src">Source: Process &amp; Orchestration.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-i">I</h2>
+      <dl class="glossary-list">
+        <dt id="term-istio">Istio Service Mesh</dt>
+        <dd><p>East-west control for service-to-service authentication, encryption, routing, retries, and zero-trust enforcement within the FinX Glue platform.</p><p class="glossary-src">Source: FinX Glue.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-j">J</h2>
+      <dl class="glossary-list">
+        <dt id="term-jumio">Jumio</dt>
+        <dd><p>Third-party IDV (Identity Document Verification) provider for document authenticity and liveness checks. Integrated for ID verification during onboarding (Passport, Aadhaar, Driving License). Outcome: Verified, Manual review, or Fail with reason. Note: flagged as High risk in the project plan. The manual review flow for IDV failures is not in first-release scope.</p><p class="glossary-src">Source: Project Plan, Onboarding and Portal Program; FBSA-14.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-k">K</h2>
+      <dl class="glossary-list">
+        <dt id="term-keycloak">Keycloak</dt>
+        <dd><p>Handles authentication via OIDC and User Federation, federating identity back to the client's IdP. Ensures access control remains anchored to the client's own identity infrastructure. In FinX Glass, the Finx-Glass realm issues access tokens (5-minute TTL) and refresh tokens (30-minute TTL) stored in HttpOnly cookies.</p><p class="glossary-src">Source: FinX Glue Architecture; ADR, Glass Session Lifecycle Management (PCI-DSS 8.2.8).</p></dd>
+
+        <dt id="term-kong">Kong API Gateway</dt>
+        <dd><p>The unified entry point for all north-south API traffic in FinX Glue. Provides WAF, caching, API traffic routing with policy-based enforcement, rate limiting, and security policies. Kong routes requests to Keycloak for authentication. Native OpenTelemetry and Prometheus plugins stream telemetry data to the observability stack.</p><p class="glossary-src">Source: FinX Glue; FinX Glue Architecture.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-m">M</h2>
+      <dl class="glossary-list">
+        <dt id="term-maker-checker">Maker / Checker</dt>
+        <dd><p>User roles in the entitlement service for transaction approval workflows. The Maker initiates transactions (part of a Maker Group with specific limits). The Checker approves transactions (part of an Approval or Checker Group with upper and lower authorization limits). Dual-approval (four-eyes) is supported. Managed via <code>finx-celta-entitlement-service</code>.</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
+
+        <dt id="term-mfe">MFE (Micro Front-End)</dt>
+        <dd><p>A self-contained UI module deployed as an independent component through Modyo CMS or CI/CD. In FinX Glass, each capability is surfaced as an MFE (also called SPA). MFEs are IIFE bundles injected into the same page DOM (not iframes), sharing window, same origin, and same cookies. Built with Vue 3 + TypeScript + Vite. Examples: <code>finx-fe-cop-retail-onboarding</code>, <code>finx-fe-bop-service-request-fulfillment</code>.</p><p class="glossary-src">Source: Introduction to FinX Glass; ADR, Glass Session Lifecycle Management (PCI-DSS 8.2.8).</p></dd>
+
+        <dt id="term-modyo">Modyo</dt>
+        <dd><p>The composable front-end platform used by FinX Glass for micro front-end hosting and orchestration. Supports deployment of React or Vue SPAs as independent components. Provides CMS, build and deploy pipeline, and module federation capabilities.</p><p class="glossary-src">Source: Introduction to FinX Glass.</p></dd>
+
+        <dt id="term-msd">MSD (Master Service Data)</dt>
+        <dd><p>The internal master data store used by FinX onboarding services. The <code>finx-customer-onboarding-service-papi</code> provides APIs for customer onboarding purposes into MSD, including corporate entity creation, individual creation, case management, and appForm status tracking. MSD is referenced as a dependency in the FinX-Celta Services List for onboarding, qualify-prospect, and shareholder services.</p><p class="glossary-src">Source: FinX Microservices Details; FinX-Celta Services List.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-n">N</h2>
+      <dl class="glossary-list">
+        <dt id="term-non-bian-api">Non-BIAN API</dt>
+        <dd><p>APIs not defined by BIAN but needed in practice. FinX classifies these as Extension APIs (service-domain-specific, for example Dedup) or Utility APIs (cross-cutting, for example notification, audit, reference data lookup). Non-BIAN APIs follow BIAN-style naming and governance. They are retired or mapped if BIAN introduces equivalents.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-o">O</h2>
+      <dl class="glossary-list">
+        <dt id="term-oasdiff">oasdiff</dt>
+        <dd><p>Breaking-change detection tool used in CI for design-time validation. Compares OpenAPI spec versions to detect backward-incompatible changes. Failures block PR merge.</p><p class="glossary-src">Source: Schema Registry and SoP for onboarding new BIAN services in Glue.</p></dd>
+
+        <dt id="term-observability-stack">Observability Stack</dt>
+        <dd><p>The integrated open-source framework comprising Prometheus (metrics and monitoring), Grafana (visualization and alerting), Loki + Promtail (centralized logging), and OpenTelemetry (distributed tracing). Each API call is tracked from Kong Gateway ingress through FinX Glue microservices and backend integrations. Logs are captured in JSON format with correlation identifiers (trace_id, span_id). Serves as the data backbone for SRE, enabling SLI, SLO, and SLA measurement and enforcement.</p><p class="glossary-src">Source: Observability.</p></dd>
+
+        <dt id="term-orchestration-layer">Orchestration Layer</dt>
+        <dd><p>The process and policy layer that composes service-domain APIs, Utility APIs, and adapters into business journeys while insulating BIAN contracts from backend specifics. Handles sequencing, error handling, compensation, and routing. Keeps domain APIs stable.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-p">P</h2>
+      <dl class="glossary-list">
+        <dt id="term-perf">PERF</dt>
+        <dd><p>Performance environment for scalability, throughput, and stability validation under realistic load. Infrastructure topology is similar to production-equivalent.</p><p class="glossary-src">Source: FinX Environments.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-q">Q</h2>
+      <dl class="glossary-list">
+        <dt id="term-qa">QA</dt>
+        <dd><p>Quality Assurance environment for validating functional correctness across integrated components. All major FinX Glue components are deployed. CI/CD promotes validated builds from DEV to QA.</p><p class="glossary-src">Source: FinX Environments.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-s">S</h2>
+      <dl class="glossary-list">
+        <dt id="term-saga">Saga / Compensation Pattern</dt>
+        <dd><p>Pre-built patterns in Conductor OSS for maintaining data integrity across distributed systems. Includes reversible and irreversible compensation templates with embedded checkpointing, undo logic, fallback routing, and state recovery. Domain-ready blueprints for onboarding, payments, lending, servicing, and operations. Centralized audit trail for compliance.</p><p class="glossary-src">Source: Process &amp; Orchestration.</p></dd>
+
+        <dt id="term-schema-registry">Schema Registry</dt>
+        <dd><p>A version-controlled, GitHub-hosted repository of BIAN-aligned OAS YAML schemas: the single source of truth for all canonical data contracts. Uses a dual-version model: info.version (SemVer) and x-bian-version. Hosts V0 baselines and FinX-customized versions. Enforces design-time and build-time validation via CI/CD. GitHub repo: <code>ust-finx-schema-registry</code>.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context); Schema Registry and SoP for onboarding new BIAN services in Glue.</p></dd>
+
+        <dt id="term-semver">SemVer (Semantic Versioning)</dt>
+        <dd><p>The OAS info.version using MAJOR.MINOR.PATCH to track API evolution independently of BIAN releases. MAJOR for breaking changes, MINOR for additive compatibility, PATCH for fixes. Validated in CI. Deprecation policy: minimum three-month window, support latest minus 2.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context); FinX Glue API, Microservice Standards &amp; Naming Conventions.</p></dd>
+
+        <dt id="term-service-domain">Service Domain (SD)</dt>
+        <dd><p>A discrete BIAN business capability boundary that owns a specific functional pattern applied to an asset (for example Current Account, Customer Management). FinX organizes Glue services, API catalogs, and governance by service domain. All API and schema ownership, access control, and lifecycle policies are service-domain-scoped.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+
+        <dt id="term-sli-slo-sla">SLI / SLO / SLA</dt>
+        <dd><p>Service Level Indicators (measurable metrics: availability, latency, error rate), Service Level Objectives (targets, for example 99.9% uptime), and Service Level Agreements (contractual commitments). FinX defines error budgets and burn rate alerts: 1 to 2× Warning, 2 to 5× Critical, &gt;10× Deployment freeze + rollback.</p><p class="glossary-src">Source: SRE and Observability; Observability.</p></dd>
+
+        <dt id="term-spectral">Spectral</dt>
+        <dd><p>OpenAPI linting tool used in CI for design-time validation of OAS YAML schemas. Part of the Schema Registry governance pipeline. Failures block PR merge.</p><p class="glossary-src">Source: Schema Registry and SoP for onboarding new BIAN services in Glue.</p></dd>
+
+        <dt id="term-supplementarydata">supplementaryData</dt>
+        <dd><p>A governed extension envelope carried within BIAN payloads to include platform or tenant-specific attributes without changing canonical fields. Namespaced and versioned blocks are validated against JSON Schema before processing or persistence.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-t">T</h2>
+      <dl class="glossary-list">
+        <dt id="term-thought-machine">Thought Machine (TM) / Vault Core</dt>
+        <dd><p>The core banking system integrated via <code>finx-glue-tm-account-adapter-service</code>. Used for customer creation (<code>finx-celta-tm-party-service</code>), account lifecycle management (<code>finx-celta-tm-account-service</code> with V1, V2, and VP variants), postings and balances (<code>finx-celta-tm-postings-service</code>), and Vault Payments (<code>finx-celta-tm-vaultpayment-service</code>). TM endpoints are in us-east-1 (N. Virginia). FinX is in ap-south-1 (Mumbai) with VPC peering.</p><p class="glossary-src">Source: FinX Microservices Details; FinX Installation Manual; FinX Glue Services and Adapter details.</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-v">V</h2>
+      <dl class="glossary-list">
+        <dt id="term-v0-spec">V0 Spec</dt>
+        <dd><p>The unmodified base BIAN YAML committed as the initial baseline in the Schema Registry for a service domain. Establishes lineage. FinX customizations start after V0 and are fully versioned.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="letter-x">X</h2>
+      <dl class="glossary-list">
+        <dt id="term-x-bian-version">x-bian-version</dt>
+        <dd><p>A custom OAS extension indicating the upstream BIAN service-domain specification version the schema aligns to (for example 14.0.0), separate from technical SemVer. Updated only when the underlying BIAN release changes.</p><p class="glossary-src">Source: BIAN Glossary and Standards (FinX Context).</p></dd>
+      </dl>
+
+      <h2 class="h3" id="related">Related</h2>
+      <div class="grid-3">
+        <a href="#/resources" class="card card--link"><div class="card-eyebrow">Resources</div><h3 class="card-title">Resources overview →</h3><p class="card-text">White paper, FAQs, and diagrams for evaluators and architects.</p></a>
+        <a href="#/architecture" class="card card--link"><div class="card-eyebrow">Architecture</div><h3 class="card-title">Architecture &amp; BIAN →</h3><p class="card-text">The target estate, service domains, and the canonical contract.</p></a>
+        <a href="#/docs/glue" class="card card--link"><div class="card-eyebrow">Reference</div><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">APIs, journeys, and operate runbooks.</p></a>
+      </div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#letter-a" class="toc-link">A</a>
+      <a href="#letter-b" class="toc-link">B</a>
+      <a href="#letter-c" class="toc-link">C</a>
+      <a href="#letter-d" class="toc-link">D</a>
+      <a href="#letter-e" class="toc-link">E</a>
+      <a href="#letter-f" class="toc-link">F</a>
+      <a href="#letter-g" class="toc-link">G</a>
+      <a href="#letter-h" class="toc-link">H</a>
+      <a href="#letter-i" class="toc-link">I</a>
+      <a href="#letter-j" class="toc-link">J</a>
+      <a href="#letter-k" class="toc-link">K</a>
+      <a href="#letter-m" class="toc-link">M</a>
+      <a href="#letter-n" class="toc-link">N</a>
+      <a href="#letter-o" class="toc-link">O</a>
+      <a href="#letter-p" class="toc-link">P</a>
+      <a href="#letter-q" class="toc-link">Q</a>
+      <a href="#letter-s" class="toc-link">S</a>
+      <a href="#letter-t" class="toc-link">T</a>
+      <a href="#letter-v" class="toc-link">V</a>
+      <a href="#letter-x" class="toc-link">X</a>
+      <a href="#related" class="toc-link">Related</a>
+    </aside>
   </section>
 
   <!-- DOCS: Glue Developer Hub landing -->
