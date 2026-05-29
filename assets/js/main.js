@@ -14,6 +14,8 @@
      - Sign-out (clears storage, returns to homepage)
      - Product tab switcher (data-tab / data-tab-group)
      - State indicator (bottom-right) reflecting current sign-in state
+     - View-as tier filter (data-tier-select chips, persisted via URL + sessionStorage)
+     - View mode toggle (Demo / Planning / Comment, persisted via sessionStorage)
 
    See SPEC.md §8 for interaction specifications.
    ========================================================================== */
@@ -25,13 +27,53 @@
   var DEMO_PASSWORD   = 'finx2026';
   var STORAGE_KEY     = 'finx-internal-unlocked';
   var THEME_KEY       = 'finx-theme';
+  var MODE_KEY        = 'finx-view-mode';
+  var TIER_KEY        = 'finx-view-tier';
   var DEFAULT_ROUTE   = '/';
   var SIGNIN_HASH_RE  = /^#\/?signin$/i;
+  var VALID_TIERS     = ['all', 'public', 'authenticated', 'internal'];
+  var VALID_MODES     = ['demo', 'planning', 'comment'];
+  var TIER_LABELS     = {
+    all:           'All',
+    public:        'Public · External',
+    authenticated: 'Authenticated · External',
+    internal:      'UST Internal'
+  };
+
+  // ---------- View-as tier + view mode state ----------
+  var currentTier = 'all';
+  var currentMode = 'demo';
 
   // ---------- Helpers ----------
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function isUnlocked() { try { return sessionStorage.getItem(STORAGE_KEY) === '1'; } catch (_) { return false; } }
+
+  function parseQueryString(qs) {
+    var result = {};
+    if (!qs) return result;
+    var parts = qs.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var eq = parts[i].indexOf('=');
+      if (eq < 0) continue;
+      var k = decodeURIComponent(parts[i].slice(0, eq));
+      var v = decodeURIComponent(parts[i].slice(eq + 1));
+      result[k] = v;
+    }
+    return result;
+  }
+
+  function buildHash(path, params) {
+    var h = '#' + path;
+    var parts = [];
+    for (var k in params) {
+      if (params.hasOwnProperty(k) && params[k]) {
+        parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
+      }
+    }
+    if (parts.length) h += '?' + parts.join('&');
+    return h;
+  }
 
   // ---------- Theme toggle ----------
   function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
@@ -67,10 +109,22 @@
   // ---------- Routing ----------
   function parseHash() {
     var raw = (location.hash || '').replace(/^#/, '');
-    if (raw === '' || raw === '/') return { route: DEFAULT_ROUTE, signin: false };
-    if (SIGNIN_HASH_RE.test('#' + raw)) return { route: getCurrentRoute() || DEFAULT_ROUTE, signin: true };
-    if (raw.charAt(0) !== '/') raw = '/' + raw;
-    return { route: raw, signin: false };
+    // Split path from inline query string within the hash fragment
+    var qIdx = raw.indexOf('?');
+    var pathPart = qIdx >= 0 ? raw.slice(0, qIdx) : raw;
+    var params   = qIdx >= 0 ? parseQueryString(raw.slice(qIdx + 1)) : {};
+
+    // Support bare-params hash like #tier=internal (no route, just key=value)
+    // Treat as params for the default route (e.g., deep-linking /#tier=internal).
+    if (pathPart !== '' && pathPart !== '/' && pathPart.charAt(0) !== '/' && pathPart.indexOf('=') >= 0) {
+      params = parseQueryString(pathPart);
+      pathPart = DEFAULT_ROUTE;
+    }
+
+    if (pathPart === '' || pathPart === '/') return { route: DEFAULT_ROUTE, signin: false, params: params };
+    if (SIGNIN_HASH_RE.test('#' + pathPart)) return { route: getCurrentRoute() || DEFAULT_ROUTE, signin: true, params: params };
+    if (pathPart.charAt(0) !== '/') pathPart = '/' + pathPart;
+    return { route: pathPart, signin: false, params: params };
   }
 
   function getCurrentRoute() {
@@ -125,6 +179,10 @@
     // Update body palette modifier (for internal purple)
     document.body.setAttribute('data-route-palette', view.getAttribute('data-palette') || '');
 
+    // Apply tier filter and mode for newly visible view
+    applyTierFilter();
+    applyMode();
+
     // Hook for per-view JS (e.g. tab init for newly-shown content)
     document.dispatchEvent(new CustomEvent('view:enter', { detail: { route: route, view: view } }));
   }
@@ -142,8 +200,125 @@
 
   function handleHashChange() {
     var parsed = parseHash();
+
+    // Sync tier: URL param takes precedence; fall back to sessionStorage.
+    // This ensures the filter persists when navigating via sidebar links
+    // that do not carry the ?tier= param in their href.
+    var tierFromUrl = parsed.params && parsed.params['tier'];
+    var resolvedTier = 'all';
+    if (tierFromUrl && VALID_TIERS.indexOf(tierFromUrl) >= 0) {
+      resolvedTier = tierFromUrl;
+    } else {
+      try {
+        var stored = sessionStorage.getItem(TIER_KEY);
+        if (stored && VALID_TIERS.indexOf(stored) >= 0) resolvedTier = stored;
+      } catch (_) {}
+    }
+    currentTier = resolvedTier;
+    updateTierChips();
+
     if (parsed.route !== getCurrentRoute()) navigate(parsed.route);
+    else applyTierFilter(); // route unchanged but params may have changed
+
     if (parsed.signin) openModal();
+
+    // When tier comes from sessionStorage (not URL), add it to the URL so
+    // the deep-link remains canonical.
+    if (!tierFromUrl && currentTier !== 'all') {
+      var route = getCurrentRoute() || DEFAULT_ROUTE;
+      var h = buildHash(route, { tier: currentTier });
+      if (history && history.replaceState) history.replaceState(null, '', h);
+    }
+  }
+
+  // ---------- View-as tier filter ----------
+  function setTier(value) {
+    currentTier = (VALID_TIERS.indexOf(value) >= 0) ? value : 'all';
+    try {
+      if (currentTier !== 'all') sessionStorage.setItem(TIER_KEY, currentTier);
+      else sessionStorage.removeItem(TIER_KEY);
+    } catch (_) {}
+    updateTierChips();
+    applyTierFilter();
+    // Reflect in URL (replaceState does not fire hashchange)
+    var route = getCurrentRoute() || DEFAULT_ROUTE;
+    var h = buildHash(route, currentTier !== 'all' ? { tier: currentTier } : {});
+    if (history && history.replaceState) history.replaceState(null, '', h);
+  }
+
+  function updateTierChips() {
+    $$('[data-tier-select]').forEach(function (chip) {
+      chip.classList.toggle('is-active', chip.getAttribute('data-tier-select') === currentTier);
+    });
+  }
+
+  // Derive a view's trust tier: explicit data-tier, or inferred from data-gated.
+  function viewTier(view) {
+    if (!view) return 'public';
+    var t = view.getAttribute('data-tier');
+    if (t) return t;
+    return view.getAttribute('data-gated') === 'true' ? 'internal' : 'public';
+  }
+
+  function applyTierFilter() {
+    var view = $('.view.is-active');
+    var hiddenCount = 0;
+
+    if (view) {
+      var links = $$('.docs-nav-link', view);
+      for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        // Sidebar items default to 'public' if no data-tier is set
+        var linkTier = link.getAttribute('data-tier') || 'public';
+        var shouldHide = currentTier !== 'all' && linkTier !== currentTier;
+        link.classList.toggle('tier-hidden', shouldHide);
+        if (shouldHide) hiddenCount++;
+      }
+    }
+
+    var banner     = $('#tier-banner');
+    var labelEl    = $('#tier-banner-label');
+    var countEl    = $('#tier-banner-count');
+    if (banner) {
+      if (currentTier !== 'all') {
+        if (labelEl) labelEl.textContent = TIER_LABELS[currentTier] || currentTier;
+        if (countEl) countEl.textContent = hiddenCount;
+        banner.removeAttribute('hidden');
+      } else {
+        banner.setAttribute('hidden', '');
+      }
+    }
+  }
+
+  // ---------- View mode (Demo / Planning / Comment) ----------
+  function setMode(value) {
+    currentMode = (VALID_MODES.indexOf(value) >= 0) ? value : 'demo';
+    try { sessionStorage.setItem(MODE_KEY, currentMode); } catch (_) {}
+    updateModeChips();
+    applyMode();
+  }
+
+  function updateModeChips() {
+    $$('[data-mode-select]').forEach(function (chip) {
+      chip.classList.toggle('is-active', chip.getAttribute('data-mode-select') === currentMode);
+    });
+  }
+
+  function applyMode() {
+    var planningMeta = $('#planning-meta');
+    var isPlanning = currentMode === 'planning';
+
+    if (planningMeta) {
+      if (isPlanning) {
+        var view = $('.view.is-active');
+        var tier = viewTier(view);
+        var trustTierEl = $('#pm-trust-tier');
+        if (trustTierEl) trustTierEl.textContent = TIER_LABELS[tier] || tier;
+        planningMeta.removeAttribute('hidden');
+      } else {
+        planningMeta.setAttribute('hidden', '');
+      }
+    }
   }
 
   // ---------- Sign-in modal ----------
@@ -162,12 +337,17 @@
     m.classList.remove('active');
     m.setAttribute('aria-hidden', 'true');
     var err = $('.modal-error', m); if (err) err.textContent = '';
-    if (SIGNIN_HASH_RE.test(location.hash)) {
+    // Clean up #/signin hash, preserving any tier query param
+    var parsed = parseHash();
+    if (parsed.signin) {
       var current = getCurrentRoute() || DEFAULT_ROUTE;
+      var newHash = parsed.params && parsed.params['tier']
+        ? buildHash(current, { tier: parsed.params['tier'] })
+        : '#' + current;
       if (history && history.replaceState) {
-        history.replaceState(null, '', '#' + current);
+        history.replaceState(null, '', newHash);
       } else {
-        location.hash = '#' + current;
+        location.hash = newHash;
       }
     }
   }
@@ -206,7 +386,7 @@
     var unlocked = isUnlocked();
     $$('.nav-staff-link, .mobile-staff-link').forEach(function (a) {
       a.classList.toggle('is-unlocked', unlocked);
-      a.textContent = unlocked ? 'UST Internal \u2713' : 'UST staff \u2197';
+      a.textContent = unlocked ? 'UST Internal ✓' : 'UST staff ↗';
       a.setAttribute('title', unlocked
         ? 'Signed in. Open the Internal Hub.'
         : 'UST employees: access internal playbooks, sales enablement, and architecture references');
@@ -253,6 +433,12 @@
       if (/[?&]demo-unlock=1\b/.test(location.search)) {
         sessionStorage.setItem(STORAGE_KEY, '1');
       }
+    } catch (_) {}
+
+    // Restore view mode from sessionStorage before initial render
+    try {
+      var savedMode = sessionStorage.getItem(MODE_KEY);
+      if (savedMode && VALID_MODES.indexOf(savedMode) >= 0) currentMode = savedMode;
     } catch (_) {}
 
     // Modal wiring
@@ -305,6 +491,14 @@
         openModal();
       }
       else if (action === 'signout') { e.preventDefault(); signOut(); }
+    });
+
+    // Tier-filter chip clicks (data-tier-select) and mode chip clicks (data-mode-select)
+    document.addEventListener('click', function (e) {
+      var tierChip = e.target.closest('[data-tier-select]');
+      if (tierChip) { setTier(tierChip.getAttribute('data-tier-select')); return; }
+      var modeChip = e.target.closest('[data-mode-select]');
+      if (modeChip) { setMode(modeChip.getAttribute('data-mode-select')); }
     });
 
     // TOC anchor links: smooth-scroll within the active view without
@@ -374,7 +568,8 @@
     // Initial state
     updateStateIndicator();
     updateStaffLinks();
-    handleHashChange();
+    updateModeChips();
+    handleHashChange(); // sets tier from URL/sessionStorage, navigates, applies filter + mode
   });
 
   window.addEventListener('hashchange', handleHashChange);

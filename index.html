@@ -941,7 +941,44 @@
         <span></span>
       </button>
     </div>
+    <!-- Meta bar: View-as tier filter (left) + View mode toggle (right) -->
+    <div class="nav-meta-bar" id="nav-meta-bar">
+      <div class="nav-meta-inner">
+        <div class="meta-group">
+          <span class="meta-label">View as</span>
+          <div class="meta-chips" role="group" aria-label="View-as tier filter">
+            <button class="meta-chip is-active" type="button" data-tier-select="all">All</button>
+            <button class="meta-chip" type="button" data-tier-select="public">Public · External</button>
+            <button class="meta-chip" type="button" data-tier-select="authenticated">Authenticated · External</button>
+            <button class="meta-chip" type="button" data-tier-select="internal">UST Internal</button>
+          </div>
+        </div>
+        <div class="meta-group meta-group--push">
+          <div class="meta-chips" role="group" aria-label="View mode">
+            <button class="meta-chip is-active" type="button" data-mode-select="demo">Demo</button>
+            <button class="meta-chip" type="button" data-mode-select="planning">Planning</button>
+            <button class="meta-chip" type="button" data-mode-select="comment">Comment</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </nav>
+
+  <!-- Tier banner: visible when a tier other than All is active; sticky below the nav -->
+  <div id="tier-banner" class="tier-banner" hidden role="status" aria-live="polite">
+    <span>Viewing as: <strong id="tier-banner-label"></strong></span>
+    <span> · </span>
+    <span><span id="tier-banner-count">0</span> pages hidden in sidebar.</span>
+    <button class="tier-banner-dismiss" type="button" data-tier-select="all" aria-label="Clear tier filter">&#x2715; Clear</button>
+  </div>
+  <!-- Planning meta strip: visible in Planning mode; sticky below the nav -->
+  <div id="planning-meta" class="planning-meta" hidden>
+    <div class="planning-meta-inner">
+      <div class="pm-item"><span class="pm-label">Phase</span><span class="pm-value">Planned</span></div>
+      <div class="pm-item"><span class="pm-label">Audience</span><span class="pm-value">External</span></div>
+      <div class="pm-item"><span class="pm-label">Trust tier</span><span class="pm-value" id="pm-trust-tier">Public · External</span></div>
+    </div>
+  </div>
 
   <!-- Mobile navigation drawer -->
   <div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-label="Navigation menu">
@@ -4243,7 +4280,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- INTERNAL (gated) -->
-  <section class="view" data-route="/internal" data-gated="true" data-palette="internal" data-title="UST Internal Hub · UST FinX">
+  <section class="view" data-route="/internal" data-gated="true" data-tier="internal" data-palette="internal" data-title="UST Internal Hub · UST FinX">
     <div class="internal-stripe">UST Internal · Confidential. This content is for UST employees only and is not visible to bank clients</div>
     <section class="page-hero">
       <div class="container">
