@@ -4355,6 +4355,84 @@ Content-Type: application/json</code></pre>
         <li><strong>Fail (non-recoverable, payment-side).</strong> Where a payment provider is wired in, a posting rejection by the ledger (insufficient general ledger balance, account in an invalid state, smart-contract validation failure) routes to the operations queue in Glass for manual intervention.</li>
       </ul>
 
+      <h2 class="h3" id="saga">Saga compensation and error recovery</h2>
+      <p>The seven-step journey is sequential by design, and the most dangerous compensation scenario is structurally prevented: IDV (Step 3) and KYC and AML screening (Step 4) both run <em>before</em> account creation (Step 5). If either fails, the journey halts at the Application Decision stage and no account is created in the ledger. The case "KYC fails after an account has already been provisioned" therefore cannot arise in this journey.</p>
+
+      <p>Within Step 5, the staged sub-flow gives the platform a natural compensation boundary. Accounts are created with <code>ACCOUNT_STATUS_PENDING</code> and only activated to <code>ACCOUNT_STATUS_OPEN</code> after parameters and consent have been recorded. If a sub-step fails, the account can remain in pending state and is reconciled by the operations workflow rather than left in an inconsistent activated state.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Current error handling guarantees</h4>
+      <ul>
+        <li>Errors propagate with full context preserved: the response includes the step that failed, a correlation identifier, and a typed error code.</li>
+        <li>Partial failures return an explicit error indicating incomplete state. Channels never receive a silent success on partial completion.</li>
+        <li>The pending-to-open staging in Step 5 prevents premature account activation when a downstream step has not yet confirmed success.</li>
+      </ul>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Target-state orchestration</h4>
+      <p>Saga compensation is orchestrated by a workflow engine (Conductor) in the target architecture. Current production deployments use service-level retry and compensation patterns; the journey is moving toward a centrally orchestrated model that adds the following:</p>
+      <ul>
+        <li>Reusable reversible and irreversible compensation templates, with embedded checkpointing, undo logic, fallback routing, and state recovery.</li>
+        <li>Human-in-the-loop workflows for manual intervention when automated compensation is insufficient (timeouts, ambiguous error states, fraud holds).</li>
+        <li>A centralised audit trail of compensation and recovery actions, queryable from Glass.</li>
+        <li>Compensation and escalation rules configurable at the workflow level rather than embedded in service code.</li>
+      </ul>
+
+      <p>Party Lifecycle Management is the state anchor that ties all of this together. The lifecycle spec defines status tracking (In Progress, Completed, Failed) and the explicit pattern "close the lifecycle only when every downstream service domain has succeeded." That is a saga commit model and the workflow engine is the orchestrator that drives it.</p>
+
+      <h2 class="h3" id="configurability">Configurability reference</h2>
+      <p>Three axes determine how much of the journey is configurable per tenant: the workflow itself (order and presence of steps), the screen layer (validation, error messages, document types), and the rules engine (decision thresholds and policies). The table summarises where each axis is open today and where it is fixed.</p>
+
+      <table class="comparison" style="margin-top:8px;">
+        <thead>
+          <tr><th scope="col">Step</th><th scope="col">Workflow</th><th scope="col">Screen</th><th scope="col">Rules</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1. Prospect qualification</td>
+            <td>Fixed as first step.</td>
+            <td>Configurable. Dropdown values (account types, products, currencies, intended uses) are data-driven from master APIs.</td>
+            <td>N/A. No business rules evaluated.</td>
+          </tr>
+          <tr>
+            <td>2. Personal details</td>
+            <td>Fixed two-screen sequence (initiation, then personal details).</td>
+            <td>Configurable. Email and phone validation patterns, error messages, and date-of-birth format per country.</td>
+            <td>Fixed. De-duplication logic is uniform across tenants.</td>
+          </tr>
+          <tr>
+            <td>3. Identity verification</td>
+            <td>Fixed. IDV always runs as part of data validation.</td>
+            <td>Configurable. Accepted ID document types per tenant.</td>
+            <td>Fixed. Risk-band thresholds are defined in the Party Lifecycle Management spec. Externalisation to a rules engine is target state.</td>
+          </tr>
+          <tr>
+            <td>4. KYC and AML screening</td>
+            <td>Fixed. Screening always runs as part of data validation.</td>
+            <td>Configurable. Customer-facing rejection message and accepted address-proof document types.</td>
+            <td>Fixed today. The six-scenario decision lookup is hard-coded in the journey. Rules engine externalisation is target state.</td>
+          </tr>
+          <tr>
+            <td>5. Account creation</td>
+            <td>Fixed four-step sub-flow (create pending, apply parameters, activate, register).</td>
+            <td>N/A. Back-end only.</td>
+            <td>Configurable. Product parameter sets are applied at runtime; the creation flow itself is not.</td>
+          </tr>
+          <tr>
+            <td>6. Agreement signing</td>
+            <td>Optional. Skipped for products that record consent inline at Step 5.</td>
+            <td>Configurable where in scope. Template selection and recipient routing per product.</td>
+            <td>Configurable. Acceptable signer set and signing order per template.</td>
+          </tr>
+          <tr>
+            <td>7. Credential setup and funding</td>
+            <td>Fixed as final step.</td>
+            <td>Configurable. Password policy per tenant.</td>
+            <td>Fixed. Deposit validation rules (numeric, non-zero, positive, max 999,999,999) are uniform. Payment processing rules live with the payment provider integration when wired in.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><div class="callout-body"><strong>Reading the table.</strong> "Configurable" means the value can be changed without a code deployment, either via Glue master APIs (Step 1) or via tenant configuration applied at provisioning time. "Fixed" means the value is part of the platform contract and changes through a release, not a configuration switch. Bank engineers planning a tenant onboarding can use this table to scope the configuration work up front.</div></div>
+
       <h2 class="h3" id="code-samples">Code sample</h2>
       <div class="code-panel">
         <div class="code-bar">
@@ -4405,6 +4483,8 @@ Content-Type: application/json</code></pre>
       <a href="#step-5" class="toc-link">Step 5: Account creation</a>
       <a href="#step-6" class="toc-link">Step 6: Agreement signing</a>
       <a href="#step-7" class="toc-link">Step 7: Credentials and funding</a>
+      <a href="#saga" class="toc-link">Saga and error recovery</a>
+      <a href="#configurability" class="toc-link">Configurability reference</a>
       <a href="#code-samples" class="toc-link">Code sample</a>
       <a href="#related-guides" class="toc-link">Related guides</a>
     </aside>
