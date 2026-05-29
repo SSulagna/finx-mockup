@@ -4180,6 +4180,181 @@ Content-Type: application/json</code></pre>
 
       <div class="callout callout--info"><div class="callout-body"><strong>BIAN as contract.</strong> The journey is expressed in BIAN terms because BIAN is the contract of record in Glue. The underlying fintech connectors (Jumio for IDV, ComplyAdvantage for AML, Thought Machine Vault for the account ledger, DocuSign for e-signature) are swappable per tenant. Channels and Glass code against the canonical BIAN APIs only; they never see the fintech-specific shape.</div></div>
 
+      <h2 class="h3" id="step-1">Step 1: Prospect qualification</h2>
+      <p>The customer lands on the channel's Product Selection screen and chooses an account type, product, currency, and intended use of account. All dropdown values are data-driven from Glue master APIs and can be changed without a code deployment. No customer information is captured on this screen and no external service call is made; the Enroll button enables only when all mandatory fields contain valid data.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Fields captured</h4>
+      <table class="comparison" style="margin-top:8px;">
+        <thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Required</th><th scope="col">Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Account type</td><td>Dropdown</td><td>Yes</td><td>Savings, Checking, Term Deposit, Loan. Availability per tenant configuration.</td></tr>
+          <tr><td>Product</td><td>Dropdown</td><td>Yes</td><td>Dependent on account type. Sourced from Customer Product and Service Directory.</td></tr>
+          <tr><td>Currency</td><td>Dropdown</td><td>Yes</td><td>CAD, EUR, GBP, INR, USD by default. Tenant-configurable.</td></tr>
+          <tr><td>Intended use</td><td>Dropdown</td><td>Yes</td><td>Dependent on product. Selecting Other exposes a 100-character free-text field.</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes</h4>
+      <p>The channel reads from Customer Product and Service Directory to populate the dropdowns. No state is persisted until Step 2. A separate platform-level eligibility service exists (used by corporate onboarding) but is not part of the retail savings journey; eligibility for retail is implicit in the product catalogue.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> All mandatory fields valid, customer proceeds to Step 2.</li>
+        <li><strong>Fail (recoverable).</strong> Missing or unsupported selection. Enroll button stays disabled until corrected.</li>
+        <li><strong>Fail (non-recoverable).</strong> None at this step.</li>
+      </ul>
+
+      <h2 class="h3" id="step-2">Step 2: Personal details and de-duplication</h2>
+      <p>The journey moves through two screens. The first captures email and mobile number; on blur, each field triggers a de-duplication check against the Customer Master. If a duplicate is found, the channel shows a configurable message inviting the customer to sign in to their existing portal. If no duplicate is found, an Application ID is issued and the customer enters name and date of birth on the Personal Details screen.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Fields captured</h4>
+      <table class="comparison" style="margin-top:8px;">
+        <thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Required</th><th scope="col">Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Email</td><td>String</td><td>Yes</td><td>Regex validation, de-duplication check on blur.</td></tr>
+          <tr><td>Mobile (country code + number)</td><td>Dropdown + numeric</td><td>Yes</td><td>10-digit number; de-duplication check on blur.</td></tr>
+          <tr><td>Consent to contact</td><td>Boolean</td><td>Yes</td><td>Must be ticked to proceed.</td></tr>
+          <tr><td>First / Middle / Last name</td><td>String</td><td>First and Last required</td><td>Max 50 chars each; allowed characters A-Z, a-z, hyphen, apostrophe, underscore.</td></tr>
+          <tr><td>Date of birth</td><td>Date picker</td><td>Yes</td><td>Format configurable per country (DD-MM-YYYY or MM-DD-YYYY).</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes</h4>
+      <p>De-duplication queries Party Reference Data Directory. On a clean result, the application is registered and an Application ID is returned. Name fields map to <code>PartyReferenceDataDirectory/Register</code>; date of birth maps to <code>PartyReferenceDataDirectory/{id}/Reference/{referenceId}/Update</code>. No external fintech call is made at this step.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> No duplicate found, Application ID issued, customer proceeds to Step 3.</li>
+        <li><strong>Fail (recoverable).</strong> Duplicate detected. Customer routed to sign-in flow; may restart with a different identifier.</li>
+        <li><strong>Fail (non-recoverable).</strong> None at this step in the reference implementation. OTP and email verification are out of scope for the reference journey and are added per tenant.</li>
+      </ul>
+
+      <h2 class="h3" id="step-3">Step 3: Identity verification (IDV)</h2>
+      <p>The customer enters identity document details (type, number, issuing authority, issue and expiry dates) and uploads front and back images. A consent checkbox is a hard prerequisite. Data is captured on the Identification Details screen but the IDV check itself runs asynchronously during data validation, after the customer submits the application on the Preview screen. The customer sees the IDV outcome only on the final Application Decision screen.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Fields captured</h4>
+      <table class="comparison" style="margin-top:8px;">
+        <thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Required</th><th scope="col">Notes</th></tr></thead>
+        <tbody>
+          <tr><td>ID type</td><td>Dropdown</td><td>Yes</td><td>Passport, Driving License, National ID Card. Accepted types are tenant-configurable.</td></tr>
+          <tr><td>ID number, issuing state, issuing authority</td><td>String</td><td>Yes</td><td>Validation per ID type.</td></tr>
+          <tr><td>Issue date, expiry date</td><td>Date</td><td>Yes</td><td>Issue date must be in the past; expiry must be after issue.</td></tr>
+          <tr><td>Front and back image</td><td>File upload</td><td>Yes</td><td>Max 2 MB; JPG, PNG, or PDF.</td></tr>
+          <tr><td>IDV consent</td><td>Boolean</td><td>Yes</td><td>Hard prerequisite for invoking the IDV connector.</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes</h4>
+      <p>The IDV adapter runs a fully asynchronous pipeline behind a Party Lifecycle Management BIAN interface. The channel only calls <code>POST /PartyLifecycleManagement/{id}/IdentityProofing/Initiate</code> to trigger and then <code>Retrieve</code> to poll for the result. Internally the adapter validates consent, fetches the uploaded images from the Document Directory, calls the IDV connector's account-creation and workflow APIs, then fetches the result and writes it back to the Identity Proofing behaviour qualifier. The full connector response is stored verbatim for audit. Assessment outcome is derived from the connector's risk score.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Risk bands and decisions</h4>
+      <table class="comparison" style="margin-top:8px;">
+        <thead><tr><th scope="col">Risk score</th><th scope="col">Assessment</th><th scope="col">Default journey behaviour</th></tr></thead>
+        <tbody>
+          <tr><td>0 to 30</td><td>PASSED</td><td>Journey continues to Application Decision with positive outcome.</td></tr>
+          <tr><td>31 to 70</td><td>WARNING</td><td>Reference journey holds for manual review. The compliance manual-review queue surface in Glass is required to clear these cases; channels should treat WARNING as pending, not approved.</td></tr>
+          <tr><td>71 to 100</td><td>REJECTED</td><td>Journey stops at Application Decision. Customer informed; no automatic re-initiation flow.</td></tr>
+          <tr><td>-1</td><td>NOT_EXECUTED</td><td>Treated as REJECTED for the customer-facing decision; operations workflow surfaces the underlying error for triage.</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> PASSED outcome, journey proceeds to Step 4.</li>
+        <li><strong>Fail (recoverable).</strong> WARNING outcome routes to the compliance review surface in Glass. See <a href="#/docs/glass/task-kyc-review">Reviewing KYC in Glass</a> for the operations side.</li>
+        <li><strong>Fail (non-recoverable).</strong> REJECTED or NOT_EXECUTED ends the journey. Re-initiation requires a new application.</li>
+      </ul>
+
+      <h2 class="h3" id="step-4">Step 4: KYC and AML screening</h2>
+      <p>KYC and AML screening is a fully back-end step. The customer does not see a dedicated screen; screening runs during data validation immediately after submission. The full customer profile assembled in Steps 2 and 3 is sent to the screening connector. The decision is the gate before account creation: a clear result proceeds silently, matches or elevated risk are surfaced to the compliance review queue, and confirmed high risk halts the journey.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Inputs</h4>
+      <p>The screening call uses the data already collected: name, gender, date and country of birth, nationality, address (residential and mailing), contact information, and identity document details. No additional fields are captured at this step.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes</h4>
+      <p>The Know Your Customer service domain orchestrates a synchronous create-and-screen workflow against the AML connector. The workflow runs five sequential steps: customer creation, initial risk scoring, screening against sanctions, PEP and adverse media lists, alert generation, and case creation. The connector returns two response fields, an overall risk level and a screening result, which combine into the decision in the lookup table below. Three webhook events (case created, case state updated, workflow completed) are published per environment for downstream consumers.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Decision lookup</h4>
+      <table class="comparison" style="margin-top:8px;">
+        <thead><tr><th scope="col">Risk level</th><th scope="col">Screening result</th><th scope="col">Decision</th></tr></thead>
+        <tbody>
+          <tr><td>LOW-RISK</td><td>NO_PROFILES</td><td>APPROVED — proceed to Step 5</td></tr>
+          <tr><td>LOW-RISK</td><td>PROFILES_FOUND</td><td>REVIEW_REQUIRED — route to compliance queue</td></tr>
+          <tr><td>MEDIUM-RISK</td><td>NO_PROFILES</td><td>REVIEW_REQUIRED — route to compliance queue</td></tr>
+          <tr><td>MEDIUM-RISK</td><td>PROFILES_FOUND</td><td>REVIEW_REQUIRED — route to compliance queue</td></tr>
+          <tr><td>HIGH-RISK</td><td>NO_PROFILES</td><td>REJECTED — journey ends</td></tr>
+          <tr><td>HIGH-RISK</td><td>PROFILES_FOUND</td><td>REJECTED — journey ends</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> APPROVED, journey continues to Step 5.</li>
+        <li><strong>Fail (recoverable).</strong> REVIEW_REQUIRED routes to the compliance reviewer in Glass. The reviewer can approve, reject, or escalate. See <a href="#/docs/glass/task-kyc-review">Reviewing KYC in Glass</a>.</li>
+        <li><strong>Fail (non-recoverable).</strong> REJECTED ends the journey with a configurable customer-facing message.</li>
+      </ul>
+
+      <h2 class="h3" id="step-5">Step 5: Account creation</h2>
+      <p>Account creation runs in the back end after a positive Application Decision. There is no customer screen during this step; the customer sees the Congratulations page next, with their Customer ID and Account Number displayed. The flow uses a deliberately staged pattern: the account is created in a pending state, parameters are applied, and only then is the account activated. This gives the platform a natural compensation boundary if a downstream step fails.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Sub-flow</h4>
+      <ol>
+        <li><strong>Create the party.</strong> A customer (party) record is created in Thought Machine Vault from the profile assembled in Steps 2 to 4.</li>
+        <li><strong>Open the account in pending state.</strong> <code>POST /v2/accounts</code> with <code>ACCOUNT_STATUS_PENDING</code>. Parameters are not supplied at this point.</li>
+        <li><strong>Apply parameters.</strong> <code>POST /v1/parameter-values:batchCreate</code> against the new account, applying the product's parameter set.</li>
+        <li><strong>Activate.</strong> <code>PUT /v2/accounts/{accountId}</code> transitions the account from <code>ACCOUNT_STATUS_PENDING</code> to <code>ACCOUNT_STATUS_OPEN</code>.</li>
+        <li><strong>Record consent.</strong> Three sequential calls under Customer Agreement create the master consent record, store the consent value alongside the Application ID and Party ID, then update the party lifecycle status to completed.</li>
+        <li><strong>Register the product instance.</strong> The new account is registered in Customer Product and Service Directory so it appears in subsequent product lookups for this customer.</li>
+      </ol>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes</h4>
+      <p>The Savings Account BIAN service domain routes through the TM Vault adapter. The same staged pattern (create pending, configure, activate) is used for Current Account and other Fulfill-pattern products; only the product reference and parameter set change.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> Account reaches <code>ACCOUNT_STATUS_OPEN</code>, consent recorded, product registered. Customer proceeds to Step 7 (Step 6 applies only where DocuSign is wired in).</li>
+        <li><strong>Fail (recoverable).</strong> If a downstream sub-step fails, the account can remain in pending state. The reference architecture compensates via the saga model described <a href="#saga">below</a>.</li>
+        <li><strong>Fail (non-recoverable).</strong> Complete failure of party or account creation ends the journey at the Application Decision stage; no partial account is created.</li>
+      </ul>
+
+      <h2 class="h3" id="step-6">Step 6: Agreement signing</h2>
+      <p>Step 6 covers e-signature for products that require a counter-signed legal agreement, typically corporate onboarding, lending, and joint accounts. The retail savings reference journey records consent inline at Step 5 (Customer Agreement) and does not invoke the e-signature connector. Where Step 6 applies, the channel sends a pre-populated agreement template to the recipient and polls the envelope status endpoint until the document is signed and stored.</p>
+
+      <div class="callout callout--info"><div class="callout-body"><strong>Reference scope.</strong> The retail savings reference journey skips Step 6. The DocuSign integration is a platform capability available to tenants whose product requires a signed agreement; it is wired in per product, not per platform. The Customer Agreement consent recorded at Step 5 satisfies regulatory consent for retail savings on its own.</div></div>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes (where in scope)</h4>
+      <p>The channel calls <code>POST /v1/documents/docusign/templates/send</code> to dispatch a pre-populated template. The recipient signs in the e-signature provider's UI. A webhook posted by the provider is consumed by the platform and used to update an envelope tracking record. The channel polls <code>GET /v1/documents/docusign/envelopes/status?caseId={caseId}</code> until the envelope reaches a terminal state. The webhook is registered against the tenant during provisioning; no per-environment configuration is required from the bank.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> Envelope reaches signed state; signed document is stored in the Document Directory under the Customer Agreement record. Journey proceeds to Step 7.</li>
+        <li><strong>Fail (recoverable).</strong> Envelope voided or expired. Channel may re-issue the template.</li>
+        <li><strong>Fail (non-recoverable).</strong> Repeated decline or expiry leads to journey termination with the same configurable rejection message used at Step 4.</li>
+      </ul>
+
+      <h2 class="h3" id="step-7">Step 7: Credential setup and account funding</h2>
+      <p>The final screen captures a password and an initial deposit amount. The username is pre-populated, non-editable, and matches the email captured at Step 2. The password field follows the tenant's password policy. The deposit field validates as numeric, non-zero, positive, with no decimals and a maximum of 999,999,999 in the selected currency. Once the customer clicks Done after the Preview, the journey cannot be re-entered through the browser back button.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Fields captured</h4>
+      <table class="comparison" style="margin-top:8px;">
+        <thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Required</th><th scope="col">Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Username</td><td>String (display only)</td><td>N/A</td><td>Auto-populated from Step 2 email. Non-editable.</td></tr>
+          <tr><td>Password</td><td>String (masked)</td><td>Yes</td><td>Encrypted in transit and at rest. Show / hide toggle. Policy is tenant-configurable.</td></tr>
+          <tr><td>First deposit</td><td>Numeric</td><td>Yes</td><td>Non-zero, positive, integer; maximum 999,999,999. Currency from Step 1.</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Behind the scenes</h4>
+      <p>Password registration runs through Issued Device Administration: <code>Initiate</code> registers the password assignment, <code>Update</code> stores the password value. The deposit amount is captured by the channel and routed to the bank's payment provider integration. The reference implementation does not bundle a payment provider; see <a href="javascript:void(0)" title="Planned: Partner Integration / Payments">Partner Integration / Payments</a> for the planned shape of that route. Where a payment provider is wired in, the resulting posting flows through the Position Keeping service domain on the activated account.</p>
+
+      <h4 style="font-size:15px;font-weight:600;letter-spacing:0;margin:20px 0 8px;color:var(--text-primary);">Exit conditions</h4>
+      <ul>
+        <li><strong>Pass.</strong> Password registered. If a payment provider is wired in, deposit is posted and the account shows an opening balance. Journey complete.</li>
+        <li><strong>Fail (recoverable).</strong> Invalid password or deposit value; customer corrects and resubmits.</li>
+        <li><strong>Fail (non-recoverable, payment-side).</strong> Where a payment provider is wired in, a posting rejection by the ledger (insufficient general ledger balance, account in an invalid state, smart-contract validation failure) routes to the operations queue in Glass for manual intervention.</li>
+      </ul>
+
       <h2 class="h3" id="code-samples">Code sample</h2>
       <div class="code-panel">
         <div class="code-bar">
@@ -4223,6 +4398,13 @@ Content-Type: application/json</code></pre>
     <aside class="docs-toc"><div class="toc-title">On this page</div>
       <a href="#journey-overview" class="toc-link">Journey at a glance</a>
       <a href="#bian-mapping" class="toc-link">BIAN service domains</a>
+      <a href="#step-1" class="toc-link">Step 1: Prospect qualification</a>
+      <a href="#step-2" class="toc-link">Step 2: Personal details</a>
+      <a href="#step-3" class="toc-link">Step 3: Identity verification</a>
+      <a href="#step-4" class="toc-link">Step 4: KYC and AML screening</a>
+      <a href="#step-5" class="toc-link">Step 5: Account creation</a>
+      <a href="#step-6" class="toc-link">Step 6: Agreement signing</a>
+      <a href="#step-7" class="toc-link">Step 7: Credentials and funding</a>
       <a href="#code-samples" class="toc-link">Code sample</a>
       <a href="#related-guides" class="toc-link">Related guides</a>
     </aside>
