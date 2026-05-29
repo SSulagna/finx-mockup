@@ -2911,6 +2911,18 @@
           <a href="#/resources" class="btn btn-secondary" style="margin-left:8px;">Download PDF</a>
         </div>
       </div>
+      <div class="grid-2" style="max-width:760px; margin-top:20px;">
+        <a href="#/executive-brief" class="card card--link">
+          <div class="card-eyebrow">For executives · 5 min read</div>
+          <h3 class="card-title">The executive brief →</h3>
+          <p class="card-text">A short read for sponsors and steering committees. The thesis, four strategic advantages, version 1 scope, and the risks worth naming.</p>
+        </a>
+        <a href="javascript:void(0)" class="card card--link" title="Planned: white paper PDF download">
+          <div class="card-eyebrow">Download</div>
+          <h3 class="card-title">White paper PDF →</h3>
+          <p class="card-text">Forty-eight pages, eleven sections. Composable Banking at Scale.</p>
+        </a>
+      </div>
     </div></section>
 
     <section class="section section--mid"><div class="container">
@@ -3383,6 +3395,174 @@
       <a href="#letter-x" class="toc-link">X</a>
       <a href="#related" class="toc-link">Related</a>
     </aside>
+  </section>
+
+  <!-- EXECUTIVE BRIEF -->
+  <section class="view" data-route="/executive-brief" data-title="For executives · The brief · UST FinX">
+    <section class="page-hero">
+      <div class="x-watermark x-watermark--small" aria-hidden="true">X</div>
+      <div class="container">
+        <a href="#/" class="back-link">← Back to Home</a>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="#/">Home</a><span class="sep">/</span>
+          <span>For executives</span>
+        </nav>
+        <span class="eyebrow">For executives</span>
+        <h1 class="page-title">Modernize the bank <span class="accent">without betting the firm.</span></h1>
+        <p class="page-lead">
+          FinX is a BIAN-aligned, cloud-native banking platform built so an incumbent bank can replace legacy capability one domain at a time, behind a canonical contract, with the existing book of business intact. No multi-year core replacement. No big-bang cutover. First production capability typically in six to nine months.
+        </p>
+        <nav class="toc-card" aria-label="On this page">
+          <div class="toc-eyebrow">On this page</div>
+          <ol>
+            <li><a class="toc-link" href="#exec-thesis">The thesis in one paragraph</a></li>
+            <li><a class="toc-link" href="#exec-advantages">Four strategic advantages</a></li>
+            <li><a class="toc-link" href="#exec-direction">From integration platform to business capability platform</a></li>
+            <li><a class="toc-link" href="#exec-scope">What ships in version 1</a></li>
+            <li><a class="toc-link" href="#exec-risks">The risks worth naming</a></li>
+            <li><a class="toc-link" href="#exec-next">Next steps</a></li>
+          </ol>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section section--mid">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Thesis</span>
+          <h2 class="h2" id="exec-thesis">The thesis in one paragraph.</h2>
+          <p class="section-lead">Banking modernization has spent two decades oscillating between two failures: incremental upgrades that never reach the new estate, and big-bang core replacements that consume capital and political tolerance for years before they deliver value. The structural answer is a BIAN-aligned canonical contract that lets a bank wrap what is, add what is needed, and migrate at the seams the architecture defines, not the seams a vendor invented. That is what FinX is.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--deep">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Strategic advantages</span>
+          <h2 class="h2" id="exec-advantages">Four strategic advantages.</h2>
+          <p class="section-lead">Each one is a property of the architecture, not a marketing claim. The white paper builds the case in full; the summary is here.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-eyebrow">Advantage 01</div>
+            <h3 class="card-title">Interoperability without lock-in.</h3>
+            <p class="card-text">Legacy cores, modern core platforms, and fintech connectors all sit behind the same canonical model. Components can be swapped at the seams BIAN defines. A bank is never committed to a single core, a single fintech, or a single integrator for the next decade.</p>
+          </div>
+          <div class="card">
+            <div class="card-eyebrow">Advantage 02</div>
+            <h3 class="card-title">Governance and compliance by design.</h3>
+            <p class="card-text">Policy-as-code, segregation of duties, service identity, lineage, consent, and runtime validation are platform properties. Alignment to PCI-DSS, GDPR, MAS TRM, and ISO 27001 is built into the canonical contract, not bolted on per project.</p>
+          </div>
+          <div class="card">
+            <div class="card-eyebrow">Advantage 03</div>
+            <h3 class="card-title">Composable banking experiences.</h3>
+            <p class="card-text">BIAN-aligned APIs, schema-driven UI flows, and orchestrated journeys let the bank assemble new products in weeks rather than redevelop them in quarters. The same canonical surface serves channels, partners, and the operations console.</p>
+          </div>
+          <div class="card">
+            <div class="card-eyebrow">Advantage 04</div>
+            <h3 class="card-title">Orchestration as a first-class layer.</h3>
+            <p class="card-text">APIs, events, human tasks, rules, and UI steps are coordinated by the platform, not by the channel. A change to a journey is a change to one orchestration, not a release across every channel that consumes it.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--mid">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Strategic direction</span>
+          <h2 class="h2" id="exec-direction">From integration platform to business capability platform.</h2>
+          <p class="section-lead">FinX Glue began as a BIAN-aligned integration layer. The next step is the Business Abstraction Layer.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card card--negative">
+            <div class="card-eyebrow">Today</div>
+            <h3 class="card-title">Channels orchestrate the journey.</h3>
+            <p class="card-text">A retail onboarding flow today sequences a series of BIAN API calls from the channel: Party Reference Data, Know Your Customer, Customer Agreement, Savings Account. Each channel carries the orchestration logic. Each new channel repeats it.</p>
+          </div>
+          <div class="card card--positive">
+            <div class="card-eyebrow">Target</div>
+            <h3 class="card-title">The platform exposes the journey.</h3>
+            <p class="card-text">The Business Abstraction Layer publishes Business APIs such as Customer Onboarding and Account Opening as single calls. Orchestration, retries, compensation, policy enforcement, and unified responses move into the platform. Channels become thinner. New channels are days, not quarters.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--deep">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Version 1 scope</span>
+          <h2 class="h2" id="exec-scope">What ships in version 1.</h2>
+          <p class="section-lead">Version 1 of FinX Glue and FinX Glass goes live 11 July 2026. The scope is real, not directional.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-eyebrow">Platform</div>
+            <h3 class="card-title">FinX Glue v1.</h3>
+            <p class="card-text">BIAN service APIs and adapters for Party Lifecycle, Customer Agreement, Document Directory, Customer Product and Service Directory, Account Management, and IDV/AML orchestration. Targets include the bank-provided CIF, Thought Machine Vault Core and Vault Payments, ComplyAdvantage Mesh, Jumio, and DocuSign.</p>
+          </div>
+          <div class="card">
+            <div class="card-eyebrow">Operations</div>
+            <h3 class="card-title">FinX Glass v1.</h3>
+            <p class="card-text">Operations console built on Modyo. Customer and Account Management module and Task Management module ship in v1, with role-aware views for CSR, Compliance, Supervisor, and Admin. Single sign-on against the bank's IdP via Keycloak.</p>
+          </div>
+          <div class="card">
+            <div class="card-eyebrow">Reference journey</div>
+            <h3 class="card-title">Retail savings onboarding.</h3>
+            <p class="card-text">First end-to-end journey on the platform, delivered December 2025. Web and mobile micro front-ends, schema-driven UI orchestration, BIAN onboarding services, customer portal, and bankers workbench. The reference for every onboarding journey that follows.</p>
+          </div>
+        </div>
+        <p class="page-lead" style="font-size:14px; margin-top:24px;">Release schedule: Glue PI-3 in progress through June 2026, code freeze 23 June, UAT 24 June to 3 July, go-live 11 July. Glass v0.3 in progress, v1 cutover same date.</p>
+      </div>
+    </section>
+
+    <section class="section section--mid">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Risk</span>
+          <h2 class="h2" id="exec-risks">The risks worth naming.</h2>
+          <p class="section-lead">The risks that matter to an executive sponsor are not the day-to-day delivery risks. They are the structural risks that decide whether the platform holds its shape under load and change.</p>
+        </div>
+        <ul class="domain-list">
+          <li><strong>BIAN contract drift.</strong> Breaking changes to the canonical contract cascade into every consumer. Mitigation: contract testing in CI, schema-registry review, backward-compatibility gates on every release.</li>
+          <li><strong>Adapter instability.</strong> Third-party platforms (cores, IDV, AML, e-signature) change behavior unilaterally. Mitigation: adapter-specific regression packs, controlled stubs, environment isolation.</li>
+          <li><strong>Performance discovered late.</strong> Production load patterns are different from test patterns. Mitigation: a dedicated performance environment, performance gates at every promotion to the customer-facing demo environment.</li>
+          <li><strong>Demo treated as release-ready.</strong> A clean demo is not a clean release. Mitigation: mandatory smoke and regression subsets, ops-readiness checklist, no go-live without it.</li>
+          <li><strong>Security misconfiguration.</strong> A misconfigured gateway or policy is the failure mode that matters most. Mitigation: automated security checks in CI, role-based and attribute-based access control suites, periodic external review.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--deep">
+      <div class="container cta-container">
+        <div class="x-watermark x-watermark--small" aria-hidden="true">X</div>
+        <div class="section-head">
+          <span class="eyebrow">Next</span>
+          <h2 class="h2" id="exec-next">Next steps.</h2>
+          <p class="section-lead">Two routes from here. Both are short.</p>
+        </div>
+        <div class="grid-2">
+          <a href="#/talk-to-us" class="card card--link">
+            <div class="card-eyebrow">Conversation</div>
+            <h3 class="card-title">Talk to a banking architect →</h3>
+            <p class="card-text">Thirty minutes with someone who has stood the platform up at a bank, not a sales call. The conversation starts from your existing estate.</p>
+          </a>
+          <a href="#/resources" class="card card--link">
+            <div class="card-eyebrow">Reading</div>
+            <h3 class="card-title">Read the white paper →</h3>
+            <p class="card-text">Composable Banking at Scale. Forty-eight pages, eleven sections, one argument: BIAN-aligned progressive modernization is the structural answer to a structural problem.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">Why BIAN, why composable, why now.</p></a>
+      <a href="#/modernization" class="card card--link"><h3 class="card-title">Modernization paths →</h3><p class="card-text">Greenfield, coexistence, progressive. When each one fits.</p></a>
+      <a href="#/resources" class="card card--link"><h3 class="card-title">Resources →</h3><p class="card-text">White paper, glossary, FAQs.</p></a>
+    </div></div></aside>
   </section>
 
   <!-- DOCS: Glue Developer Hub landing -->
