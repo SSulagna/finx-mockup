@@ -4143,20 +4143,42 @@ Content-Type: application/json</code></pre>
       <a href="#/docs/glue" class="back-link">← Back to Glue Developer Hub</a>
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue">Journey guides</a><span class="sep">/</span><span>Customer onboarding &amp; KYC</span></nav>
       <h1 class="page-title">Customer onboarding and KYC journey</h1>
-      <div class="preview-tags"><span class="preview-tag">6 API calls</span><span class="preview-tag">~3 min</span><span class="preview-tag">PLM · IDV · AML</span></div>
-      <p class="page-lead">A typical onboarding journey runs through six BIAN-aligned calls: initiate a party, attach documents, run identity verification, screen against AML watchlists, then transition the lifecycle to active. The sequence below is the contract that channels and Glass compose against. The underlying fintech connectors are configurable per tenant.</p>
+      <div class="preview-tags"><span class="preview-tag">7 journey steps</span><span class="preview-tag">PLM · IDV · AML · TM</span><span class="preview-tag">BIAN v14 aligned</span></div>
+      <p class="page-lead">This guide is the canonical reference for the FinX retail savings onboarding journey, from product selection to a funded, active account. It walks through the seven steps in sequence, names the BIAN service domains that own each interaction, and calls out where the platform delegates to fintech connectors. Use it when mapping FinX onto an existing bank journey, or when designing a channel that composes against the Glue contract directly.</p>
 
-      <h2 class="h3" id="api-sequence">API sequence</h2>
+      <div class="callout callout--info"><div class="callout-body"><strong>Scope.</strong> The reference journey described here is retail savings account opening. Other onboarding journeys (corporate, joint, minor, lending) reuse the same service domains and orchestration patterns but vary in the steps that apply. Channel and Glass implementations should follow the seven-step structure as a baseline, then add or remove steps per product.</div></div>
+
+      <h2 class="h3" id="journey-overview">Journey at a glance</h2>
       <div class="api-sequence">
-        <div class="api-step"><span class="method method--post">POST</span><code>/v1/parties/initiate</code><span class="step-tag">PLM · BIAN</span></div>
-        <div class="api-step"><span class="method method--post">POST</span><code>/v1/documents</code><span class="step-tag">Document Directory</span></div>
-        <div class="api-step"><span class="method method--post">POST</span><code>/v1/idv/initiate</code><span class="step-tag">Jumio connector</span></div>
-        <div class="api-step"><span class="method method--get">GET</span><code>/v1/idv/{id}/result</code><span class="step-tag">Poll until complete</span></div>
-        <div class="api-step"><span class="method method--post">POST</span><code>/v1/aml/screen</code><span class="step-tag">ComplyAdvantage</span></div>
-        <div class="api-step"><span class="method method--patch">PATCH</span><code>/v1/parties/{id}/lifecycle</code><span class="step-tag">Update to active</span></div>
+        <div class="api-step"><span class="method method--get">1</span><code>Prospect qualification</code><span class="step-tag">Channel only · no API</span></div>
+        <div class="api-step"><span class="method method--post">2</span><code>Personal details and de-duplication</code><span class="step-tag">Party Reference Data Directory</span></div>
+        <div class="api-step"><span class="method method--post">3</span><code>Identity verification (IDV)</code><span class="step-tag">Party Lifecycle Mgmt · Jumio</span></div>
+        <div class="api-step"><span class="method method--post">4</span><code>KYC and AML screening</code><span class="step-tag">Know Your Customer · ComplyAdvantage</span></div>
+        <div class="api-step"><span class="method method--post">5</span><code>Account creation</code><span class="step-tag">Savings Account · Customer Agreement · TM Vault</span></div>
+        <div class="api-step"><span class="method method--post">6</span><code>Agreement signing</code><span class="step-tag">Document Directory · DocuSign (where in scope)</span></div>
+        <div class="api-step"><span class="method method--post">7</span><code>Credential setup and account funding</code><span class="step-tag">Issued Device Administration</span></div>
       </div>
 
-      <div class="callout callout--amber"><strong>Polling guidance.</strong> IDV results typically resolve in 2 to 8 seconds. Poll the result endpoint every 2 seconds with exponential backoff; fall back to the webhook for outliers. Never block a customer-facing thread on a synchronous IDV result.</div>
+      <div class="callout callout--amber"><div class="callout-body"><strong>Async behaviour.</strong> Steps 3 and 4 are asynchronous from the channel's perspective. IDV typically resolves in 10 to 15 seconds; AML screening completes synchronously within the workflow but emits webhook events for downstream consumers. Never block a customer-facing thread on a synchronous IDV or AML result. Poll the lifecycle status endpoint or subscribe to the corresponding webhook.</div></div>
+
+      <h2 class="h3" id="bian-mapping">BIAN service domains used</h2>
+      <p>Each step in the journey is owned by one or more BIAN v14 service domains. The table below names the primary owner. Where a step touches multiple service domains, the controlling domain is listed first. The fintech connectors named in parentheses are the reference implementations; alternatives are configurable per tenant.</p>
+      <table class="comparison" style="margin-top:8px;">
+        <thead>
+          <tr><th scope="col">Step</th><th scope="col">Primary BIAN service domain</th><th scope="col">Functional pattern</th><th scope="col">Generic operations</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1. Prospect qualification</td><td>Customer Product and Service Directory</td><td>Administer</td><td>retrieve</td></tr>
+          <tr><td>2. Personal details</td><td>Party Reference Data Directory</td><td>Administer</td><td>register, update, retrieve</td></tr>
+          <tr><td>3. Identity verification</td><td>Party Lifecycle Management</td><td>Process</td><td>initiate, retrieve, record</td></tr>
+          <tr><td>4. KYC and AML screening</td><td>Know Your Customer</td><td>Process</td><td>initiate, execute, evaluate, record</td></tr>
+          <tr><td>5. Account creation</td><td>Savings Account, Customer Agreement, Customer Product and Service Directory</td><td>Fulfill, Administer</td><td>initiate, update, register, evaluate</td></tr>
+          <tr><td>6. Agreement signing</td><td>Document Directory, Customer Agreement</td><td>Administer</td><td>register, update</td></tr>
+          <tr><td>7. Credential setup, funding</td><td>Issued Device Administration, Position Keeping (target)</td><td>Fulfill, Monitor</td><td>initiate, update, record</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><div class="callout-body"><strong>BIAN as contract.</strong> The journey is expressed in BIAN terms because BIAN is the contract of record in Glue. The underlying fintech connectors (Jumio for IDV, ComplyAdvantage for AML, Thought Machine Vault for the account ledger, DocuSign for e-signature) are swappable per tenant. Channels and Glass code against the canonical BIAN APIs only; they never see the fintech-specific shape.</div></div>
 
       <h2 class="h3" id="code-samples">Code sample</h2>
       <div class="code-panel">
@@ -4199,10 +4221,9 @@ Content-Type: application/json</code></pre>
       </div>
     </main>
     <aside class="docs-toc"><div class="toc-title">On this page</div>
-      <a href="javascript:void(0)" class="toc-link">Overview</a>
-      <a href="#api-sequence" class="toc-link">API sequence</a>
-      <a href="javascript:void(0)" class="toc-link">Polling guidance</a>
-      <a href="#code-samples" class="toc-link">Code samples</a>
+      <a href="#journey-overview" class="toc-link">Journey at a glance</a>
+      <a href="#bian-mapping" class="toc-link">BIAN service domains</a>
+      <a href="#code-samples" class="toc-link">Code sample</a>
       <a href="#related-guides" class="toc-link">Related guides</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Related guides</div><div class="grid-3">
