@@ -543,6 +543,30 @@ body.tier-internal #internal-banner {
   transform: translateY(-1px);
 }
 
+/* Per-component focus rings (override or augment global :focus-visible
+   where the default cyan outline would clash with the component background) */
+.btn-primary:focus-visible {
+  outline: 2px solid var(--bg-deep);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--cyan-dim);
+}
+.btn-secondary:focus-visible,
+.nav-link:focus-visible,
+.nav-cta:focus-visible,
+.docs-nav-link:focus-visible,
+.card-link:focus-visible,
+.related-card:focus-visible,
+.view-as-chip:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.nav-staff-link .signout-x:focus-visible {
+  outline: 2px solid var(--internal-primary);
+  outline-offset: 2px;
+  opacity: 1;
+  border-radius: 50%;
+}
+
 /* -----------------------------------------------------------------------------
    7. Cards (component 6.4)
    ----------------------------------------------------------------------------- */
