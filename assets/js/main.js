@@ -125,7 +125,11 @@
 
     if (pathPart === '' || pathPart === '/') return { route: DEFAULT_ROUTE, signin: false, params: params };
     if (SIGNIN_HASH_RE.test('#' + pathPart)) return { route: getCurrentRoute() || DEFAULT_ROUTE, signin: true, params: params };
-    if (pathPart.charAt(0) !== '/') pathPart = '/' + pathPart;
+    // Bare in-page anchor like #letter-a or #section-id: leave the current
+    // route untouched so the browser scrolls without re-rendering the view.
+    if (pathPart.charAt(0) !== '/') {
+      return { route: getCurrentRoute() || DEFAULT_ROUTE, signin: false, params: params };
+    }
     return { route: pathPart, signin: false, params: params };
   }
 
