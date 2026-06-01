@@ -1,0 +1,375 @@
+{
+  "file": "Position+Keeping+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Position Keeping SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "It acts as the authoritative transaction ledger exposure layer for a given positionkeepingid (Account Instance Reference)."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Attribute",
+          "Detail"
+        ],
+        [
+          "What it manages",
+          "Ledger-level transaction entries — identification, date, description, amount, debit/credit indicator, status"
+        ],
+        [
+          "What it does NOT do",
+          "Manage customer profile data — belongs to Party Directory SD"
+        ],
+        [
+          "What it does NOT do",
+          "Manage product agreement configuration — belongs to Sales Product Agreement SD"
+        ],
+        [
+          "What it does NOT do",
+          "Maintain customer holdings registry — belongs to Customer Product & Service Directory SD"
+        ],
+        [
+          "What it does NOT do",
+          "Perform payment execution — belongs to Payment Execution domain"
+        ],
+        [
+          "Primary role",
+          "Authoritative transaction ledger exposure layer — read-only in current scope"
+        ],
+        [
+          "positionkeepingid",
+          "Account Instance Reference — unique identifier per account position record"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. Behaviour Qualifier in Scope"
+    },
+    {
+      "type": "p",
+      "text": "The existing FinancialTransactionCapture BQ is used. No new Behaviour Qualifier was introduced. All enhancements remain within the existing BIAN structure."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "BQ Attribute",
+          "Detail"
+        ],
+        [
+          "BQ Name",
+          "FinancialTransactionCapture"
+        ],
+        [
+          "Cardinality",
+          "1..* — Multiple transaction entries can exist under the same Position Keeping CR. Each entry is independently addressable via financialtransactioncaptureid in the path."
+        ],
+        [
+          "BQ ID",
+          "financialtransactioncaptureid — BIAN-standard BQ instance identifier. In this implementation, both positionkeepingid and financialtransactioncaptureid are passed with the same account number (to preserve BIAN endpoint structure without deviation)."
+        ],
+        [
+          "Implemented Operation",
+          "Retrieve only — GET /PositionKeeping/{positionkeepingid}/FinancialTransactionCapture/{financialtransactioncaptureid}/Retrieve"
+        ],
+        [
+          "Not implemented",
+          "Initiate, Update, Control, Initiate CR, Position Recalculation"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "This SD is invoked when transaction-level history retrieval is required for a specific account. Current scope supports read-only retrieval only."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Scenario",
+          "Action"
+        ],
+        [
+          "Transaction History View Customer opens Transaction History screen in mobile/internet banking.",
+          "Call GET /.../FinancialTransactionCapture/{id}/Retrieve with fromDate, toDate, and pageSize query parameters. Fetches transactions within the date range with pagination support for infinite scroll UI."
+        ],
+        [
+          "Statement Generation Customer requests account statement for a defined period.",
+          "Invoke the same Retrieve endpoint with fromDate = statement start date and toDate = statement end date. Returned transactions are compiled into a statement document."
+        ],
+        [
+          "Operational or Audit Review Operations or audit team reviewing account activity.",
+          "Retrieve endpoint invoked with date filters and pageSize for controlled, paginated result extraction. Supports reconciliation and audit."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Level of Details to Capture"
+    },
+    {
+      "type": "p",
+      "text": "This is an Operational Ledger Exposure Domain. Each transaction entry must capture:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Data Element",
+          "Purpose"
+        ],
+        [
+          "Transaction Identification",
+          "Unique identifier for each ledger entry — for internal reference and audit traceability"
+        ],
+        [
+          "Transaction Date",
+          "Booking date of the transaction — when it was posted to the ledger"
+        ],
+        [
+          "Transaction Description",
+          "Human-readable description — merchant name, reference, or payment description"
+        ],
+        [
+          "Transaction Amount",
+          "Explicit monetary value of the ledger entry with currency — no ambiguity of implicit values"
+        ],
+        [
+          "Debit / Credit Indicator",
+          "Explicit classification of transaction direction (Debit/Credit) — avoids relying on positive/negative amount inference"
+        ],
+        [
+          "Transaction Status",
+          "Status of the transaction (e.g. Completed / Rejected) — derived from upstream posting system status"
+        ],
+        [
+          "Transaction Status Type Value",
+          "BIAN enum value for status — Completed / Rejected / Initiated etc."
+        ],
+        [
+          "Event Identification",
+          "Client batch ID from the posting system — provides traceability back to the originating posting batch"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Query Parameters"
+    },
+    {
+      "type": "p",
+      "text": "The following query parameters are supported on the Retrieve endpoint to filter and paginate transaction results:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Query Parameter",
+          "Purpose"
+        ],
+        [
+          "fromDate",
+          "Start date for transaction filtering — only transactions on or after this date are returned"
+        ],
+        [
+          "toDate",
+          "End date for transaction filtering — only transactions on or before this date are returned"
+        ],
+        [
+          "pageSize",
+          "Maximum number of transaction records to return per call — supports paginated UI / infinite scroll"
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "The API response must include next page and previous page tokens to support subsequent paginated calls when the result count exceeds pageSize."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. BIAN Specification Enhancements"
+    },
+    {
+      "type": "p",
+      "text": "The following enhancements were introduced while preserving Service Domain boundaries:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Enhancement",
+          "Detail"
+        ],
+        [
+          "TransactionAmount added",
+          "Explicit monetary value of the ledger entry using a structured Amount object including currency. Avoids ambiguity of implicit amount fields."
+        ],
+        [
+          "TransactionDebitCreditIndicator added",
+          "Enum: Debit / Credit. Provides explicit classification of transaction direction. Avoids relying on positive/negative amount sign inference. Ensures semantic clarity for consuming systems."
+        ],
+        [
+          "FinancialTransactionCapture BQ → 1:*",
+          "BQ is modeled with cardinality 1..* — multiple transaction entries exist under the same CR, each independently addressable via financialtransactioncaptureid."
+        ],
+        [
+          "Query parameters: fromDate, toDate, pageSize",
+          "Added to the Retrieve endpoint to support date-range filtering and result pagination."
+        ],
+        [
+          "Pagination tokens in response",
+          "next page and previous page tokens must be returned in the response to support subsequent paginated calls."
+        ],
+        [
+          "No own DB schema",
+          "This SD does not require its own schema. It connects directly to the core target adapter to pull transactions from the core posting system."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Boundary Integrity"
+    },
+    {
+      "type": "p",
+      "text": "All enhancements remain within Position Keeping SD scope and do not violate service domain boundaries:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Boundary Rule",
+          "Explanation"
+        ],
+        [
+          "Ledger entries only",
+          "Represents ledger-level transaction data only — not customer or product data"
+        ],
+        [
+          "No posting orchestration",
+          "Does not introduce payment initiation or posting orchestration — belongs to Payment Execution domain"
+        ],
+        [
+          "No overlap with Accounting",
+          "Does not perform ledger recalculation or accounting — that belongs to accounting domains"
+        ],
+        [
+          "Payment Execution boundary intact",
+          "Position Keeping exposes results of completed postings — it does not execute them"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. BIAN Field Mapping"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "TransactionIdentification",
+          "PostingTransaction.TransactionIdentification.IdentifierValue",
+          "TXNXXXXXXXXXX",
+          "Unique identifier assigned to the financial transaction/posting instruction."
+        ],
+        [
+          "TransactionDescription",
+          "PostingTransaction.TransactionDescription",
+          "Mikkeller Bar&Pub",
+          "Narrative or business description explaining the purpose of the transaction."
+        ],
+        [
+          "TransactionDebitCreditIndicator",
+          "PostingTransaction.TransactionDebitCreditIndicator",
+          "Credit",
+          "Indicates whether the transaction is a debit or credit posting."
+        ],
+        [
+          "TransactionAmount",
+          "PostingTransaction.TransactionAmount.AmountValue.Value",
+          "10000",
+          "Monetary amount associated with the financial transaction."
+        ],
+        [
+          "TransactionCurrency",
+          "PostingTransaction.TransactionAmount.AmountCurrency.Currencycode",
+          "USD",
+          "Currency code representing the denomination of the transaction amount."
+        ],
+        [
+          "TransactionDate",
+          "PostingTransaction.TransactionDate.TransactionDate.DateTimeContent",
+          "2026-02-13T10:09:34.146049Z",
+          "Date and time when the transaction was booked or processed."
+        ],
+        [
+          "StatusReason",
+          "PostingTransaction.TransactionStatus.TransactionStatus.StatusReason.Text",
+          "POSTING_INSTRUCTION_BATCH_STATUS_ACCEPTED",
+          "Current processing or operational status reason associated with the transaction/posting batch."
+        ],
+        [
+          "TransactionStatusType",
+          "PostingTransaction.TransactionStatus.TransactionStatusType",
+          "Completed",
+          "Classification of the transaction status such as initiated, completed, rejected, or pending."
+        ],
+        [
+          "EventIdentification",
+          "PostingTransaction.EventIdentification.IdentifierValue",
+          "b7b6da03-f564-4fe9-9d79-6d0c445d9ef4",
+          "Unique identifier assigned to the posting event or posting instruction batch."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter: Position Keeping Adapter - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "Revised Yaml :"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}
