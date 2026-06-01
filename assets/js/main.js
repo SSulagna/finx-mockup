@@ -257,6 +257,7 @@
     updateTierChips();
     applyTierFilter();
     updateStateIndicator();
+    updateStaffLinks();
     // If we just switched to External while sitting on an internal route,
     // bounce to the homepage so the user is not staring at a hidden view.
     var route = getCurrentRoute() || DEFAULT_ROUTE;
@@ -425,12 +426,17 @@
   // ---------- Staff-link state (top nav + footer + mobile) ----------
   function updateStaffLinks() {
     var unlocked = isUnlocked();
+    var tierLabel = TIER_LABELS[currentTier] || 'External';
     $$('.nav-staff-link, .mobile-staff-link').forEach(function (a) {
       a.classList.toggle('is-unlocked', unlocked);
-      a.textContent = unlocked ? 'UST Internal ✓' : 'UST staff ↗';
-      a.setAttribute('title', unlocked
-        ? 'Signed in. Open the Internal Hub.'
-        : 'UST employees: access internal playbooks, sales enablement, and architecture references');
+      if (unlocked) {
+        a.innerHTML = 'Signed in &middot; ' + tierLabel +
+          ' <span class="signout-x" data-action="signout" title="Sign out" aria-label="Sign out" role="button">&times;</span>';
+        a.setAttribute('title', 'Signed in. Open the Internal Hub. Click \u00D7 to sign out.');
+      } else {
+        a.textContent = 'UST staff \u00B7 Sign in';
+        a.setAttribute('title', 'UST employees: sign in to access internal engagement playbooks, sales enablement, and architecture references');
+      }
     });
   }
 
