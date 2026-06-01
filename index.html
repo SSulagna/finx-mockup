@@ -880,6 +880,29 @@
     .redoc-host .menu-content { background: #f6f8fa !important; border-right: 1px solid #e3e8ee !important; }
     .redoc-host .api-content { background: #ffffff !important; }
 
+    /* ----- Stripe-style polish for Redoc internals ------------------------- */
+    /* Tighten the parameter rail so it reads like a property list rather than a table. */
+    .redoc-host [data-section-id] h2 { font-size: 22px !important; font-weight: 600 !important; color: #1a1f36 !important; letter-spacing: -0.01em; }
+    .redoc-host [data-section-id] h3 { font-size: 16px !important; font-weight: 600 !important; color: #1a1f36 !important; }
+    .redoc-host .api-content table thead { background: transparent !important; border-bottom: 1px solid #e3e8ee !important; }
+    .redoc-host .api-content table thead th { color: #697386 !important; font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; font-weight: 600 !important; padding-bottom: 8px !important; }
+    .redoc-host .api-content table td { border-color: #f0f2f5 !important; padding: 12px 8px !important; vertical-align: top !important; }
+    .redoc-host .api-content table .property-name-td { font-family: 'JetBrains Mono', ui-monospace, monospace !important; color: #1a1f36 !important; font-size: 13px !important; font-weight: 500 !important; }
+    /* Type pill: small uppercase, soft cyan tint, mirrors Stripe's parameter pills. */
+    .redoc-host .api-content .sc-type, .redoc-host .api-content [class*="TypeName"], .redoc-host .api-content [class*="type-name"] { background: rgba(0, 212, 212, 0.10) !important; color: #0a2540 !important; border-radius: 4px !important; padding: 2px 6px !important; font-family: 'JetBrains Mono', monospace !important; font-size: 11px !important; font-weight: 500 !important; text-transform: lowercase !important; letter-spacing: 0 !important; }
+    .redoc-host .api-content [class*="RequiredLabel"], .redoc-host .api-content [class*="required"] { color: #dc2626 !important; font-size: 11px !important; font-weight: 500 !important; text-transform: lowercase !important; }
+    /* HTTP method chips Stripe-style. */
+    .redoc-host [class*="OperationBadge"], .redoc-host [class*="http-verb"] { border-radius: 4px !important; padding: 3px 8px !important; font-family: 'JetBrains Mono', monospace !important; font-size: 11px !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.04em !important; }
+    /* Right-hand code panel: Stripe navy with tighter padding. */
+    .redoc-host .api-info ~ * [class*="RightPanel"], .redoc-host [class*="DarkRightPanel"], .redoc-host [class*="ApiInfoWrap"] + div [class*="right-panel"] { padding-top: 20px !important; }
+    .redoc-host [class*="TabList"] button, .redoc-host [class*="react-tabs__tab"] { font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; font-weight: 500 !important; text-transform: uppercase !important; letter-spacing: 0.04em !important; color: #8898aa !important; border: none !important; padding: 8px 12px !important; }
+    .redoc-host [class*="TabList"] button[aria-selected="true"], .redoc-host [class*="react-tabs__tab--selected"] { color: #00D4D4 !important; border-bottom: 2px solid #00D4D4 !important; background: transparent !important; }
+    /* Anchored links from operation descriptions (overlay markdown). */
+    .redoc-host .api-content a { color: #008B99 !important; text-decoration: underline; text-decoration-color: rgba(0, 139, 153, 0.3); text-underline-offset: 2px; }
+    .redoc-host .api-content a:hover { color: #00D4D4 !important; text-decoration-color: #00D4D4; }
+    /* Schema field indentation lines, lighter so they stop competing with content. */
+    .redoc-host [class*="InnerPropertiesWrap"], .redoc-host [class*="property-line"] { border-color: #e7eaee !important; }
+
     /* CTA injected by main.js onto each SD page that has a spec. */
     .api-explorer-cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: rgba(0, 212, 212, 0.12); color: var(--cyan); border: 1px solid rgba(0, 212, 212, 0.35); border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; margin: 4px 0 24px 0; transition: background var(--transition), color var(--transition); }
     .api-explorer-cta:hover { background: var(--cyan); color: var(--bg-deep); }
@@ -7683,6 +7706,7 @@ Content-Type: application/json</code></pre>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
       <div class="docs-nav-group">API Explorer</div>
       <a href="#/docs/glue/api-explorer" class="docs-nav-link is-active">All service domains</a>
+      <a href="#/docs/glue/api-explorer/conventions" class="docs-nav-link">Conventions</a>
       <a href="#/docs/glue/api-explorer/api-reference" class="docs-nav-link">Party Lifecycle Management</a>
       <a href="#/docs/glue/api-explorer/party-reference-data" class="docs-nav-link">Party Reference Data</a>
       <a href="#/docs/glue/api-explorer/current-account" class="docs-nav-link">Current Account</a>
@@ -7703,6 +7727,7 @@ Content-Type: application/json</code></pre>
       <span class="eyebrow">FinX Glue · OpenAPI 3.0.1 · BIAN 14.0</span>
       <h1 class="page-title">Interactive API Explorer</h1>
       <p class="page-lead">Eleven BIAN-aligned service domains, rendered live from the OpenAPI 3.0.1 specifications published by <code>gatewayqa.ustfinx.com</code>. Each explorer is paired with the prose service-domain page under <a href="#/docs/glue/api-reference">API Reference</a>: the prose explains intent and BIAN mapping; the explorer is the machine-readable contract.</p>
+      <div class="callout callout--info"><strong>Start here.</strong> The cross-cutting rules every endpoint follows (authentication, tenancy, pagination, idempotency, errors, versioning, and the FinX SDK stance) live on the <a href="#/docs/glue/api-explorer/conventions">Conventions page</a>. Read it once, then the per-operation pages stay short.</div>
       <div class="callout callout--info"><strong>What you see.</strong> Operations grouped by tag, request and response schemas with examples, downloadable JSON spec, and deep links to every operation. Authorize-and-call (Swagger UI's "Try it out") is intentionally not exposed here; runtime calls belong in the sandbox.</div>
 
       <h2 class="h3" style="margin-top:40px;">Party &amp; Customer</h2>
@@ -7734,6 +7759,111 @@ Content-Type: application/json</code></pre>
 
       <h2 class="h3" style="margin-top:32px;">Why Redoc</h2>
       <p>These pages are rendered with <a href="https://redocly.com/redoc" target="_blank" rel="noopener">Redoc</a>, the OpenAPI renderer used by GitHub, Docker, Lyft, Discourse, and most published banking API references. Redoc is read-first: a three-column layout that mirrors the published-spec convention BIAN consumers expect. Where the sibling developer console uses Swagger UI for interactive calls against a Keycloak-gated backend, this portal uses Redoc to present the contract as documentation.</p>
+    </main>
+  </section>
+
+  <!-- Conventions: cross-cutting rules every endpoint follows. Read-once, then per-op pages stay short. -->
+  <section class="view" data-route="/docs/glue/api-explorer/conventions" data-tier="external" data-layout="docs" data-section="glue" data-title="API Conventions · API Explorer · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+      <div class="docs-nav-group">API Explorer</div>
+      <a href="#/docs/glue/api-explorer" class="docs-nav-link">All service domains</a>
+      <a href="#/docs/glue/api-explorer/conventions" class="docs-nav-link is-active">Conventions</a>
+      <a href="#/docs/glue/api-explorer/api-reference" class="docs-nav-link">Party Lifecycle Management</a>
+      <a href="#/docs/glue/api-explorer/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <a href="#/docs/glue/api-explorer/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-explorer/savings-account" class="docs-nav-link">Savings Account</a>
+      <a href="#/docs/glue/api-explorer/product-directory" class="docs-nav-link">Product Directory</a>
+      <a href="#/docs/glue/api-explorer/customer-product-service-directory" class="docs-nav-link">Customer Product &amp; Service Directory</a>
+      <a href="#/docs/glue/api-explorer/customer-offer" class="docs-nav-link">Customer Offer</a>
+      <a href="#/docs/glue/api-explorer/customer-agreement" class="docs-nav-link">Customer Agreement</a>
+      <a href="#/docs/glue/api-explorer/position-keeping" class="docs-nav-link">Position Keeping</a>
+      <a href="#/docs/glue/api-explorer/payment-order-initiation" class="docs-nav-link">Payment Order Initiation</a>
+      <a href="#/docs/glue/api-explorer/document-directory" class="docs-nav-link">Document Directory</a>
+      <div class="docs-nav-group">Reference prose</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">← Service-domain reference</a>
+    </div></aside>
+    <main class="docs-main">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Conventions</span></nav>
+      <span class="eyebrow">FinX Glue · OpenAPI 3.0.1 · BIAN 14.0</span>
+      <h1 class="page-title">API Conventions</h1>
+      <p class="page-lead">The cross-cutting rules every FinX Glue endpoint follows. Read this once; the per-operation pages stay short by deferring to it. Six sections: <a href="#auth">Authentication</a>, <a href="#tenancy">Tenancy</a>, <a href="#pagination">Pagination</a>, <a href="#idempotency">Idempotency</a>, <a href="#errors">Errors</a>, <a href="#versioning">Versioning</a>, plus a note on the <a href="#sdk">FinX SDK stance</a>.</p>
+
+      <h2 id="auth">Authentication</h2>
+      <p>Every request to <code>https://gatewayqa.ustfinx.com</code> (or the production host you have been provisioned with) carries a bearer token in the <code>Authorization</code> header:</p>
+      <pre><code>Authorization: Bearer eyJhbGciOiJSUzI1NiIsImt...</code></pre>
+      <p>Tokens are issued by the FinX gateway's Keycloak realm against an OAuth2 client-credentials grant. The token endpoint, the client ID, and the client secret are provisioned per consuming application during onboarding. Tokens are valid for one hour; refresh against the token endpoint when the response carries <code>401</code> with <code>error_code: token_expired</code>.</p>
+      <div class="callout callout--info"><strong>Where to keep secrets.</strong> Treat the client secret like a database password. Never embed it in a browser bundle or commit it to source control. The samples on every operation page read <code>$FINX_TOKEN</code> from the environment for exactly this reason.</div>
+      <p>For full setup, including the realm URL and the scopes you should request, see <a href="#/docs/glue/auth">Authentication and tenant headers</a>.</p>
+
+      <h2 id="tenancy">Tenancy</h2>
+      <p>FinX Glue is multi-tenant by design. Every request must carry the <code>X-Tenant-ID</code> header identifying the bank, brand, or business unit on whose behalf the call is made:</p>
+      <pre><code>X-Tenant-ID: bank_acme_us_retail</code></pre>
+      <p>The tenant identifier is issued during onboarding. A token issued for one tenant cannot be used to read or mutate another tenant's data; the gateway rejects the call with <code>403 forbidden_for_tenant</code>. This holds even for read endpoints: there is no cross-tenant lookup.</p>
+      <p>If your application services multiple tenants (for example a hosted CSR console), set the header per request, not once per session.</p>
+
+      <h2 id="pagination">Pagination</h2>
+      <p>List endpoints return at most <strong>50 items per page</strong>. Pagination is cursor-based: the response includes a <code>nextCursor</code> field when more data is available; pass it back as the <code>cursor</code> query parameter on the next call.</p>
+      <pre><code>GET /v1/customer-agreement/list?limit=50
+GET /v1/customer-agreement/list?limit=50&amp;cursor=eyJpZCI6ImFncl8wMUhaUTh...</code></pre>
+      <p>When <code>nextCursor</code> is absent or null, you have reached the end of the result set. Cursors are opaque, time-bounded (24 hours), and tied to the original query parameters: changing <code>limit</code> or any filter mid-walk will reject the cursor with <code>400 invalid_cursor</code>.</p>
+      <p>There is no offset-based pagination. The cursor approach is stable under concurrent writes; offsets are not.</p>
+
+      <h2 id="idempotency">Idempotency</h2>
+      <p>Every mutating endpoint (<code>POST</code>, <code>PUT</code>, <code>PATCH</code>) accepts an optional <code>Idempotency-Key</code> header. Pass a client-generated string (UUID, ULID, or a deterministic value derived from your business key) and FinX will guarantee at-most-once execution for that key inside a 24-hour window.</p>
+      <pre><code>Idempotency-Key: agr-2026-06-01-cust_8KQ2vP7nR3xLmYzA</code></pre>
+      <p>Repeating the same call with the same key returns the original response (including the same status code) instead of executing the operation a second time. This is how you safely retry across network errors, gateway timeouts, and partial failures.</p>
+      <div class="callout callout--info"><strong>Key reuse.</strong> Reusing a key with a different request body returns <code>422 idempotency_key_conflict</code>. Generate a new key whenever the payload changes.</div>
+
+      <h2 id="errors">Errors</h2>
+      <p>Errors carry a JSON body with three fields: <code>error_code</code> (stable string, safe to switch on), <code>message</code> (human-readable, may change), and <code>details</code> (per-error structured context):</p>
+      <pre><code>{
+  "error_code": "agreement_not_found",
+  "message": "No active agreement with id agr_01HZQ8XK6PNR7M4F9Z3V exists for tenant bank_acme_us_retail.",
+  "details": { "customerAgreementId": "agr_01HZQ8XK6PNR7M4F9Z3V" }
+}</code></pre>
+      <p>Status codes follow the standard HTTP conventions plus two FinX-specific cases:</p>
+      <table>
+        <thead><tr><th>Status</th><th>Meaning</th><th>Retryable</th></tr></thead>
+        <tbody>
+          <tr><td><code>400</code></td><td>Validation failure. Inspect <code>details</code> for the offending field.</td><td>No, fix the request.</td></tr>
+          <tr><td><code>401</code></td><td>Missing or expired token.</td><td>Refresh the token, then retry.</td></tr>
+          <tr><td><code>403</code></td><td>Token valid but not authorised for this tenant or operation.</td><td>No.</td></tr>
+          <tr><td><code>404</code></td><td>Resource does not exist.</td><td>No.</td></tr>
+          <tr><td><code>409</code></td><td>State conflict (for example, trying to update a superseded agreement).</td><td>No, refetch and retry against the new state.</td></tr>
+          <tr><td><code>410 Gone</code></td><td>Resource existed and was superseded. <code>details.supersededBy</code> carries the replacement ID.</td><td>No, follow the link.</td></tr>
+          <tr><td><code>422</code></td><td>Semantic failure: the request was well-formed but rejected by business rules.</td><td>No.</td></tr>
+          <tr><td><code>429</code></td><td>Rate-limited. <code>Retry-After</code> header carries seconds to wait.</td><td>Yes, after the header value.</td></tr>
+          <tr><td><code>5xx</code></td><td>Gateway or upstream failure.</td><td>Yes, with exponential backoff and your idempotency key.</td></tr>
+        </tbody>
+      </table>
+      <p>The full <code>error_code</code> catalogue lives in the per-service-domain reference. New codes are additive; FinX never recycles a code to mean something different.</p>
+
+      <h2 id="versioning">Versioning</h2>
+      <p>The API version is a path segment: <code>/v1/...</code> today, with <code>/v2/...</code> reserved for the next breaking-change wave. Within a major version, the contract is forward-compatible. FinX may:</p>
+      <ul>
+        <li>Add new endpoints, new optional request fields, and new response fields without notice.</li>
+        <li>Add new <code>error_code</code> values and new enum members.</li>
+        <li>Mark fields as deprecated; deprecated fields keep working for at least 12 months.</li>
+      </ul>
+      <p>FinX will not, within a major version:</p>
+      <ul>
+        <li>Remove a field, an endpoint, or an enum member.</li>
+        <li>Tighten a required field to required-with-validation in a way that breaks existing payloads.</li>
+        <li>Change the semantics of an existing <code>error_code</code>.</li>
+      </ul>
+      <p>Deprecations are announced on the <a href="javascript:void(0)" title="Planned: Releases &amp; deprecations log">releases page</a> at least 90 days before any consumer-visible change. Set the <code>FinX-Version</code> response header expectation in your monitoring; we bump the patch component on every deploy.</p>
+
+      <h2 id="sdk">A note on SDKs</h2>
+      <p>FinX deliberately does not publish a language SDK in v1. Every example on these pages uses raw HTTP against the published OpenAPI contract, in three languages (cURL, Node.js with <code>fetch</code>, Python with <code>requests</code>) that map one-for-one to the wire format.</p>
+      <p>The reasoning:</p>
+      <ul>
+        <li><strong>BIAN service domains evolve.</strong> An SDK locked to one snapshot of the BIAN spec would lag the gateway by a release cycle. The raw HTTP samples stay correct.</li>
+        <li><strong>Bank stacks are heterogeneous.</strong> The realistic consumer mix spans Java microservices, .NET back-office systems, Python data jobs, and Node frontends. A first-party SDK in any one language would underserve the others.</li>
+        <li><strong>OpenAPI is the SDK.</strong> The same JSON specs that render these pages also generate type-safe clients on demand. Use <a href="https://openapi-generator.tech/" target="_blank" rel="noopener">openapi-generator</a> or your stack's equivalent to produce a client for the language you actually use.</li>
+      </ul>
+      <p>This decision is revisited at every major version. If v2 ships a first-party SDK, this section will say so.</p>
     </main>
   </section>
 
@@ -8788,17 +8918,26 @@ Content-Type: application/json</code></pre>
 
   <!-- Floating answer assistant -->
   <div class="finx-assistant" id="finx-assistant" aria-live="polite">
-    <button class="finx-assistant-toggle" id="finx-assistant-toggle" type="button" aria-label="Open FinX answer assistant" aria-expanded="false" aria-controls="finx-assistant-panel">
-      <span class="finx-assistant-toggle-icon" aria-hidden="true">?</span>
-      <span class="finx-assistant-toggle-label">Ask FinX</span>
-    </button>
+    <div class="finx-assistant-launcher">
+      <button class="finx-assistant-search" type="button" data-action="open-search" aria-label="Search the FinX portal">
+        <span class="finx-assistant-search-icon" aria-hidden="true">⌕</span>
+        <span class="finx-assistant-search-label">Search the portal</span>
+      </button>
+      <button class="finx-assistant-toggle" id="finx-assistant-toggle" type="button" aria-label="Open FinX answer assistant" aria-expanded="false" aria-controls="finx-assistant-panel">
+        <span class="finx-assistant-toggle-icon" aria-hidden="true">?</span>
+        <span class="finx-assistant-toggle-label">Ask</span>
+      </button>
+    </div>
     <section class="finx-assistant-panel" id="finx-assistant-panel" aria-label="FinX answer assistant" hidden>
       <header class="finx-assistant-header">
         <div>
           <div class="finx-assistant-kicker">Local index</div>
           <h2>Ask FinX</h2>
         </div>
-        <button class="finx-assistant-close" type="button" aria-label="Close FinX answer assistant">&times;</button>
+        <div class="finx-assistant-actions">
+          <button class="finx-assistant-expand" type="button" aria-label="Expand FinX answer assistant" aria-expanded="false">□</button>
+          <button class="finx-assistant-close" type="button" aria-label="Close FinX answer assistant">&times;</button>
+        </div>
       </header>
       <div class="finx-assistant-scope" id="finx-assistant-scope">Public content only</div>
       <div class="finx-assistant-messages" id="finx-assistant-messages" role="log" aria-live="polite">
@@ -8814,19 +8953,20 @@ Content-Type: application/json</code></pre>
     </section>
   </div>
 
-  <!-- Search modal (decorative, Cmd/Ctrl+K) -->
+  <!-- Search modal (Cmd/Ctrl+K) -->
   <div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-labelledby="search-modal-input" aria-hidden="true">
     <div class="search-modal">
       <div class="search-modal-input-wrap">
         <span class="ico" aria-hidden="true">⌕</span>
-        <input id="search-modal-input" class="search-modal-input" type="search" placeholder="Search documentation" autocomplete="off">
+        <input id="search-modal-input" class="search-modal-input" type="search" placeholder="Search the portal" autocomplete="off">
         <span class="kbd">esc</span>
       </div>
+      <div id="search-empty-state">
       <div class="search-modal-section">
         <div class="search-modal-eyebrow">Recent pages</div>
         <ul class="search-modal-list">
           <li><a href="#/architecture"><span class="pre">ARCH</span><span>Why BIAN. Why composable. Why now.</span></a></li>
-          <li><a href="#/docs/glue/journey-onboarding"><span class="pre">DOCUMENTATION</span><span>Customer Onboarding &amp; KYC journey</span></a></li>
+          <li><a href="#/docs/glue/journey-onboarding"><span class="pre">GLUE</span><span>Customer Onboarding &amp; KYC journey</span></a></li>
           <li><a href="#/modernization/coexistence"><span class="pre">PATH</span><span>Coexistence: Glue alongside legacy core</span></a></li>
         </ul>
       </div>
@@ -8839,7 +8979,15 @@ Content-Type: application/json</code></pre>
           <li><a href="#/resources"><span class="pre">FAQ</span><span>Is FinX a core banking system?</span></a></li>
         </ul>
       </div>
+      </div>
+      <div id="search-live-state" class="search-live-state" hidden>
+        <div class="search-modal-section">
+          <div class="search-modal-eyebrow" id="search-live-summary">Search results</div>
+          <ul class="search-modal-list search-modal-live-list" id="search-live-results"></ul>
+        </div>
+      </div>
       <div class="search-modal-footer">
+        <span class="cmdk-hint"><span class="kbd">↑</span><span class="kbd">↓</span> to move</span>
         <span class="cmdk-hint"><span class="kbd">↵</span> to open</span>
         <span class="cmdk-hint"><span class="kbd">⌘</span><span class="kbd">K</span> to toggle</span>
       </div>
@@ -8868,6 +9016,7 @@ Content-Type: application/json</code></pre>
     </div>
   </div>
 
+  <script src="assets/js/api-overlay.js" defer></script>
   <script src="assets/js/main.js" defer></script>
   <script>
     /* Docs page interactions: response-tab switching + copy buttons. */

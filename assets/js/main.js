@@ -341,6 +341,7 @@
   function applyMode() {
     var planningMeta = $('#planning-meta');
     var isPlanning = currentMode === 'planning';
+    document.body.setAttribute('data-view-mode', currentMode);
 
     if (planningMeta) {
       if (isPlanning) {
@@ -722,9 +723,23 @@
     if (toggle) toggle.setAttribute('aria-expanded', 'false');
   }
 
+  function toggleAssistantExpand() {
+    var panel = $('#finx-assistant-panel');
+    var expand = $('.finx-assistant-expand');
+    if (!panel) return;
+    var expanded = !panel.classList.contains('is-expanded');
+    panel.classList.toggle('is-expanded', expanded);
+    if (expand) {
+      expand.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      expand.setAttribute('aria-label', expanded ? 'Shrink FinX answer assistant' : 'Expand FinX answer assistant');
+      expand.textContent = expanded ? '–' : '□';
+    }
+  }
+
   function bindAssistant() {
     var toggle = $('#finx-assistant-toggle');
     var close = $('.finx-assistant-close');
+    var expand = $('.finx-assistant-expand');
     var form = $('#finx-assistant-form');
     var input = $('#finx-assistant-input');
     if (toggle) {
@@ -735,6 +750,7 @@
       });
     }
     if (close) close.addEventListener('click', closeAssistant);
+    if (expand) expand.addEventListener('click', toggleAssistantExpand);
     if (form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -1109,7 +1125,48 @@
     try { return JSON.stringify(ex, null, 2); } catch (e) { return null; }
   }
 
+  // Apply curated overlay entries (from api-overlay.js) into the live spec.
+  // Each overlay entry can carry a hand-written description, realistic request
+  // and response examples, and curated cURL/Node/Python samples. Overlay wins
+  // over auto-generated content; missing endpoints fall back to auto samples.
+  function applyOverlay(spec, slug) {
+    var overlay = (window.FINX_API_OVERLAY || {})[slug];
+    if (!overlay) return spec;
+    Object.keys(overlay).forEach(function (path) {
+      var pathItem = spec.paths && spec.paths[path];
+      if (!pathItem) return;
+      Object.keys(overlay[path]).forEach(function (method) {
+        var op = pathItem[method];
+        var patch = overlay[path][method];
+        if (!op || !patch) return;
+        if (patch.summary)     op.summary = patch.summary;
+        if (patch.description) op.description = patch.description;
+        if (patch.requestExample && op.requestBody && op.requestBody.content) {
+          var rb = op.requestBody.content['application/json'];
+          if (rb) rb.example = patch.requestExample;
+        }
+        if (patch.responseExample && op.responses) {
+          var rcode = String(patch.responseExample.status || 200);
+          var resp = op.responses[rcode] || op.responses['200'];
+          if (resp && resp.content && resp.content['application/json']) {
+            resp.content['application/json'].example = patch.responseExample.body;
+          }
+        }
+        if (patch.codeSamples) {
+          op['x-codeSamples'] = [
+            { lang: 'curl',       label: 'cURL',    source: patch.codeSamples.curl },
+            { lang: 'JavaScript', label: 'Node.js', source: patch.codeSamples.node },
+            { lang: 'Python',     label: 'Python',  source: patch.codeSamples.python }
+          ];
+          op['x-finx-curated'] = true; // marker so auto-sampler skips this op
+        }
+      });
+    });
+    return spec;
+  }
+
   // Stripe-style: every operation gets cURL, Node, and Python tabs in the right panel.
+  // Curated samples (set by applyOverlay) win; everything else gets auto-generated.
   function injectCodeSamples(spec) {
     var base = (spec.servers && spec.servers[0] && spec.servers[0].url) || 'https://gatewayqa.ustfinx.com';
     base = base.replace(/\/$/, '');
@@ -1178,11 +1235,12 @@
     if (!host || rendered[route]) return;
     var specUrl = host.getAttribute('data-spec');
     if (!specUrl) return;
+    var slug = (specUrl.match(/openapi\/([^./]+)\.json/) || [])[1] || '';
 
     rendered[route] = true;
     Promise.all([loadRedoc(), fetchSpec(specUrl)])
       .then(function (parts) {
-        var spec = injectCodeSamples(parts[1]);
+        var spec = injectCodeSamples(applyOverlay(parts[1], slug));
         host.innerHTML = '';
         try {
           window.Redoc.init(spec, REDOC_OPTIONS, host);
