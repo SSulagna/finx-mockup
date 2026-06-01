@@ -792,7 +792,7 @@ body.tier-internal #internal-banner {
 .state-indicator {
   position: fixed;
   bottom: 16px;
-  right: 16px;
+  left: 16px;
   z-index: 60;
   display: inline-flex;
   align-items: center;
@@ -816,6 +816,213 @@ body.tier-internal #internal-banner {
 .state-indicator.signed-in .dot {
   background: var(--internal-primary);
   box-shadow: 0 0 8px var(--internal-primary);
+}
+
+/* -----------------------------------------------------------------------------
+   Floating answer assistant
+   ----------------------------------------------------------------------------- */
+.finx-assistant {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 96;
+  font-family: var(--font-sans);
+}
+.finx-assistant-toggle {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 12px;
+  border: 1px solid rgba(0, 212, 212, 0.42);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(0, 212, 212, 0.18), rgba(15, 69, 85, 0.96));
+  color: var(--text-primary);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.36), 0 0 30px rgba(0, 212, 212, 0.12);
+  cursor: pointer;
+}
+.finx-assistant-toggle:hover,
+.finx-assistant-toggle:focus-visible {
+  border-color: var(--cyan);
+  background: linear-gradient(135deg, rgba(46, 230, 230, 0.22), rgba(15, 69, 85, 0.98));
+}
+.finx-assistant-toggle-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cyan);
+  color: var(--bg-deep);
+  font-weight: 700;
+  font-size: 17px;
+}
+.finx-assistant-toggle-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.finx-assistant-panel {
+  position: absolute;
+  right: 0;
+  bottom: 62px;
+  width: min(420px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 120px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(0, 212, 212, 0.26);
+  border-radius: 8px;
+  background: rgba(6, 34, 41, 0.98);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48), 0 0 50px rgba(0, 212, 212, 0.1);
+  backdrop-filter: blur(18px);
+}
+.finx-assistant-panel[hidden] { display: none; }
+.finx-assistant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid var(--border-dark);
+  background:
+    radial-gradient(circle at top left, rgba(0, 212, 212, 0.16), transparent 38%),
+    var(--bg-card);
+}
+.finx-assistant-kicker {
+  margin-bottom: 4px;
+  color: var(--cyan);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.finx-assistant-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 18px;
+  line-height: 1.2;
+}
+.finx-assistant-close {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-dark);
+  border-radius: 50%;
+  background: rgba(168, 196, 204, 0.06);
+  color: var(--text-secondary);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.finx-assistant-close:hover,
+.finx-assistant-close:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--cyan-dim);
+}
+.finx-assistant-scope {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-dark);
+  color: var(--text-muted);
+  font-size: 12px;
+  background: rgba(168, 196, 204, 0.04);
+}
+.finx-assistant-scope.is-internal {
+  color: var(--internal-primary);
+  background: rgba(180, 147, 244, 0.08);
+}
+.finx-assistant-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 240px;
+  overflow: auto;
+  padding: 16px;
+}
+.finx-assistant-msg {
+  max-width: 92%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.finx-assistant-msg--bot {
+  align-self: flex-start;
+  border: 1px solid var(--border-dark);
+  background: rgba(15, 69, 85, 0.72);
+  color: var(--text-secondary);
+}
+.finx-assistant-msg--user {
+  align-self: flex-end;
+  background: var(--cyan);
+  color: var(--bg-deep);
+  font-weight: 600;
+}
+.finx-assistant-msg strong { color: var(--text-primary); }
+.finx-assistant-msg--user strong { color: var(--bg-deep); }
+.finx-assistant-msg a {
+  color: var(--cyan-bright);
+  font-weight: 600;
+}
+.finx-assistant-msg ol,
+.finx-assistant-msg ul { margin: 8px 0 0 18px; }
+.finx-assistant-msg li { margin-bottom: 6px; }
+.finx-assistant-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 14px;
+  border-top: 1px solid var(--border-dark);
+  background: rgba(3, 19, 25, 0.72);
+}
+.finx-assistant-form input {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+}
+.finx-assistant-form input::placeholder { color: var(--text-muted); }
+.finx-assistant-form input:focus {
+  outline: none;
+  border-color: var(--cyan-dim);
+}
+.finx-assistant-form button {
+  padding: 0 16px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--cyan);
+  color: var(--bg-deep);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.finx-assistant-form button:hover,
+.finx-assistant-form button:focus-visible { background: var(--cyan-bright); }
+@media (max-width: 720px) {
+  .finx-assistant {
+    right: 16px;
+    bottom: 16px;
+  }
+  .finx-assistant-toggle-label { display: none; }
+  .finx-assistant-toggle {
+    min-width: 52px;
+    min-height: 52px;
+    justify-content: center;
+    padding: 10px;
+  }
+  .finx-assistant-panel {
+    right: -4px;
+    bottom: 64px;
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 104px);
+  }
 }
 
 /* -----------------------------------------------------------------------------

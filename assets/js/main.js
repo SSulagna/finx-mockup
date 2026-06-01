@@ -577,23 +577,44 @@
     return picked;
   }
 
-  function answerAssistant(query) {
+  function retrieveAssistantMatches(query, limit) {
     var tokens = tokenize(query);
     var index = buildAssistantIndex();
-    var locked = !isUnlocked();
-    var authTerms = /\b(internal|staff|sales|enablement|playbook|confidential|architecture references|product requirements)\b/i;
-
-    if (!tokens.length) {
-      return 'Ask a specific question, for example: <strong>How does FinX Glue support coexistence?</strong>';
-    }
-
-    var ranked = index.map(function (entry) {
+    if (!tokens.length) return { tokens: tokens, matches: [] };
+    var matches = index.map(function (entry) {
       return { entry: entry, score: scoreEntry(entry, tokens) };
     }).filter(function (item) {
       return item.score > 0;
     }).sort(function (a, b) {
       return b.score - a.score;
-    }).slice(0, 4);
+    }).slice(0, limit || 4);
+    return { tokens: tokens, matches: matches };
+  }
+
+  function assistantContextPayload(matches, tokens) {
+    return matches.map(function (item) {
+      var entry = item.entry;
+      var snippets = bestSentences(entry, tokens).join(' ');
+      return {
+        label: entry.label,
+        title: entry.title,
+        route: entry.route,
+        text: snippets || entry.text.slice(0, 700),
+        internal: entry.internal,
+        gated: entry.gated
+      };
+    });
+  }
+
+  function fallbackAssistantAnswer(query, retrieval) {
+    var locked = !isUnlocked();
+    var authTerms = /\b(internal|staff|sales|enablement|playbook|confidential|architecture references|product requirements)\b/i;
+    var tokens = retrieval.tokens || [];
+    var ranked = retrieval.matches || [];
+
+    if (!tokens.length) {
+      return 'Ask a specific question, for example: <strong>How does FinX Glue support coexistence?</strong>';
+    }
 
     if (!ranked.length) {
       if (locked && authTerms.test(query)) {
@@ -619,14 +640,57 @@
     return html;
   }
 
+  function assistantTextToHtml(text, sources) {
+    var safe = escapeHtml(text || '').replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>');
+    var html = '<p>' + safe + '</p>';
+    if (sources && sources.length) {
+      html += '<p><strong>Portal matches</strong></p><ul>';
+      for (var i = 0; i < sources.length && i < 4; i++) {
+        html += '<li><a href="#' + escapeHtml(sources[i].route) + '">' + escapeHtml(sources[i].label) + '</a></li>';
+      }
+      html += '</ul>';
+    }
+    return html;
+  }
+
+  function assistantLLMEnabled() {
+    var host = location.hostname || '';
+    if (/[?&]llm=1\b/.test(location.search || '')) return true;
+    return host === 'finx-mockup.vercel.app' || /\.vercel\.app$/i.test(host);
+  }
+
+  function askAssistantLLM(query, retrieval) {
+    var contexts = assistantContextPayload(retrieval.matches, retrieval.tokens);
+    if (!contexts.length) return Promise.resolve(fallbackAssistantAnswer(query, retrieval));
+    if (!assistantLLMEnabled()) return Promise.resolve(fallbackAssistantAnswer(query, retrieval));
+
+    return fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: query,
+        scope: isUnlocked() ? 'signed-in' : 'public',
+        contexts: contexts
+      })
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok || !data || data.error) throw new Error((data && data.error) || 'LLM unavailable');
+        return assistantTextToHtml(data.answer, data.sources || contexts);
+      });
+    }).catch(function () {
+      return fallbackAssistantAnswer(query, retrieval);
+    });
+  }
+
   function addAssistantMessage(kind, html) {
     var log = $('#finx-assistant-messages');
-    if (!log) return;
+    if (!log) return null;
     var msg = document.createElement('div');
     msg.className = 'finx-assistant-msg finx-assistant-msg--' + kind;
     msg.innerHTML = html;
     log.appendChild(msg);
     log.scrollTop = log.scrollHeight;
+    return msg;
   }
 
   function updateAssistantScope() {
@@ -677,8 +741,16 @@
         var query = compactText(input ? input.value : '');
         if (!query) return;
         addAssistantMessage('user', escapeHtml(query));
-        addAssistantMessage('bot', answerAssistant(query));
+        var retrieval = retrieveAssistantMatches(query, 5);
+        var pending = addAssistantMessage('bot', 'Thinking with the portal index...');
         if (input) input.value = '';
+        askAssistantLLM(query, retrieval).then(function (html) {
+          if (pending) {
+            pending.innerHTML = html;
+            var log = $('#finx-assistant-messages');
+            if (log) log.scrollTop = log.scrollHeight;
+          }
+        });
       });
     }
     document.addEventListener('click', function (e) {
