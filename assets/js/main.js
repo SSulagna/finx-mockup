@@ -10,11 +10,12 @@
 
    Also handles:
      - Sign-in modal (open/close, ESC, click-outside, password check)
-     - Internal-route gate (sessionStorage 'finx-internal-unlocked')
+     - Docs + internal gate (sessionStorage 'finx-internal-unlocked' now gates
+       any route whose hash path starts with /docs/ or /internal/)
      - Sign-out (clears storage, returns to homepage)
      - Product tab switcher (data-tab / data-tab-group)
-     - State indicator (bottom-right) reflecting current sign-in state
-     - View-as tier filter (data-tier-select chips, persisted via URL + sessionStorage)
+     - State indicator (bottom-right) reflecting sign-in + View-as state
+     - View-as toggle (External / Internal) for simulating dual-SSO in v1
      - View mode toggle (Demo / Planning / Comment, persisted via sessionStorage)
 
    See SPEC.md §8 for interaction specifications.
@@ -25,23 +26,24 @@
 
   // ---------- Constants ----------
   var DEMO_PASSWORD   = 'finx2026';
+  // Single sessionStorage flag. Despite the legacy name, this now unlocks
+  // every gated route (/docs/* and /internal/*), not just the internal hub.
   var STORAGE_KEY     = 'finx-internal-unlocked';
   var THEME_KEY       = 'finx-theme';
   var MODE_KEY        = 'finx-view-mode';
-  var TIER_KEY        = 'finx-view-tier';
+  var TIER_KEY        = 'finx-view-as';
   var DEFAULT_ROUTE   = '/';
   var SIGNIN_HASH_RE  = /^#\/?signin$/i;
-  var VALID_TIERS     = ['all', 'public', 'authenticated', 'internal'];
+  var GATED_PREFIXES  = ['/docs/', '/internal/', '/internal'];
+  var VALID_TIERS     = ['external', 'internal'];
   var VALID_MODES     = ['demo', 'planning', 'comment'];
   var TIER_LABELS     = {
-    all:           'All',
-    public:        'Public · External',
-    authenticated: 'Authenticated · External',
-    internal:      'UST Internal'
+    external: 'External',
+    internal: 'Internal'
   };
 
   // ---------- View-as tier + view mode state ----------
-  var currentTier = 'all';
+  var currentTier = 'external';
   var currentMode = 'demo';
 
   // ---------- Helpers ----------
@@ -144,13 +146,26 @@
     return views[0] || null;
   }
 
+  // A route is gated if its path starts with /docs/ or is /internal[/...].
+  // Implicit on every matching view; per-view data-gated="true" still honoured.
+  function isGatedRoute(route) {
+    if (!route) return false;
+    for (var i = 0; i < GATED_PREFIXES.length; i++) {
+      var p = GATED_PREFIXES[i];
+      if (route === p) return true;
+      if (route.indexOf(p) === 0) return true;
+    }
+    return false;
+  }
+
   function navigate(route) {
     var view = findView(route);
     if (!view) return;
 
-    // Gate check for internal routes: keep the URL on the gated route
-    // but render the homepage underneath while the sign-in modal is open.
-    if (view.getAttribute('data-gated') === 'true' && !isUnlocked()) {
+    // Gate check: keep the URL on the gated route but render the homepage
+    // underneath while the sign-in modal is open.
+    var gated = view.getAttribute('data-gated') === 'true' || isGatedRoute(route);
+    if (gated && !isUnlocked()) {
       var home = findView(DEFAULT_ROUTE);
       if (home) showView(home);
       setTimeout(openModal, 30);
@@ -202,10 +217,10 @@
     var parsed = parseHash();
 
     // Sync tier: URL param takes precedence; fall back to sessionStorage.
-    // This ensures the filter persists when navigating via sidebar links
+    // This ensures the selection persists when navigating via sidebar links
     // that do not carry the ?tier= param in their href.
     var tierFromUrl = parsed.params && parsed.params['tier'];
-    var resolvedTier = 'all';
+    var resolvedTier = 'external';
     if (tierFromUrl && VALID_TIERS.indexOf(tierFromUrl) >= 0) {
       resolvedTier = tierFromUrl;
     } else {
@@ -223,8 +238,8 @@
     if (parsed.signin) openModal();
 
     // When tier comes from sessionStorage (not URL), add it to the URL so
-    // the deep-link remains canonical.
-    if (!tierFromUrl && currentTier !== 'all') {
+    // the deep-link remains canonical. Skip when on the default external view.
+    if (!tierFromUrl && currentTier !== 'external') {
       var route = getCurrentRoute() || DEFAULT_ROUTE;
       var h = buildHash(route, { tier: currentTier });
       if (history && history.replaceState) history.replaceState(null, '', h);
@@ -233,16 +248,20 @@
 
   // ---------- View-as tier filter ----------
   function setTier(value) {
-    currentTier = (VALID_TIERS.indexOf(value) >= 0) ? value : 'all';
-    try {
-      if (currentTier !== 'all') sessionStorage.setItem(TIER_KEY, currentTier);
-      else sessionStorage.removeItem(TIER_KEY);
-    } catch (_) {}
+    currentTier = (VALID_TIERS.indexOf(value) >= 0) ? value : 'external';
+    try { sessionStorage.setItem(TIER_KEY, currentTier); } catch (_) {}
     updateTierChips();
     applyTierFilter();
-    // Reflect in URL (replaceState does not fire hashchange)
+    updateStateIndicator();
+    // If we just switched to External while sitting on an internal route,
+    // bounce to the homepage so the user is not staring at a hidden view.
     var route = getCurrentRoute() || DEFAULT_ROUTE;
-    var h = buildHash(route, currentTier !== 'all' ? { tier: currentTier } : {});
+    if (currentTier === 'external' && route.indexOf('/internal') === 0) {
+      location.hash = '#/';
+      return;
+    }
+    // Reflect in URL (replaceState does not fire hashchange)
+    var h = buildHash(route, currentTier !== 'external' ? { tier: currentTier } : {});
     if (history && history.replaceState) history.replaceState(null, '', h);
   }
 
@@ -252,26 +271,34 @@
     });
   }
 
-  // Derive a view's trust tier: explicit data-tier, or inferred from data-gated.
+  // Derive a view's trust tier: explicit data-tier, or inferred from route prefix.
   function viewTier(view) {
-    if (!view) return 'public';
+    if (!view) return 'external';
     var t = view.getAttribute('data-tier');
-    if (t) return t;
-    return view.getAttribute('data-gated') === 'true' ? 'internal' : 'public';
+    if (t === 'internal') return 'internal';
+    if (t === 'external') return 'external';
+    var route = view.getAttribute('data-route') || '';
+    if (route === '/internal' || route.indexOf('/internal/') === 0) return 'internal';
+    return 'external';
   }
 
   function applyTierFilter() {
+    // Hide entire views that are internal-tier when View-as is External.
+    $$('.view').forEach(function (v) {
+      var t = viewTier(v);
+      var hide = currentTier === 'external' && t === 'internal';
+      v.classList.toggle('tier-hidden-view', hide);
+    });
+
     var view = $('.view.is-active');
     var hiddenCount = 0;
 
     if (view) {
-      var links = $$('.docs-nav-link', view);
-      for (var i = 0; i < links.length; i++) {
-        var link = links[i];
-        // Sidebar items default to 'public' if no data-tier is set
-        var linkTier = link.getAttribute('data-tier') || 'public';
-        var shouldHide = currentTier !== 'all' && linkTier !== currentTier;
-        link.classList.toggle('tier-hidden', shouldHide);
+      // Sidebar/inline items flagged data-tier="internal" hide in External view.
+      var items = $$('[data-tier="internal"]', view);
+      for (var i = 0; i < items.length; i++) {
+        var shouldHide = currentTier === 'external';
+        items[i].classList.toggle('tier-hidden', shouldHide);
         if (shouldHide) hiddenCount++;
       }
     }
@@ -280,7 +307,7 @@
     var labelEl    = $('#tier-banner-label');
     var countEl    = $('#tier-banner-count');
     if (banner) {
-      if (currentTier !== 'all') {
+      if (currentTier === 'external' && hiddenCount > 0) {
         if (labelEl) labelEl.textContent = TIER_LABELS[currentTier] || currentTier;
         if (countEl) countEl.textContent = hiddenCount;
         banner.removeAttribute('hidden');
@@ -357,17 +384,22 @@
     var err = $('.modal-error', m);
     if (password === DEMO_PASSWORD) {
       try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
+      // Default View-as is External after a successful unlock.
+      currentTier = 'external';
+      try { sessionStorage.setItem(TIER_KEY, 'external'); } catch (_) {}
+      updateTierChips();
       closeModal();
       updateStateIndicator();
       updateStaffLinks();
       // If the URL already targets a gated route, render it now.
-      // Otherwise, send the user into the internal hub.
+      // Otherwise, send the user into the Glue developer hub.
       var parsed = parseHash();
       var target = findView(parsed.route);
-      if (target && target.getAttribute('data-gated') === 'true') {
+      var gated = target && (target.getAttribute('data-gated') === 'true' || isGatedRoute(parsed.route));
+      if (target && gated) {
         showView(target);
       } else {
-        location.hash = '#/internal';
+        location.hash = '#/docs/glue';
       }
     } else if (err) {
       err.textContent = 'Incorrect password. Try the demo password shown below.';
@@ -375,7 +407,12 @@
   }
 
   function signOut() {
-    try { sessionStorage.removeItem(STORAGE_KEY); } catch (_) {}
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(TIER_KEY);
+    } catch (_) {}
+    currentTier = 'external';
+    updateTierChips();
     updateStateIndicator();
     updateStaffLinks();
     location.hash = '#/';
@@ -399,7 +436,10 @@
     var unlocked = isUnlocked();
     el.classList.toggle('signed-in', unlocked);
     var label = $('.state-label', el);
-    if (label) label.textContent = unlocked ? 'Signed in: UST Internal' : 'Public view';
+    if (label) {
+      if (!unlocked) label.textContent = 'Public view';
+      else label.textContent = 'Signed in: ' + (TIER_LABELS[currentTier] || 'External');
+    }
   }
 
   // ---------- Tab switcher (homepage Products section) ----------

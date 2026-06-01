@@ -946,11 +946,9 @@
       <div class="nav-meta-inner">
         <div class="meta-group">
           <span class="meta-label">View as</span>
-          <div class="meta-chips" role="group" aria-label="View-as tier filter">
-            <button class="meta-chip is-active" type="button" data-tier-select="all">All</button>
-            <button class="meta-chip" type="button" data-tier-select="public">Public · External</button>
-            <button class="meta-chip" type="button" data-tier-select="authenticated">Authenticated · External</button>
-            <button class="meta-chip" type="button" data-tier-select="internal">UST Internal</button>
+          <div class="meta-chips" role="group" aria-label="View-as role simulator">
+            <button class="meta-chip is-active" type="button" data-tier-select="external" title="What a signed-in bank partner or evaluator sees">External</button>
+            <button class="meta-chip" type="button" data-tier-select="internal" title="What a UST staff member sees, including the Internal Hub">Internal</button>
           </div>
         </div>
         <div class="meta-group meta-group--push">
@@ -969,14 +967,14 @@
     <span>Viewing as: <strong id="tier-banner-label"></strong></span>
     <span> · </span>
     <span><span id="tier-banner-count">0</span> pages hidden in sidebar.</span>
-    <button class="tier-banner-dismiss" type="button" data-tier-select="all" aria-label="Clear tier filter">&#x2715; Clear</button>
+    <button class="tier-banner-dismiss" type="button" data-tier-select="internal" aria-label="Switch to Internal view to show all items">Switch to Internal</button>
   </div>
   <!-- Planning meta strip: visible in Planning mode; sticky below the nav -->
   <div id="planning-meta" class="planning-meta" hidden>
     <div class="planning-meta-inner">
       <div class="pm-item"><span class="pm-label">Phase</span><span class="pm-value">Planned</span></div>
       <div class="pm-item"><span class="pm-label">Audience</span><span class="pm-value">External</span></div>
-      <div class="pm-item"><span class="pm-label">Trust tier</span><span class="pm-value" id="pm-trust-tier">Public · External</span></div>
+      <div class="pm-item"><span class="pm-label">Trust tier</span><span class="pm-value" id="pm-trust-tier">External</span></div>
     </div>
   </div>
 
@@ -3567,7 +3565,7 @@
   </section>
 
   <!-- DOCS: Glue Developer Hub landing -->
-  <section class="view" data-route="/docs/glue" data-layout="docs" data-section="glue" data-title="Glue Developer Hub · UST FinX">
+  <section class="view" data-route="/docs/glue" data-tier="external" data-layout="docs" data-section="glue" data-title="Glue Developer Hub · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link is-active">Overview</a>
@@ -3703,7 +3701,7 @@
   </section>
 
   <!-- DOCS: Glue Quickstart -->
-  <section class="view" data-route="/docs/glue/quickstart" data-layout="docs" data-section="glue" data-title="Quickstart · Glue Developer Hub · UST FinX">
+  <section class="view" data-route="/docs/glue/quickstart" data-tier="external" data-layout="docs" data-section="glue" data-title="Quickstart · Glue Developer Hub · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
@@ -3895,7 +3893,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: Glue Authentication -->
-  <section class="view" data-route="/docs/glue/auth" data-layout="docs" data-section="glue" data-title="Authentication · Glue Developer Hub · UST FinX">
+  <section class="view" data-route="/docs/glue/auth" data-tier="external" data-layout="docs" data-section="glue" data-title="Authentication · Glue Developer Hub · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
@@ -4008,7 +4006,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: Glue Environments -->
-  <section class="view" data-route="/docs/glue/environments" data-layout="docs" data-section="glue" data-title="Environments · Glue Developer Hub · UST FinX">
+  <section class="view" data-route="/docs/glue/environments" data-tier="external" data-layout="docs" data-section="glue" data-title="Environments · Glue Developer Hub · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
@@ -4109,7 +4107,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: Customer Onboarding journey -->
-  <section class="view" data-route="/docs/glue/journey-onboarding" data-layout="docs" data-section="glue" data-title="Customer onboarding &amp; KYC · UST FinX">
+  <section class="view" data-route="/docs/glue/journey-onboarding" data-tier="external" data-layout="docs" data-section="glue" data-title="Customer onboarding &amp; KYC · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
@@ -4496,7 +4494,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: API reference (Create party) -->
-  <section class="view" data-route="/docs/glue/api-reference" data-layout="docs" data-section="glue" data-title="API Reference · UST FinX">
+  <section class="view" data-route="/docs/glue/api-reference" data-tier="external" data-layout="docs" data-section="glue" data-title="API Reference · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glue</div>
       <a href="#/docs/glue" class="docs-nav-link">Overview</a>
@@ -4662,7 +4660,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: Glass Operations Guide landing -->
-  <section class="view" data-route="/docs/glass" data-layout="docs" data-section="glass" data-title="Glass Operations Guide · UST FinX">
+  <section class="view" data-route="/docs/glass" data-tier="external" data-layout="docs" data-section="glass" data-title="Glass Operations Guide · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link is-active">Overview</a>
@@ -4770,7 +4768,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: CSR / Ops Agent role -->
-  <section class="view" data-route="/docs/glass/role-csr" data-layout="docs" data-section="glass" data-title="CSR / Ops Agent · UST FinX">
+  <section class="view" data-route="/docs/glass/role-csr" data-tier="external" data-layout="docs" data-section="glass" data-title="CSR / Ops Agent · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link">Overview</a>
@@ -4862,7 +4860,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: Compliance Officer role -->
-  <section class="view" data-route="/docs/glass/role-compliance" data-layout="docs" data-section="glass" data-title="Compliance Officer · UST FinX">
+  <section class="view" data-route="/docs/glass/role-compliance" data-tier="external" data-layout="docs" data-section="glass" data-title="Compliance Officer · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link">Overview</a>
@@ -4935,7 +4933,7 @@ Content-Type: application/json</code></pre>
   </section>
 
   <!-- DOCS: KYC review task walkthrough -->
-  <section class="view" data-route="/docs/glass/task-kyc-review" data-layout="docs" data-section="glass" data-title="Reviewing KYC results · UST FinX">
+  <section class="view" data-route="/docs/glass/task-kyc-review" data-tier="external" data-layout="docs" data-section="glass" data-title="Reviewing KYC results · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
       <div class="docs-nav-title">FinX Glass</div>
       <a href="#/docs/glass" class="docs-nav-link">Overview</a>

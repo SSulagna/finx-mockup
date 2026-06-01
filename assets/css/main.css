@@ -2308,7 +2308,11 @@ html[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
 }
 
 /* Sidebar items hidden by the tier filter */
-.docs-nav-link.tier-hidden { display: none; }
+.docs-nav-link.tier-hidden,
+[data-tier="internal"].tier-hidden { display: none; }
+/* Entire views hidden by the View-as filter (e.g. internal hub in External view).
+   Use !important to override the .view.is-active display rule. */
+.view.tier-hidden-view { display: none !important; }
 
 /* Increase sticky offset for docs sidebar and TOC to account for meta bar */
 .docs-sidebar { top: 100px; max-height: calc(100vh - 100px); }
