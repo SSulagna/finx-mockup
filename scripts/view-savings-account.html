@@ -1,0 +1,281 @@
+  <!-- DOCS: API reference (Savings Account) -->
+  <section class="view" data-route="/docs/glue/api-reference/savings-account" data-tier="external" data-layout="docs" data-section="glue" data-title="Savings Account · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-reference/savings-account" class="docs-nav-link is-active">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product & Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Position Keeping reference">Position Keeping</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Payment Order Initiation reference">Payment Order Initiation</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Document Directory reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Savings Account</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Savings Account</h1>
+      <p class="page-lead">The Savings Account service domain maintains and exposes the operational state of a specific savings &lt;code&gt;AccountInstanceReference&lt;/code&gt;: balances, restrictions, entitlements, lifecycle attributes, and currency denominations. It is the live runtime view of a single savings account.</p>
+      <div class="callout callout--info"><strong>Scope.</strong> This SD owns runtime account state. Product agreement configuration lives in Sales Product Agreement; the customer holdings registry lives in Customer Product &amp; Service Directory; customer profile lives in Party Reference Data Directory.</div>
+
+      <h2 class="h3" id="service-domain-overview">Service Domain Overview</h2>
+      <p>The Savings Account Service Domain in BIAN v14.0.0 is responsible for managing and exposing the live operational representation of a savings account instance. It is a runtime, instance-level domain, not a contract or directory domain.</p>
+      <table class="docs-table">
+        <thead><tr><th>Attribute</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>SD Name</td><td>Savings Account</td></tr>
+          <tr><td>Functional Pattern</td><td>Fulfillment</td></tr>
+          <tr><td>Control Record</td><td>SavingsAccountFacility</td></tr>
+          <tr><td>Asset Type</td><td>Savings Account Instance</td></tr>
+          <tr><td>BIAN Version</td><td>v14.0.0</td></tr>
+          <tr><td>Operations Implemented</td><td>Initiate, Update, Retrieve</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="sd-scope-what-it-manages">SD Scope, What It Manages</h2>
+      <h2 class="h3" id="what-this-sd-manages">What This SD Manages</h2>
+      <ul>
+        <li>Runtime account state (status, lifecycle)</li>
+        <li>Account balances (available, incoming, outgoing)</li>
+        <li>Account currencies (base and secondary)</li>
+        <li>Account dates (open, effective, creating)</li>
+        <li>Entitlement option definitions, product-level parameters</li>
+        <li>Entitlement option settings, account-level parameter overrides</li>
+        <li>Restriction option definitions, restriction templates</li>
+        <li>Restriction option settings, restriction instances</li>
+        <li>Account identification and account name</li>
+      </ul>
+      <h2 class="h3" id="what-this-sd-does-not-manage">What This SD Does NOT Manage</h2>
+      <table class="docs-table">
+        <thead><tr><th>Excluded Concern</th><th>Handled By</th></tr></thead>
+        <tbody>
+          <tr><td>Customer profile data</td><td>Party Directory SD</td></tr>
+          <tr><td>Product agreement configuration</td><td>Sales Product Agreement SD</td></tr>
+          <tr><td>Customer holdings registry</td><td>Customer Product &amp; Service Directory SD</td></tr>
+          <tr><td>Product design / product catalogue</td><td>Product Directory SD</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="control-record-structure">Control Record Structure</h2>
+      <p>The Control Record for this SD is SavingsAccountFacility. Key structural enhancements (array normalisation) have been applied to the standard BIAN v14 definition:</p>
+      <table class="docs-table">
+        <thead><tr><th>CR Field</th><th>Type</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>SavingsAccountNumber</td><td>Identifier</td><td>The account&#x27;s unique identifier (AccountNumber type)</td></tr>
+          <tr><td>ProductInstanceReference</td><td>Object</td><td>Links to the product agreement (SavingAccountAgreement / CustomerAgreement)</td></tr>
+          <tr><td>CustomerReference</td><td>PartyReference</td><td>The account holder; maps to stakeholder_ids in core</td></tr>
+          <tr><td>AccountType</td><td>Enum</td><td>Hardcoded: SavingAccount</td></tr>
+          <tr><td>AccountCurrency[]</td><td>Array</td><td>Base and secondary currencies; multiple permitted denominations</td></tr>
+          <tr><td>AssociationType</td><td>Enum</td><td>Hardcoded: PartyIsOwnerOfAccount</td></tr>
+          <tr><td>EntitlementOptionDefinition[]</td><td>Array</td><td>Product-level parameters, defined at product version level</td></tr>
+          <tr><td>EntitlementOptionSetting[]</td><td>Array</td><td>Account-level parameter overrides, instance specific</td></tr>
+          <tr><td>RestrictionOptionDefinition[]</td><td>Array</td><td>Restriction templates applicable to this account</td></tr>
+          <tr><td>RestrictionOptionSetting[]</td><td>Array</td><td>Active restriction instances on the account</td></tr>
+          <tr><td>AccountDetails.AccountStatus</td><td>Status</td><td>Runtime lifecycle state: PENDING → OPEN</td></tr>
+          <tr><td>AccountDetails.AccountDate[]</td><td>Array</td><td>OpenDate, EffectiveDate, CreatingDate, lifecycle timestamps</td></tr>
+          <tr><td>AccountDetails.AccountBalances[]</td><td>Array</td><td>AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="behaviour-qualifiers-bqs">Behaviour Qualifiers (BQs)</h2>
+      <p>No new Behaviour Qualifiers were introduced in this implementation. All enhancements remain inside the existing Savings Account SD structure, ensuring full BIAN alignment with no domain boundary violation.</p>
+      <p>The three standard CR-level operations are implemented:</p>
+      <table class="docs-table">
+        <thead><tr><th>Operation</th><th>Endpoint</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Initiate</td><td>POST /SavingsAccount/Initiate</td><td>Creates the Control Record for the account instance. Account status starts as PENDING. No parameters are set at this stage.</td></tr>
+          <tr><td>Update</td><td>PUT /SavingsAccount/{id}/Update</td><td>Applies parameters, updates account status (PENDING to OPEN), and reflects ongoing lifecycle changes (balance, status, restriction, currency changes).</td></tr>
+          <tr><td>Retrieve</td><td>GET /SavingsAccount/{id}/Retrieve</td><td>Returns the full operational state of the account including balances, parameters, dates, and restrictions.</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="account-lifecycle-states">Account Lifecycle States</h2>
+      <p>The SD manages the following account lifecycle state transitions:</p>
+      <table class="docs-table">
+        <thead><tr><th>From State</th><th>To State</th><th>Trigger</th></tr></thead>
+        <tbody>
+          <tr><td>(none)</td><td>ACCOUNT_STATUS_PENDING</td><td>POST /SavingsAccount/Initiate, CR created, core account provisioned</td></tr>
+          <tr><td>ACCOUNT_STATUS_PENDING</td><td>ACCOUNT_STATUS_OPEN</td><td>PUT /SavingsAccount/{id}/Update, parameters applied, activation complete</td></tr>
+          <tr><td>ACCOUNT_STATUS_OPEN</td><td>(ongoing updates)</td><td>Balance changes, restriction changes, parameter overrides, re-invoke Update</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="key-bian-field-definitions">Key BIAN Field Definitions</h2>
+      <h2 class="h3" id="balance-type-enum-bian-standard">Balance Type Enum (BIAN Standard)</h2>
+      <table class="docs-table">
+        <thead><tr><th>BIAN BalanceType</th><th>Semantics</th></tr></thead>
+        <tbody>
+          <tr><td>AvailableBalance</td><td>Funds available for immediate use by the account holder</td></tr>
+          <tr><td>ExpectedIncomingBalance</td><td>Pending credits not yet settled, funds expected to arrive</td></tr>
+          <tr><td>ExpectedOutgoingBalance</td><td>Pending debits not yet settled, funds expected to leave</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="account-date-type-enum-bian-standard">Account Date Type Enum (BIAN Standard)</h2>
+      <table class="docs-table">
+        <thead><tr><th>BIAN DateType</th><th>Semantics</th></tr></thead>
+        <tbody>
+          <tr><td>OpenDate</td><td>The date the account was formally opened, only populated when account status is OPEN</td></tr>
+          <tr><td>EffectiveDate</td><td>The date the account became active / was activated, always populated</td></tr>
+          <tr><td>CreatingDate</td><td>The date the account record was created in the system, always populated</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="currency-type-enum-bian-standard">Currency Type Enum (BIAN Standard)</h2>
+      <table class="docs-table">
+        <thead><tr><th>AccountCurrencyType</th><th>Semantics</th></tr></thead>
+        <tbody>
+          <tr><td>BaseCurrency</td><td>The primary operating currency of the account, one per account</td></tr>
+          <tr><td>SecondaryCurrency</td><td>Additional permitted denominations, zero or more per account</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="parameter-placement-model-bian-entitlement-struc">Parameter Placement Model (BIAN Entitlement Structure)</h2>
+      <table class="docs-table">
+        <thead><tr><th>Parameter Level</th><th>BIAN Destination</th><th>ObligationOrEntitlementType</th></tr></thead>
+        <tbody>
+          <tr><td>Product level (LEVEL_PRODUCT)</td><td>EntitlementOptionDefinition[]</td><td>Entitlement Arrangement</td></tr>
+          <tr><td>Account level (LEVEL_INSTANCE)</td><td>EntitlementOptionSetting[]</td><td>Administrative Arrangement</td></tr>
+          <tr><td>Restriction templates</td><td>RestrictionOptionDefinition[]</td><td>Restriction Arrangement</td></tr>
+          <tr><td>Restriction instances</td><td>RestrictionOptionSetting[]</td><td>Restriction Arrangement</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-sd-invocation-scenarios">BIAN SD Invocation Scenarios</h2>
+      <h2 class="h3" id="account-dashboard-view">Account Dashboard View</h2>
+      <p>When a customer logs into mobile banking, the application calls Retrieve to display balances, currency, status, account details, and parameters. This is a read-only call to the SD.</p>
+      <h2 class="h3" id="balance-inquiry">Balance Inquiry</h2>
+      <p>When a user requests their current balance, the SD Retrieve operation returns the AccountBalances[] array, which contains AvailableBalance, ExpectedIncomingBalance, and ExpectedOutgoingBalance.</p>
+      <h2 class="h3" id="product-rule-display">Product Rule Display</h2>
+      <p>When the UI needs to display product rules (e.g. minimum withdrawal limits), the EntitlementOptionDefinition[] array from the Retrieve response contains these product-level parameter definitions.</p>
+      <h2 class="h3" id="re-invocation-triggers-lifecycle-updates">Re-invocation Triggers (Lifecycle Updates)</h2>
+      <p>The Update operation must be re-invoked whenever any of the following occur:</p>
+      <ul>
+        <li>Balance changes</li>
+        <li>Account status changes</li>
+        <li>Restriction changes</li>
+        <li>Parameter overrides applied</li>
+        <li>Currency changes</li>
+      </ul>
+      <h2 class="h3" id="freeze-and-unfreeze-account">Freeze and Unfreeze Account</h2>
+      <ul>
+        <li>The bank operator can freeze or unfreeze an account, restricting all transactions to and from it.</li>
+        <li>This operation triggers when the update API is called and the fields for restriction templates and instances are populated.</li>
+        <li>Only the bank operator can initiate this operation; customers cannot request a freeze or unfreeze.</li>
+        <li>Only transactions are restricted on frozen accounts; customers can still access their accounts and view documents.</li>
+        <li>No notification is sent to customers when their accounts are frozen or unfrozen.</li>
+      </ul>
+      <h2 class="h3" id="bian-structural-enhancements-proposed-changes-to">BIAN Structural Enhancements, Proposed Changes to Standard</h2>
+      <p>The following enhancements to the BIAN v14 standard are recommended based on implementation experience:</p>
+      <table class="docs-table">
+        <thead><tr><th>Enhancement</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>Array-based attribute standardisation</td><td>AccountCurrency, AccountBalance, AccountDate, EntitlementOptionDefinition/Setting, RestrictionOptionDefinition/Setting should all be defined as arrays. Real implementations always contain multiple values.</td></tr>
+          <tr><td>Standard BalanceType enumeration</td><td>BIAN should prescribe standard enums: AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance, to prevent institution-specific naming.</td></tr>
+          <tr><td>DepositLimit as string</td><td>Changed from object to string to resolve circular referencing in the YAML schema definition.</td></tr>
+          <tr><td>No new BQ introduced</td><td>All enhancements retained inside existing SD structure. No domain boundary violation. Full BIAN alignment maintained.</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>JSON Path (Field Path)</th><th>Sample Data</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>ProductAgreementType</td><td>SavingsAccount.ProductInstanceReference.ProductAgreementType</td><td>SavingsAccountAgreement</td><td>Type of product agreement associated with this savings account instance.</td></tr>
+          <tr><td>ProductAgreementIdentification</td><td>SavingsAccount.ProductInstanceReference.ProductAgreementIdentification.IdentifierValue</td><td>e2e_savings_account_glass</td><td>Unique identifier of the product agreement linked to this account.</td></tr>
+          <tr><td>ProductAgreementIdentification DateTimeType</td><td>ProductInstanceReference.ProductAgreementIdentification.IdentifierStartDate.DateTimeType</td><td>CreatingDate</td><td></td></tr>
+          <tr><td>AgreementType</td><td>SavingsAccount.ProductInstanceReference .AgreementType</td><td>CustomerAgreement</td><td>Type of customer agreement governing the product.</td></tr>
+          <tr><td>AgreementVersion</td><td>SavingsAccount.ProductInstanceReference .AgreementVersion</td><td>1077</td><td>Smart contract version id linked to the account.</td></tr>
+          <tr><td>AccountIdentificationType</td><td>SavingsAccount.SavingsAccountNumber .AccountIdentification .AccountIdentificationType</td><td>AccountNumber</td><td>Identifies the type of account identification used.</td></tr>
+          <tr><td>CustomerReference</td><td>SavingsAccount.CustomerReference .PartyReference</td><td>3f97d088-365e-414c-92fb-403a8fcbf98c</td><td>Reference to the customer/party who owns this savings account.</td></tr>
+          <tr><td>AccountType</td><td>SavingsAccount.AccountType</td><td>SavingAccount</td><td>Classifies the account as a Savings Account.</td></tr>
+          <tr><td>AccountCurrency</td><td>SavingsAccount.AccountCurrency.CurrencyCode</td><td>USD</td><td>Array of currencies permitted on this account.</td></tr>
+          <tr><td>AccountCurrencyType</td><td>SavingsAccount.AccountCurrency[] .AccountCurrencyType</td><td>BaseCurrency</td><td>Indicates whether the currency is the base or a secondary currency.</td></tr>
+          <tr><td>EntitlementOptionDefinition[]</td><td>SavingsAccount.EntitlementOptionDefinition.ObligationOrEntitlementDefinition SavingsAccount.EntitlementOptionDefinition.AgreementAction.EventType SavingsAccount.EntitlementOptionDefinition.AgreementAction.EventValue SavingsAccount.EntitlementOptionDefinition.AgreementAction.EventIdentification.IdentifierValue SavingsAccount.EntitlementOptionDefinition.ArrangementStartDate.EventIdentification.DateTimeContent</td><td></td><td>Product-level parameter definitions. No parameters created at initiation.</td></tr>
+          <tr><td>EntitlementOptionSetting[]</td><td>SavingsAccount.EntitlementOptionSetting.ObligationOrEntitlementDefinition SavingsAccount.EntitlementOptionSetting.AgreementAction.EventType SavingsAccount.EntitlementOptionSetting.AgreementAction.EventValue SavingsAccount.EntitlementOptionSetting.AgreementAction.EventIdentification.IdentifierValue SavingsAccount.EntitlementOptionSetting.AgreementStatus.StatusReason SavingsAccount.EntitlementOptionSetting.ArrangementIdentification.IdentifierValue SavingsAccount.EntitlementOptionSetting.ArrangementStartDate.EventIdentification.DateTimeContent SavingsAccount.EntitlementOptionSetting.ArrangementEndDate.EventIdentification.DateTimeContent</td><td></td><td>Account-level parameter settings. Not passed during initiation.</td></tr>
+          <tr><td>RestrictionOptionDefinition[]</td><td></td><td></td><td></td></tr>
+          <tr><td>Account Restriction Definition Identifier</td><td>SavingsAccount.RestrictionOptionDefinition.AccountRestrictionIdentifier.IdentifierValue</td><td>RESTR-FREEZE-001</td><td>A unique identifier for this restriction instance. Used to correlate the Definition entry with its Setting entry and to track the restriction across its full lifecycle.</td></tr>
+          <tr><td>Restriction Definition Type</td><td>SavingsAccount.RestrictionOptionDefinition.AccountRestrictionType</td><td>FullAccountFreeze</td><td>Classifies the kind of restriction being defined. For a freeze, this identifies that all transactional access to the account is being restricted.</td></tr>
+          <tr><td>Account Restriction Description</td><td>SavingsAccount.RestrictionOptionDefinition.AccountRestrictionDescription</td><td>Complete freeze of all debit and credit transactions initiated by bank employee.</td><td>Human-readable explanation of the restriction, providing context for audit trails and internal review workflows.</td></tr>
+          <tr><td>RestrictionOptionSetting[]</td><td></td><td></td><td></td></tr>
+          <tr><td>Account Restriction Setting Identifier</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionIdentifier.IdentifierValue</td><td>RESTR-FREEZE-001</td><td>Must match the identifier in RestrictionOptionDefinition so the system links the status setting to the correct restriction definition record.</td></tr>
+          <tr><td>Restriction Setting Type</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionType</td><td>FullAccountFreeze</td><td>Repeats the restriction type to unambiguously identify which restriction is being activated, supporting filtering and lookup by type in downstream systems.</td></tr>
+          <tr><td>Account Restriction Status Type</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionStatus.AccountRestrictionStatusType</td><td>Active</td><td>PRIMARY TOGGLE. BIAN enumeration value (Accountrestrictionstatustypevalues) that governs whether the restriction is enforced.</td></tr>
+          <tr><td>Account Restriction Status Reason</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionStatus.StatusReason</td><td>Account frozen by bank employee - pending investigation.</td><td>Human-readable explanation of why the restriction is being activated. Serves as audit narrative.</td></tr>
+          <tr><td>Account Restriction Status Date</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionStatus.StatusDateTime</td><td>2026-05-11T10:30:00Z</td><td>Timestamp recording when the restriction status was set to Active. Anchors the freeze event in the account timeline.</td></tr>
+          <tr><td>Account Restriction Regulator ID</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionRegulator.PartyReference</td><td>EMP-00482</td><td>Identifies the party responsible for applying the restriction. Mirrors involved party reference.</td></tr>
+          <tr><td>Account Restriction Regulator</td><td>SavingsAccount.RestrictionOptionSetting.AccountRestrictionRegulator.InvolvementReference</td><td>BankEmployee</td><td>Confirms the role of the regulating party applying the restriction.</td></tr>
+          <tr><td>AssociationType</td><td>SavingsAccount.AssociationType</td><td>PartyIsOwnerOfAccount</td><td>Defines the relationship between the party and the account.</td></tr>
+          <tr><td>IdentifierStartDate</td><td>SavingsAccountNumber.AccountIdentification.IdentifierStartDate.DateTimeContent</td><td>2026-03-02T04:58:18.920540Z</td><td>Array of lifecycle dates associated with the account.</td></tr>
+          <tr><td>AccountName</td><td>SavingsAccount.AccountDetails.AccountName.Name</td><td></td><td>Human-readable alias/name of the savings account.</td></tr>
+        </tbody>
+      </table>
+      <p>Revised Yaml :</p>
+      <p>Note : Updated YAML contains Financial Status Tracking BQ with Execute and Retrieve endpoints.</p>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Savings Account</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#service-domain-overview" class="toc-link">Service Domain Overview</a>
+      <a href="#sd-scope-what-it-manages" class="toc-link">SD Scope, What It Manages</a>
+      <a href="#what-this-sd-manages" class="toc-link">What This SD Manages</a>
+      <a href="#what-this-sd-does-not-manage" class="toc-link">What This SD Does NOT Manage</a>
+      <a href="#control-record-structure" class="toc-link">Control Record Structure</a>
+      <a href="#behaviour-qualifiers-bqs" class="toc-link">Behaviour Qualifiers (BQs)</a>
+      <a href="#account-lifecycle-states" class="toc-link">Account Lifecycle States</a>
+      <a href="#key-bian-field-definitions" class="toc-link">Key BIAN Field Definitions</a>
+      <a href="#balance-type-enum-bian-standard" class="toc-link">Balance Type Enum (BIAN Standard)</a>
+      <a href="#account-date-type-enum-bian-standard" class="toc-link">Account Date Type Enum (BIAN Standard)</a>
+      <a href="#currency-type-enum-bian-standard" class="toc-link">Currency Type Enum (BIAN Standard)</a>
+      <a href="#parameter-placement-model-bian-entitlement-struc" class="toc-link">Parameter Placement Model (BIAN Entitlement Structure)</a>
+      <a href="#bian-sd-invocation-scenarios" class="toc-link">BIAN SD Invocation Scenarios</a>
+      <a href="#account-dashboard-view" class="toc-link">Account Dashboard View</a>
+      <a href="#balance-inquiry" class="toc-link">Balance Inquiry</a>
+      <a href="#product-rule-display" class="toc-link">Product Rule Display</a>
+      <a href="#re-invocation-triggers-lifecycle-updates" class="toc-link">Re-invocation Triggers (Lifecycle Updates)</a>
+      <a href="#freeze-and-unfreeze-account" class="toc-link">Freeze and Unfreeze Account</a>
+      <a href="#bian-structural-enhancements-proposed-changes-to" class="toc-link">BIAN Structural Enhancements, Proposed Changes to Standard</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>

@@ -1,0 +1,702 @@
+{
+  "file": "Savings+Account+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Savings Account SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. Service Domain Overview"
+    },
+    {
+      "type": "p",
+      "text": "The Savings Account Service Domain in BIAN v14.0.0 is responsible for managing and exposing the live operational representation of a savings account instance. It is a runtime, instance-level domain — not a contract or directory domain."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Attribute",
+          "Value"
+        ],
+        [
+          "SD Name",
+          "Savings Account"
+        ],
+        [
+          "Functional Pattern",
+          "Fulfillment"
+        ],
+        [
+          "Control Record",
+          "SavingsAccountFacility"
+        ],
+        [
+          "Asset Type",
+          "Savings Account Instance"
+        ],
+        [
+          "BIAN Version",
+          "v14.0.0"
+        ],
+        [
+          "Operations Implemented",
+          "Initiate, Update, Retrieve"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. SD Scope — What It Manages"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.1 What This SD Manages"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Runtime account state (status, lifecycle)",
+        "Account balances (available, incoming, outgoing)",
+        "Account currencies (base and secondary)",
+        "Account dates (open, effective, creating)",
+        "Entitlement option definitions — product-level parameters",
+        "Entitlement option settings — account-level parameter overrides",
+        "Restriction option definitions — restriction templates",
+        "Restriction option settings — restriction instances",
+        "Account identification and account name"
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.2 What This SD Does NOT Manage"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Excluded Concern",
+          "Handled By"
+        ],
+        [
+          "Customer profile data",
+          "Party Directory SD"
+        ],
+        [
+          "Product agreement configuration",
+          "Sales Product Agreement SD"
+        ],
+        [
+          "Customer holdings registry",
+          "Customer Product & Service Directory SD"
+        ],
+        [
+          "Product design / product catalogue",
+          "Product Directory SD"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. Control Record Structure"
+    },
+    {
+      "type": "p",
+      "text": "The Control Record for this SD is SavingsAccountFacility. Key structural enhancements (array normalisation) have been applied to the standard BIAN v14 definition:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "CR Field",
+          "Type",
+          "Purpose"
+        ],
+        [
+          "SavingsAccountNumber",
+          "Identifier",
+          "The account's unique identifier (AccountNumber type)"
+        ],
+        [
+          "ProductInstanceReference",
+          "Object",
+          "Links to the product agreement (SavingAccountAgreement / CustomerAgreement)"
+        ],
+        [
+          "CustomerReference",
+          "PartyReference",
+          "The account holder; maps to stakeholder_ids in core"
+        ],
+        [
+          "AccountType",
+          "Enum",
+          "Hardcoded: SavingAccount"
+        ],
+        [
+          "AccountCurrency[]",
+          "Array",
+          "Base and secondary currencies; multiple permitted denominations"
+        ],
+        [
+          "AssociationType",
+          "Enum",
+          "Hardcoded: PartyIsOwnerOfAccount"
+        ],
+        [
+          "EntitlementOptionDefinition[]",
+          "Array",
+          "Product-level parameters — defined at product version level"
+        ],
+        [
+          "EntitlementOptionSetting[]",
+          "Array",
+          "Account-level parameter overrides — instance specific"
+        ],
+        [
+          "RestrictionOptionDefinition[]",
+          "Array",
+          "Restriction templates applicable to this account"
+        ],
+        [
+          "RestrictionOptionSetting[]",
+          "Array",
+          "Active restriction instances on the account"
+        ],
+        [
+          "AccountDetails.AccountStatus",
+          "Status",
+          "Runtime lifecycle state: PENDING → OPEN"
+        ],
+        [
+          "AccountDetails.AccountDate[]",
+          "Array",
+          "OpenDate, EffectiveDate, CreatingDate — lifecycle timestamps"
+        ],
+        [
+          "AccountDetails.AccountBalances[]",
+          "Array",
+          "AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Behaviour Qualifiers (BQs)"
+    },
+    {
+      "type": "p",
+      "text": "No new Behaviour Qualifiers were introduced in this implementation. All enhancements remain inside the existing Savings Account SD structure, ensuring full BIAN alignment with no domain boundary violation."
+    },
+    {
+      "type": "p",
+      "text": "The three standard CR-level operations are implemented:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Operation",
+          "Endpoint",
+          "Purpose"
+        ],
+        [
+          "Initiate",
+          "POST /SavingsAccount/Initiate",
+          "Creates the Control Record for the account instance. Account status starts as PENDING. No parameters are set at this stage."
+        ],
+        [
+          "Update",
+          "PUT /SavingsAccount/{id}/Update",
+          "Applies parameters, updates account status (PENDING to OPEN), and reflects ongoing lifecycle changes (balance, status, restriction, currency changes)."
+        ],
+        [
+          "Retrieve",
+          "GET /SavingsAccount/{id}/Retrieve",
+          "Returns the full operational state of the account including balances, parameters, dates, and restrictions."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Account Lifecycle States"
+    },
+    {
+      "type": "p",
+      "text": "The SD manages the following account lifecycle state transitions:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "From State",
+          "To State",
+          "Trigger"
+        ],
+        [
+          "(none)",
+          "ACCOUNT_STATUS_PENDING",
+          "POST /SavingsAccount/Initiate — CR created, core account provisioned"
+        ],
+        [
+          "ACCOUNT_STATUS_PENDING",
+          "ACCOUNT_STATUS_OPEN",
+          "PUT /SavingsAccount/{id}/Update — parameters applied, activation complete"
+        ],
+        [
+          "ACCOUNT_STATUS_OPEN",
+          "(ongoing updates)",
+          "Balance changes, restriction changes, parameter overrides — re-invoke Update"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Key BIAN Field Definitions"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.1 Balance Type Enum (BIAN Standard)"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "BIAN BalanceType",
+          "Semantics"
+        ],
+        [
+          "AvailableBalance",
+          "Funds available for immediate use by the account holder"
+        ],
+        [
+          "ExpectedIncomingBalance",
+          "Pending credits not yet settled — funds expected to arrive"
+        ],
+        [
+          "ExpectedOutgoingBalance",
+          "Pending debits not yet settled — funds expected to leave"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.2 Account Date Type Enum (BIAN Standard)"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "BIAN DateType",
+          "Semantics"
+        ],
+        [
+          "OpenDate",
+          "The date the account was formally opened — only populated when account status is OPEN"
+        ],
+        [
+          "EffectiveDate",
+          "The date the account became active / was activated — always populated"
+        ],
+        [
+          "CreatingDate",
+          "The date the account record was created in the system — always populated"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.3 Currency Type Enum (BIAN Standard)"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "AccountCurrencyType",
+          "Semantics"
+        ],
+        [
+          "BaseCurrency",
+          "The primary operating currency of the account — one per account"
+        ],
+        [
+          "SecondaryCurrency",
+          "Additional permitted denominations — zero or more per account"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.4 Parameter Placement Model (BIAN Entitlement Structure)"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Parameter Level",
+          "BIAN Destination",
+          "ObligationOrEntitlementType"
+        ],
+        [
+          "Product level (LEVEL_PRODUCT)",
+          "EntitlementOptionDefinition[]",
+          "Entitlement Arrangement"
+        ],
+        [
+          "Account level (LEVEL_INSTANCE)",
+          "EntitlementOptionSetting[]",
+          "Administrative Arrangement"
+        ],
+        [
+          "Restriction templates",
+          "RestrictionOptionDefinition[]",
+          "Restriction Arrangement"
+        ],
+        [
+          "Restriction instances",
+          "RestrictionOptionSetting[]",
+          "Restriction Arrangement"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. BIAN SD Invocation Scenarios"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "7.1 Account Dashboard View"
+    },
+    {
+      "type": "p",
+      "text": "When a customer logs into mobile banking, the application calls Retrieve to display balances, currency, status, account details, and parameters. This is a read-only call to the SD."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "7.2 Balance Inquiry"
+    },
+    {
+      "type": "p",
+      "text": "When a user requests their current balance, the SD Retrieve operation returns the AccountBalances[] array, which contains AvailableBalance, ExpectedIncomingBalance, and ExpectedOutgoingBalance."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "7.3 Product Rule Display"
+    },
+    {
+      "type": "p",
+      "text": "When the UI needs to display product rules (e.g. minimum withdrawal limits), the EntitlementOptionDefinition[] array from the Retrieve response contains these product-level parameter definitions."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "7.4 Re-invocation Triggers (Lifecycle Updates)"
+    },
+    {
+      "type": "p",
+      "text": "The Update operation must be re-invoked whenever any of the following occur:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Balance changes",
+        "Account status changes",
+        "Restriction changes",
+        "Parameter overrides applied",
+        "Currency changes"
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "7.5 Freeze and Unfreeze Account"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "The bank operator can freeze or unfreeze an account, restricting all transactions to and from it.",
+        "This operation triggers when the update API is called and the fields for restriction templates and instances are populated.",
+        "Only the bank operator can initiate this operation; customers cannot request a freeze or unfreeze.",
+        "Only transactions are restricted on frozen accounts; customers can still access their accounts and view documents.",
+        "No notification is sent to customers when their accounts are frozen or unfrozen."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. BIAN Structural Enhancements — Proposed Changes to Standard"
+    },
+    {
+      "type": "p",
+      "text": "The following enhancements to the BIAN v14 standard are recommended based on implementation experience:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Enhancement",
+          "Rationale"
+        ],
+        [
+          "Array-based attribute standardisation",
+          "AccountCurrency, AccountBalance, AccountDate, EntitlementOptionDefinition/Setting, RestrictionOptionDefinition/Setting should all be defined as arrays. Real implementations always contain multiple values."
+        ],
+        [
+          "Standard BalanceType enumeration",
+          "BIAN should prescribe standard enums: AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance — to prevent institution-specific naming."
+        ],
+        [
+          "DepositLimit as string",
+          "Changed from object to string to resolve circular referencing in the YAML schema definition."
+        ],
+        [
+          "No new BQ introduced",
+          "All enhancements retained inside existing SD structure. No domain boundary violation. Full BIAN alignment maintained."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "9. BIAN Field Mapping"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "JSON Path (Field Path)",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "ProductAgreementType",
+          "SavingsAccount.ProductInstanceReference.ProductAgreementType",
+          "SavingsAccountAgreement",
+          "Type of product agreement associated with this savings account instance."
+        ],
+        [
+          "ProductAgreementIdentification",
+          "SavingsAccount.ProductInstanceReference.ProductAgreementIdentification.IdentifierValue",
+          "e2e_savings_account_glass",
+          "Unique identifier of the product agreement linked to this account."
+        ],
+        [
+          "ProductAgreementIdentification DateTimeType",
+          "ProductInstanceReference.ProductAgreementIdentification.IdentifierStartDate.DateTimeType",
+          "CreatingDate",
+          ""
+        ],
+        [
+          "AgreementType",
+          "SavingsAccount.ProductInstanceReference .AgreementType",
+          "CustomerAgreement",
+          "Type of customer agreement governing the product."
+        ],
+        [
+          "AgreementVersion",
+          "SavingsAccount.ProductInstanceReference .AgreementVersion",
+          "1077",
+          "Smart contract version id linked to the account."
+        ],
+        [
+          "AccountIdentificationType",
+          "SavingsAccount.SavingsAccountNumber .AccountIdentification .AccountIdentificationType",
+          "AccountNumber",
+          "Identifies the type of account identification used."
+        ],
+        [
+          "CustomerReference",
+          "SavingsAccount.CustomerReference .PartyReference",
+          "3f97d088-365e-414c-92fb-403a8fcbf98c",
+          "Reference to the customer/party who owns this savings account."
+        ],
+        [
+          "AccountType",
+          "SavingsAccount.AccountType",
+          "SavingAccount",
+          "Classifies the account as a Savings Account."
+        ],
+        [
+          "AccountCurrency",
+          "SavingsAccount.AccountCurrency.CurrencyCode",
+          "USD",
+          "Array of currencies permitted on this account."
+        ],
+        [
+          "AccountCurrencyType",
+          "SavingsAccount.AccountCurrency[] .AccountCurrencyType",
+          "BaseCurrency",
+          "Indicates whether the currency is the base or a secondary currency."
+        ],
+        [
+          "EntitlementOptionDefinition[]",
+          "SavingsAccount.EntitlementOptionDefinition.ObligationOrEntitlementDefinition SavingsAccount.EntitlementOptionDefinition.AgreementAction.EventType SavingsAccount.EntitlementOptionDefinition.AgreementAction.EventValue SavingsAccount.EntitlementOptionDefinition.AgreementAction.EventIdentification.IdentifierValue SavingsAccount.EntitlementOptionDefinition.ArrangementStartDate.EventIdentification.DateTimeContent",
+          "",
+          "Product-level parameter definitions. No parameters created at initiation."
+        ],
+        [
+          "EntitlementOptionSetting[]",
+          "SavingsAccount.EntitlementOptionSetting.ObligationOrEntitlementDefinition SavingsAccount.EntitlementOptionSetting.AgreementAction.EventType SavingsAccount.EntitlementOptionSetting.AgreementAction.EventValue SavingsAccount.EntitlementOptionSetting.AgreementAction.EventIdentification.IdentifierValue SavingsAccount.EntitlementOptionSetting.AgreementStatus.StatusReason SavingsAccount.EntitlementOptionSetting.ArrangementIdentification.IdentifierValue SavingsAccount.EntitlementOptionSetting.ArrangementStartDate.EventIdentification.DateTimeContent SavingsAccount.EntitlementOptionSetting.ArrangementEndDate.EventIdentification.DateTimeContent",
+          "",
+          "Account-level parameter settings. Not passed during initiation."
+        ],
+        [
+          "RestrictionOptionDefinition[]",
+          "",
+          "",
+          ""
+        ],
+        [
+          "Account Restriction Definition Identifier",
+          "SavingsAccount.RestrictionOptionDefinition.AccountRestrictionIdentifier.IdentifierValue",
+          "RESTR-FREEZE-001",
+          "A unique identifier for this restriction instance. Used to correlate the Definition entry with its Setting entry and to track the restriction across its full lifecycle."
+        ],
+        [
+          "Restriction Definition Type",
+          "SavingsAccount.RestrictionOptionDefinition.AccountRestrictionType",
+          "FullAccountFreeze",
+          "Classifies the kind of restriction being defined. For a freeze, this identifies that all transactional access to the account is being restricted."
+        ],
+        [
+          "Account Restriction Description",
+          "SavingsAccount.RestrictionOptionDefinition.AccountRestrictionDescription",
+          "Complete freeze of all debit and credit transactions initiated by bank employee.",
+          "Human-readable explanation of the restriction, providing context for audit trails and internal review workflows."
+        ],
+        [
+          "RestrictionOptionSetting[]",
+          "",
+          "",
+          ""
+        ],
+        [
+          "Account Restriction Setting Identifier",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionIdentifier.IdentifierValue",
+          "RESTR-FREEZE-001",
+          "Must match the identifier in RestrictionOptionDefinition so the system links the status setting to the correct restriction definition record."
+        ],
+        [
+          "Restriction Setting Type",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionType",
+          "FullAccountFreeze",
+          "Repeats the restriction type to unambiguously identify which restriction is being activated, supporting filtering and lookup by type in downstream systems."
+        ],
+        [
+          "Account Restriction Status Type",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionStatus.AccountRestrictionStatusType",
+          "Active",
+          "PRIMARY TOGGLE. BIAN enumeration value (Accountrestrictionstatustypevalues) that governs whether the restriction is enforced."
+        ],
+        [
+          "Account Restriction Status Reason",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionStatus.StatusReason",
+          "Account frozen by bank employee – pending investigation.",
+          "Human-readable explanation of why the restriction is being activated. Serves as audit narrative."
+        ],
+        [
+          "Account Restriction Status Date",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionStatus.StatusDateTime",
+          "2026-05-11T10:30:00Z",
+          "Timestamp recording when the restriction status was set to Active. Anchors the freeze event in the account timeline."
+        ],
+        [
+          "Account Restriction Regulator ID",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionRegulator.PartyReference",
+          "EMP-00482",
+          "Identifies the party responsible for applying the restriction. Mirrors involved party reference."
+        ],
+        [
+          "Account Restriction Regulator",
+          "SavingsAccount.RestrictionOptionSetting.AccountRestrictionRegulator.InvolvementReference",
+          "BankEmployee",
+          "Confirms the role of the regulating party applying the restriction."
+        ],
+        [
+          "AssociationType",
+          "SavingsAccount.AssociationType",
+          "PartyIsOwnerOfAccount",
+          "Defines the relationship between the party and the account."
+        ],
+        [
+          "IdentifierStartDate",
+          "SavingsAccountNumber.AccountIdentification.IdentifierStartDate.DateTimeContent",
+          "2026-03-02T04:58:18.920540Z",
+          "Array of lifecycle dates associated with the account."
+        ],
+        [
+          "AccountName",
+          "SavingsAccount.AccountDetails.AccountName.Name",
+          "",
+          "Human-readable alias/name of the savings account."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    },
+    {
+      "type": "p",
+      "text": "Revised Yaml :"
+    },
+    {
+      "type": "p",
+      "text": "Note : Updated YAML contains Financial Status Tracking BQ with Execute and Retrieve endpoints."
+    },
+    {
+      "type": "p",
+      "text": "link to Jira Story:[FINXPR-726] BIAN-Mapping: Current Account and Savings Account - Jira"
+    },
+    {
+      "type": "p",
+      "text": "TM Adapter Doc: Savings Account TM adapter Documentation - Product/Engineering - USTFinX Confluence"
+    }
+  ]
+}
