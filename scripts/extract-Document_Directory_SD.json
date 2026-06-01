@@ -1,0 +1,433 @@
+{
+  "file": "Document+Directory+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Document Directory SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "The Document Directory Service Domain in BIAN v13.0 is responsible for recording and exposing document entries — specifically the storage path URLs of documents collected, generated, or uploaded across any banking process."
+    },
+    {
+      "type": "p",
+      "text": "It acts as the authoritative document registry and reference layer for a given documentdirectoryid (Document Directory Instance Reference). The actual binary files are stored in any compatible external storage system — only the URLs and metadata persisted in this SD."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Attribute",
+          "Detail"
+        ],
+        [
+          "What it manages",
+          "Document metadata and storage location references (URLs)"
+        ],
+        [
+          "What it does NOT do",
+          "Store actual document files — binaries live in the external storage system"
+        ],
+        [
+          "Primary role",
+          "Authoritative document registry and reference layer across banking processes"
+        ],
+        [
+          "Identifier",
+          "documentdirectoryid — Document Directory Instance Reference, unique per registered document"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "This Service Domain can be invoked across any banking process or journey wherever document metadata and storage location references need to be registered or retrieved. It is not limited to any specific journey."
+    },
+    {
+      "type": "p",
+      "text": "As part of the current implementation scope, it is being used during the customer onboarding journey. The same SD will be reused as-is whenever other journeys require document registration or retrieval — no changes to the SD will be needed."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.1 Invocation Scenarios"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Scenario",
+          "BIAN Operation",
+          "Description"
+        ],
+        [
+          "Register a Document",
+          "POST /DocumentDirectory/Register",
+          "Once a document is uploaded to a compatible storage system and a storage URL is obtained, invoke Register to persist document metadata and URL for future retrieval and audit."
+        ],
+        [
+          "Retrieve a Document",
+          "GET /DocumentDirectory/{documentdirectoryid}/Retrieve",
+          "Retrieve the stored file path from the Document Directory, then use the returned URL to access the document from the storage system. Enables viewing, audit, or downstream processing."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.2 Prerequisite"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Documents must be uploaded to any compatible storage system BEFORE invoking the Document Directory endpoints. The APIs for document upload to the storage system are outside the scope of this Service Domain and must be handled separately."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. SD Scope — Level of Details to Capture"
+    },
+    {
+      "type": "p",
+      "text": "This is an Operational Document Registry Service Domain — not a content store. Data captured must be metadata-accurate, location-referenced, and status-aware."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Category",
+          "Details Captured"
+        ],
+        [
+          "Document Identity",
+          "Document Type, Document Identifier Value (e.g. Passport Number)"
+        ],
+        [
+          "Document Dates",
+          "Creation Date, Capture DateTime, Signing Date, Issue Date, Validity From / Validity To"
+        ],
+        [
+          "Issuing Authority",
+          "Authority Name, Authority Type, Party Involvement Type"
+        ],
+        [
+          "Storage Location",
+          "Storage URL / File Path (DocumentLocation) — mandatory field"
+        ],
+        [
+          "Document Content",
+          "Description, Subject, Purpose, Format (file type)"
+        ],
+        [
+          "Document Status",
+          "Active / Expired / Rejected — drives integration flows"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Behaviour Qualifiers (BQs)"
+    },
+    {
+      "type": "p",
+      "text": "No Behaviour Qualifier endpoints were introduced in this implementation. All operations are at the Control Record (CR) level only."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "CR Endpoint",
+          "Operation Type",
+          "Status"
+        ],
+        [
+          "POST /DocumentDirectory/Register",
+          "Register (Create)",
+          "✅ Implemented"
+        ],
+        [
+          "GET /DocumentDirectory/{documentdirectoryid}/Retrieve",
+          "Retrieve",
+          "✅ Implemented"
+        ],
+        [
+          "PUT /DocumentDirectory/{documentdirectoryid}/Update",
+          "Update",
+          "❌ Not in scope"
+        ],
+        [
+          "PUT /DocumentDirectory/{documentdirectoryid}/Control",
+          "Control",
+          "❌ Not in scope"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. SD Data Model — Document Details to Capture"
+    },
+    {
+      "type": "p",
+      "text": "The following represents the full set of data the SD can hold per Document Directory entry, categorised by data group:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Data Group",
+          "BIAN Field",
+          "Semantics"
+        ],
+        [
+          "Document Dates",
+          "DocumentCreationDate.DateTimeContent (DateTimeType = CreationDate)",
+          "Record-level CR timestamp — when the document was created"
+        ],
+        [
+          "Document Dates",
+          "DocumentCaptureDateandTime.Text",
+          "Channel upload timestamp — when the document was captured by the channel"
+        ],
+        [
+          "Document Dates",
+          "DocumentMediaFormat.DocumentDateTime.DateTimeContent (DateTimeType = SigningDate)",
+          "Date document was signed"
+        ],
+        [
+          "Document Dates",
+          "DocumentMediaFormat.DocumentValidityPeriod.FromDateTime",
+          "Start of bank-validity period for the document"
+        ],
+        [
+          "Document Dates",
+          "DocumentMediaFormat.DocumentValidityPeriod.ToDateTime",
+          "End of bank-validity period for the document"
+        ],
+        [
+          "Document Identity",
+          "DocumentTypeDescription",
+          "Document name / type — Defaulted to: Business Document"
+        ],
+        [
+          "Document Identity",
+          "DocumentMediaFormat.DocumentIdentification.IdentifierValue.Value",
+          "The identifier value of the document e.g. Passport Number"
+        ],
+        [
+          "Document Identity",
+          "DocumentMediaFormat.DocumentDateTimeType",
+          "Enum: Document date type e.g. IssueDate"
+        ],
+        [
+          "Document Content",
+          "DocumentContent.Text",
+          "Description of document content e.g. Identity Proof"
+        ],
+        [
+          "Document Content",
+          "DocumentMediaFormat.DocumentPurpose.Text",
+          "Purpose of the document e.g. Address Proof"
+        ],
+        [
+          "Document Content",
+          "DocumentMediaFormat.DocumentSubject.Text",
+          "Subject of the document e.g. Customer Address Proof"
+        ],
+        [
+          "Document Content",
+          "DocumentMediaFormat.DocumentDescription.Text",
+          "Customer-provided document description captured through channel"
+        ],
+        [
+          "Document Content",
+          "DocumentMediaFormat.DocumentFormat.Text",
+          "File type e.g. JPG, PNG, PDF — needed for rendering"
+        ],
+        [
+          "Issuing Authority",
+          "DocumentMediaFormat.DocumentIdentification.IdentifierIssuingAuthority.PartyReference.PartyName.Name",
+          "Name of the issuing authority e.g. US Department of State"
+        ],
+        [
+          "Issuing Authority",
+          "DocumentMediaFormat.DocumentIdentification.IdentifierIssuingAuthority.PartyReference.PartyType",
+          "Type of issuing authority e.g. Organisation"
+        ],
+        [
+          "Issuing Authority",
+          "DocumentMediaFormat.DocumentIdentification.IdentifierIssuingAuthority.PartyInvolvement.PartyInvolvementType",
+          "Involvement type e.g. PartyInvolvement"
+        ],
+        [
+          "Issuing Authority",
+          "DocumentMediaFormat.DocumentIdentification.IdentifierStartDate.DateTimeContent.Text",
+          "Issue date of the document"
+        ],
+        [
+          "Issuing Authority",
+          "DocumentMediaFormat.DocumentIdentification.IdentifierEndDate.DateTimeContent.Text",
+          "Expiry date of the document"
+        ],
+        [
+          "Storage Location",
+          "DocumentLocation.DocumentLocationIdentification.IdentifierValue.Value",
+          "Storage URL — the link to the document in the external storage system (Mandatory)"
+        ],
+        [
+          "Document Status",
+          "DocumentStatus.StatusReason.Text",
+          "Overall document status e.g. Active / Expired — drives integration flows (Mandatory)"
+        ],
+        [
+          "Document Status",
+          "DocumentMediaFormat.DocumentStatus.StatusReason.Text",
+          "Status reason for the media format entry e.g. Verified"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Cross-SD Traceability"
+    },
+    {
+      "type": "p",
+      "text": "The documentdirectoryid returned by POST /DocumentDirectory/Register must be stored in the relevant Service Domain via DocumentDirectoryEntryInstanceReference for cross-SD traceability."
+    },
+    {
+      "type": "p",
+      "text": "Example: Party Reference Data Directory SD stores this parameter in its CIF DB so it can call GET /DocumentDirectory/{documentdirectoryid}/Retrieve to retrieve any party-related documents when needed."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Future Scope — Not in Current Implementation"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Feature",
+          "Notes"
+        ],
+        [
+          "Document version control",
+          "Tracking multiple versions of the same document"
+        ],
+        [
+          "Document expiry notifications",
+          "Automated alerts when document validity period ends"
+        ],
+        [
+          "Document approval workflows",
+          "Multi-step approval before a document is marked Active"
+        ],
+        [
+          "Ledger-level document audit trail",
+          "Full audit history of document access and status changes"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. BIAN Field Mapping"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "BIAN Field Path",
+          "Field Name",
+          "Sample Data"
+        ],
+        [
+          "DocumentCaptureDateandTime.Text",
+          "DocumentCaptureDateandTime",
+          "2026-04-14T10:09:34Z"
+        ],
+        [
+          "DocumentTypeDescription",
+          "DocumentType",
+          "Business Document, Financial Document, Commercial Document"
+        ],
+        [
+          "DocumentContent.Text",
+          "DocumentContent",
+          "Identity Proof"
+        ],
+        [
+          "DocumentMediaFormat.DocumentIdentification.IdentifierEndDate .DateTimeContent.Text",
+          "DateofExpiry",
+          "2028-03-24T00:00:00Z"
+        ],
+        [
+          "DocumentMediaFormat.DocumentDescription.Text",
+          "DocumentDescription",
+          "Jerry Todd Holmes's Passport issued in United States"
+        ],
+        [
+          "DocumentMediaFormat.DocumentValidityPeriod.FromDateTime .DateTimeContent.Text",
+          "ValidityFromDate",
+          "MM/DD/YYYY"
+        ],
+        [
+          "DocumentMediaFormat.DocumentValidityPeriod.ToDateTime .DateTimeContent.Text",
+          "ValidityToDate",
+          "MM/DD/YYYY"
+        ],
+        [
+          "DocumentLocation.DocumentLocationIdentification .IdentifierValue.Value",
+          "DocumentLocation (URL)",
+          "linkofthestoragesystem.com"
+        ],
+        [
+          "DocumentName.Name",
+          "DocumentName",
+          ""
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "9. BIAN Version Note"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "The BIAN V14 published API payload for Document Directory is currently insufficient and is a work in progress. The current implementation is based on BIAN V13 temporarily and will be upgraded to V14 once BIAN publishes the complete specification."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter : Document Directory Adapter - Product/Engineering - USTFinX Confluence"
+    }
+  ]
+}

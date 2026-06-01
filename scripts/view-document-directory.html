@@ -1,0 +1,188 @@
+  <!-- DOCS: API reference (Document Directory) -->
+  <section class="view" data-route="/docs/glue/api-reference/document-directory" data-tier="external" data-layout="docs" data-section="glue" data-title="Document Directory · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-reference/savings-account" class="docs-nav-link">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product & Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="#/docs/glue/api-reference/position-keeping" class="docs-nav-link">Position Keeping</a>
+      <a href="#/docs/glue/api-reference/payment-order-initiation" class="docs-nav-link">Payment Order Initiation</a>
+      <a href="#/docs/glue/api-reference/document-directory" class="docs-nav-link is-active">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Document Directory</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Document Directory</h1>
+      <p class="page-lead">The Document Directory service domain stores and indexes customer-related documents: identity artefacts, address proofs, agreement copies, and supporting evidence. It is the authoritative store for document artefacts; other service domains hold only references.</p>
+      <h2 class="h3" id="what-is-this-service-domain">What Is This Service Domain?</h2>
+      <p>The Document Directory Service Domain in BIAN v13.0 is responsible for recording and exposing document entries, specifically the storage path URLs of documents collected, generated, or uploaded across any banking process.</p>
+      <p>It acts as the authoritative document registry and reference layer for a given documentdirectoryid (Document Directory Instance Reference). The actual binary files are stored in any compatible external storage system, only the URLs and metadata persisted in this SD.</p>
+      <h2 class="h3" id="key-distinction">Key Distinction</h2>
+      <table class="docs-table">
+        <thead><tr><th>Attribute</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>What it manages</td><td>Document metadata and storage location references (URLs)</td></tr>
+          <tr><td>What it does NOT do</td><td>Store actual document files, binaries live in the external storage system</td></tr>
+          <tr><td>Primary role</td><td>Authoritative document registry and reference layer across banking processes</td></tr>
+          <tr><td>Identifier</td><td>documentdirectoryid, Document Directory Instance Reference, unique per registered document</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="when-to-use-this-service-domain">When to Use This Service Domain</h2>
+      <p>This Service Domain can be invoked across any banking process or journey wherever document metadata and storage location references need to be registered or retrieved. It is not limited to any specific journey.</p>
+      <p>As part of the current implementation scope, it is being used during the customer onboarding journey. The same SD will be reused as-is whenever other journeys require document registration or retrieval, no changes to the SD will be needed.</p>
+      <h2 class="h3" id="invocation-scenarios">Invocation Scenarios</h2>
+      <table class="docs-table">
+        <thead><tr><th>Scenario</th><th>BIAN Operation</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Register a Document</td><td>POST /DocumentDirectory/Register</td><td>Once a document is uploaded to a compatible storage system and a storage URL is obtained, invoke Register to persist document metadata and URL for future retrieval and audit.</td></tr>
+          <tr><td>Retrieve a Document</td><td>GET /DocumentDirectory/{documentdirectoryid}/Retrieve</td><td>Retrieve the stored file path from the Document Directory, then use the returned URL to access the document from the storage system. Enables viewing, audit, or downstream processing.</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="prerequisite">Prerequisite</h2>
+      <table class="docs-table">
+        <thead><tr><th>Documents must be uploaded to any compatible storage system BEFORE invoking the Document Directory endpoints. The APIs for document upload to the storage system are outside the scope of this Service Domain and must be handled separately.</th></tr></thead>
+        <tbody>
+        </tbody>
+      </table>
+      <h2 class="h3" id="sd-scope-level-of-details-to-capture">SD Scope, Level of Details to Capture</h2>
+      <p>This is an Operational Document Registry Service Domain, not a content store. Data captured must be metadata-accurate, location-referenced, and status-aware.</p>
+      <table class="docs-table">
+        <thead><tr><th>Category</th><th>Details Captured</th></tr></thead>
+        <tbody>
+          <tr><td>Document Identity</td><td>Document Type, Document Identifier Value (e.g. Passport Number)</td></tr>
+          <tr><td>Document Dates</td><td>Creation Date, Capture DateTime, Signing Date, Issue Date, Validity From / Validity To</td></tr>
+          <tr><td>Issuing Authority</td><td>Authority Name, Authority Type, Party Involvement Type</td></tr>
+          <tr><td>Storage Location</td><td>Storage URL / File Path (DocumentLocation), mandatory field</td></tr>
+          <tr><td>Document Content</td><td>Description, Subject, Purpose, Format (file type)</td></tr>
+          <tr><td>Document Status</td><td>Active / Expired / Rejected, drives integration flows</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="behaviour-qualifiers-bqs">Behaviour Qualifiers (BQs)</h2>
+      <p>No Behaviour Qualifier endpoints were introduced in this implementation. All operations are at the Control Record (CR) level only.</p>
+      <table class="docs-table">
+        <thead><tr><th>CR Endpoint</th><th>Operation Type</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>POST /DocumentDirectory/Register</td><td>Register (Create)</td><td>✅ Implemented</td></tr>
+          <tr><td>GET /DocumentDirectory/{documentdirectoryid}/Retrieve</td><td>Retrieve</td><td>✅ Implemented</td></tr>
+          <tr><td>PUT /DocumentDirectory/{documentdirectoryid}/Update</td><td>Update</td><td>❌ Not in scope</td></tr>
+          <tr><td>PUT /DocumentDirectory/{documentdirectoryid}/Control</td><td>Control</td><td>❌ Not in scope</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="sd-data-model-document-details-to-capture">SD Data Model, Document Details to Capture</h2>
+      <p>The following represents the full set of data the SD can hold per Document Directory entry, categorised by data group:</p>
+      <table class="docs-table">
+        <thead><tr><th>Data Group</th><th>BIAN Field</th><th>Semantics</th></tr></thead>
+        <tbody>
+          <tr><td>Document Dates</td><td>DocumentCreationDate.DateTimeContent (DateTimeType = CreationDate)</td><td>Record-level CR timestamp, when the document was created</td></tr>
+          <tr><td>Document Dates</td><td>DocumentCaptureDateandTime.Text</td><td>Channel upload timestamp, when the document was captured by the channel</td></tr>
+          <tr><td>Document Dates</td><td>DocumentMediaFormat.DocumentDateTime.DateTimeContent (DateTimeType = SigningDate)</td><td>Date document was signed</td></tr>
+          <tr><td>Document Dates</td><td>DocumentMediaFormat.DocumentValidityPeriod.FromDateTime</td><td>Start of bank-validity period for the document</td></tr>
+          <tr><td>Document Dates</td><td>DocumentMediaFormat.DocumentValidityPeriod.ToDateTime</td><td>End of bank-validity period for the document</td></tr>
+          <tr><td>Document Identity</td><td>DocumentTypeDescription</td><td>Document name / type, Defaulted to: Business Document</td></tr>
+          <tr><td>Document Identity</td><td>DocumentMediaFormat.DocumentIdentification.IdentifierValue.Value</td><td>The identifier value of the document e.g. Passport Number</td></tr>
+          <tr><td>Document Identity</td><td>DocumentMediaFormat.DocumentDateTimeType</td><td>Enum: Document date type e.g. IssueDate</td></tr>
+          <tr><td>Document Content</td><td>DocumentContent.Text</td><td>Description of document content e.g. Identity Proof</td></tr>
+          <tr><td>Document Content</td><td>DocumentMediaFormat.DocumentPurpose.Text</td><td>Purpose of the document e.g. Address Proof</td></tr>
+          <tr><td>Document Content</td><td>DocumentMediaFormat.DocumentSubject.Text</td><td>Subject of the document e.g. Customer Address Proof</td></tr>
+          <tr><td>Document Content</td><td>DocumentMediaFormat.DocumentDescription.Text</td><td>Customer-provided document description captured through channel</td></tr>
+          <tr><td>Document Content</td><td>DocumentMediaFormat.DocumentFormat.Text</td><td>File type e.g. JPG, PNG, PDF, needed for rendering</td></tr>
+          <tr><td>Issuing Authority</td><td>DocumentMediaFormat.DocumentIdentification.IdentifierIssuingAuthority.PartyReference.PartyName.Name</td><td>Name of the issuing authority e.g. US Department of State</td></tr>
+          <tr><td>Issuing Authority</td><td>DocumentMediaFormat.DocumentIdentification.IdentifierIssuingAuthority.PartyReference.PartyType</td><td>Type of issuing authority e.g. Organisation</td></tr>
+          <tr><td>Issuing Authority</td><td>DocumentMediaFormat.DocumentIdentification.IdentifierIssuingAuthority.PartyInvolvement.PartyInvolvementType</td><td>Involvement type e.g. PartyInvolvement</td></tr>
+          <tr><td>Issuing Authority</td><td>DocumentMediaFormat.DocumentIdentification.IdentifierStartDate.DateTimeContent.Text</td><td>Issue date of the document</td></tr>
+          <tr><td>Issuing Authority</td><td>DocumentMediaFormat.DocumentIdentification.IdentifierEndDate.DateTimeContent.Text</td><td>Expiry date of the document</td></tr>
+          <tr><td>Storage Location</td><td>DocumentLocation.DocumentLocationIdentification.IdentifierValue.Value</td><td>Storage URL, the link to the document in the external storage system (Mandatory)</td></tr>
+          <tr><td>Document Status</td><td>DocumentStatus.StatusReason.Text</td><td>Overall document status e.g. Active / Expired, drives integration flows (Mandatory)</td></tr>
+          <tr><td>Document Status</td><td>DocumentMediaFormat.DocumentStatus.StatusReason.Text</td><td>Status reason for the media format entry e.g. Verified</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="cross-sd-traceability">Cross-SD Traceability</h2>
+      <p>The documentdirectoryid returned by POST /DocumentDirectory/Register must be stored in the relevant Service Domain via DocumentDirectoryEntryInstanceReference for cross-SD traceability.</p>
+      <p>Example: Party Reference Data Directory SD stores this parameter in its CIF DB so it can call GET /DocumentDirectory/{documentdirectoryid}/Retrieve to retrieve any party-related documents when needed.</p>
+      <h2 class="h3" id="future-scope-not-in-current-implementation">Future Scope, Not in Current Implementation</h2>
+      <table class="docs-table">
+        <thead><tr><th>Feature</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Document version control</td><td>Tracking multiple versions of the same document</td></tr>
+          <tr><td>Document expiry notifications</td><td>Automated alerts when document validity period ends</td></tr>
+          <tr><td>Document approval workflows</td><td>Multi-step approval before a document is marked Active</td></tr>
+          <tr><td>Ledger-level document audit trail</td><td>Full audit history of document access and status changes</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <table class="docs-table">
+        <thead><tr><th>BIAN Field Path</th><th>Field Name</th><th>Sample Data</th></tr></thead>
+        <tbody>
+          <tr><td>DocumentCaptureDateandTime.Text</td><td>DocumentCaptureDateandTime</td><td>2026-04-14T10:09:34Z</td></tr>
+          <tr><td>DocumentTypeDescription</td><td>DocumentType</td><td>Business Document, Financial Document, Commercial Document</td></tr>
+          <tr><td>DocumentContent.Text</td><td>DocumentContent</td><td>Identity Proof</td></tr>
+          <tr><td>DocumentMediaFormat.DocumentIdentification.IdentifierEndDate .DateTimeContent.Text</td><td>DateofExpiry</td><td>2028-03-24T00:00:00Z</td></tr>
+          <tr><td>DocumentMediaFormat.DocumentDescription.Text</td><td>DocumentDescription</td><td>Jerry Todd Holmes&#x27;s Passport issued in United States</td></tr>
+          <tr><td>DocumentMediaFormat.DocumentValidityPeriod.FromDateTime .DateTimeContent.Text</td><td>ValidityFromDate</td><td>MM/DD/YYYY</td></tr>
+          <tr><td>DocumentMediaFormat.DocumentValidityPeriod.ToDateTime .DateTimeContent.Text</td><td>ValidityToDate</td><td>MM/DD/YYYY</td></tr>
+          <tr><td>DocumentLocation.DocumentLocationIdentification .IdentifierValue.Value</td><td>DocumentLocation (URL)</td><td>linkofthestoragesystem.com</td></tr>
+          <tr><td>DocumentName.Name</td><td>DocumentName</td><td></td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-version-note">BIAN Version Note</h2>
+      <table class="docs-table">
+        <thead><tr><th>The BIAN V14 published API payload for Document Directory is currently insufficient and is a work in progress. The current implementation is based on BIAN V13 temporarily and will be upgraded to V14 once BIAN publishes the complete specification.</th></tr></thead>
+        <tbody>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Document Directory</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#what-is-this-service-domain" class="toc-link">What Is This Service Domain?</a>
+      <a href="#key-distinction" class="toc-link">Key Distinction</a>
+      <a href="#when-to-use-this-service-domain" class="toc-link">When to Use This Service Domain</a>
+      <a href="#invocation-scenarios" class="toc-link">Invocation Scenarios</a>
+      <a href="#prerequisite" class="toc-link">Prerequisite</a>
+      <a href="#sd-scope-level-of-details-to-capture" class="toc-link">SD Scope, Level of Details to Capture</a>
+      <a href="#behaviour-qualifiers-bqs" class="toc-link">Behaviour Qualifiers (BQs)</a>
+      <a href="#sd-data-model-document-details-to-capture" class="toc-link">SD Data Model, Document Details to Capture</a>
+      <a href="#cross-sd-traceability" class="toc-link">Cross-SD Traceability</a>
+      <a href="#future-scope-not-in-current-implementation" class="toc-link">Future Scope, Not in Current Implementation</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+      <a href="#bian-version-note" class="toc-link">BIAN Version Note</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>
