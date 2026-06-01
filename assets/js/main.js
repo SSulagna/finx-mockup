@@ -942,7 +942,8 @@
 
 // ---------------------------------------------------------------------------
 // API Explorer: render Redoc lazily for routes under /docs/glue/api-explorer,
-// and inject a CTA onto each matching API Reference SD page.
+// inject Stripe-style three-language code samples (cURL, Node, Python) into
+// each operation before render, and inject a CTA onto each matching SD page.
 // ---------------------------------------------------------------------------
 (function () {
   var REDOC_SRC = 'https://cdn.jsdelivr.net/npm/redoc@2.4.0/bundles/redoc.standalone.js';
@@ -960,8 +961,85 @@
     '/docs/glue/api-reference/customer-agreement': 'customer-agreement'
   };
 
-  var redocPromise = null;
+  var REDOC_THEME = {
+    spacing: { unit: 4, sectionHorizontal: 32, sectionVertical: 32 },
+    colors: {
+      primary: { main: '#00D4D4' },
+      success: { main: '#00875A' },
+      warning: { main: '#cc7a00' },
+      error: { main: '#dc2626' },
+      text: { primary: '#1a1f36', secondary: '#3c4257' },
+      http: {
+        get: '#0073e6', post: '#00875A', put: '#cc7a00',
+        options: '#947600', patch: '#7c3aed', delete: '#dc2626', basic: '#3c4257', link: '#0073e6', head: '#0073e6'
+      }
+    },
+    typography: {
+      fontSize: '14px',
+      lineHeight: '1.6',
+      fontWeightRegular: '400',
+      fontWeightBold: '600',
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      smoothing: 'antialiased',
+      optimizeSpeed: true,
+      headings: { fontFamily: 'Inter, -apple-system, system-ui, sans-serif', fontWeight: '600', lineHeight: '1.4' },
+      code: {
+        fontSize: '13px',
+        fontFamily: 'JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+        lineHeight: '1.55',
+        fontWeight: '400',
+        color: '#0a2540',
+        backgroundColor: 'rgba(0, 212, 212, 0.08)',
+        wrap: true
+      },
+      links: { color: '#008B99', visited: '#008B99', hover: '#00D4D4' }
+    },
+    sidebar: {
+      width: '280px',
+      backgroundColor: '#f6f8fa',
+      textColor: '#1a1f36',
+      activeTextColor: '#00D4D4'
+    },
+    rightPanel: {
+      backgroundColor: '#0a2540',
+      textColor: '#e3e8ee',
+      width: '40%'
+    },
+    codeBlock: {
+      backgroundColor: '#062138',
+      tokens: {}
+    },
+    schema: {
+      nestedBackground: '#fafbfc',
+      linesColor: '#cbd2d9',
+      typeNameColor: '#3c4257',
+      typeTitleColor: '#1a1f36',
+      requireLabelColor: '#dc2626'
+    },
+    fab: { backgroundColor: '#0a2540', color: '#00D4D4' }
+  };
+
+  var REDOC_OPTIONS = {
+    scrollYOffset: 0,
+    hideDownloadButton: true,
+    hideHostname: false,
+    hideLoading: false,
+    expandResponses: '200,201',
+    expandSingleSchemaField: true,
+    jsonSampleExpandLevel: 3,
+    menuToggle: true,
+    nativeScrollbars: false,
+    pathInMiddlePanel: false,
+    requiredPropsFirst: true,
+    showExtensions: false,
+    sortPropsAlphabetically: false,
+    suppressWarnings: true,
+    theme: REDOC_THEME
+  };
+
+  var specCache = {};
   var rendered = {};
+  var redocPromise = null;
 
   function loadRedoc() {
     if (window.Redoc) return Promise.resolve();
@@ -971,13 +1049,125 @@
       s.src = REDOC_SRC;
       s.async = true;
       s.onload = function () { resolve(); };
-      s.onerror = function () {
-        redocPromise = null;
-        reject(new Error('Could not load Redoc from CDN.'));
-      };
+      s.onerror = function () { redocPromise = null; reject(new Error('Could not load Redoc from CDN.')); };
       document.head.appendChild(s);
     });
     return redocPromise;
+  }
+
+  function fetchSpec(url) {
+    if (specCache[url]) return Promise.resolve(specCache[url]);
+    return fetch(url, { credentials: 'omit' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('Spec HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (spec) { specCache[url] = spec; return spec; });
+  }
+
+  // Build a placeholder request body from a JSON Schema. Keeps it shallow so
+  // the right panel stays readable and developers immediately see the shape.
+  function sampleFromSchema(schema, root, depth) {
+    if (!schema || depth > 3) return null;
+    if (schema.$ref && root) {
+      var name = schema.$ref.split('/').pop();
+      var resolved = root.components && root.components.schemas && root.components.schemas[name];
+      return resolved ? sampleFromSchema(resolved, root, depth + 1) : null;
+    }
+    if (schema.example !== undefined) return schema.example;
+    if (schema.default !== undefined) return schema.default;
+    if (schema.enum && schema.enum.length) return schema.enum[0];
+    if (schema.type === 'object' || schema.properties) {
+      var out = {};
+      var props = schema.properties || {};
+      var keys = Object.keys(props).slice(0, 6);
+      keys.forEach(function (k) { out[k] = sampleFromSchema(props[k], root, depth + 1); });
+      return out;
+    }
+    if (schema.type === 'array') return [sampleFromSchema(schema.items || {}, root, depth + 1)];
+    if (schema.type === 'integer' || schema.type === 'number') return 0;
+    if (schema.type === 'boolean') return false;
+    if (schema.format === 'date-time') return '2026-01-01T00:00:00Z';
+    if (schema.format === 'date') return '2026-01-01';
+    if (schema.format === 'uuid') return '00000000-0000-0000-0000-000000000000';
+    return 'string';
+  }
+
+  function indent(str, spaces) {
+    var pad = new Array(spaces + 1).join(' ');
+    return str.split('\n').map(function (l) { return pad + l; }).join('\n');
+  }
+
+  function buildBodySample(op, root) {
+    var rb = op.requestBody;
+    if (!rb || !rb.content) return null;
+    var json = rb.content['application/json'] || rb.content['application/json; charset=utf-8'];
+    if (!json) return null;
+    var ex = (json.examples && Object.keys(json.examples).length)
+      ? json.examples[Object.keys(json.examples)[0]].value
+      : (json.example !== undefined ? json.example : sampleFromSchema(json.schema, root, 0));
+    try { return JSON.stringify(ex, null, 2); } catch (e) { return null; }
+  }
+
+  // Stripe-style: every operation gets cURL, Node, and Python tabs in the right panel.
+  function injectCodeSamples(spec) {
+    var base = (spec.servers && spec.servers[0] && spec.servers[0].url) || 'https://gatewayqa.ustfinx.com';
+    base = base.replace(/\/$/, '');
+    var methods = ['get', 'post', 'put', 'patch', 'delete'];
+    Object.keys(spec.paths || {}).forEach(function (path) {
+      var pathItem = spec.paths[path];
+      methods.forEach(function (method) {
+        var op = pathItem[method];
+        if (!op || op['x-codeSamples']) return;
+        var url = base + path;
+        var hasBody = method === 'post' || method === 'put' || method === 'patch';
+        var body = hasBody ? buildBodySample(op, spec) : null;
+        var bodyOneLine = body ? body.replace(/\n/g, ' ').replace(/\s+/g, ' ') : '{ }';
+
+        var curl = 'curl --request ' + method.toUpperCase() + ' \\\n' +
+                   '  --url ' + url + ' \\\n' +
+                   '  --header "Authorization: Bearer $FINX_TOKEN" \\\n' +
+                   '  --header "X-Tenant-ID: $FINX_TENANT"' +
+                   (hasBody
+                     ? ' \\\n  --header "Content-Type: application/json" \\\n  --data \'' + bodyOneLine + '\''
+                     : '');
+
+        var nodeLines = [
+          "const res = await fetch('" + url + "', {",
+          "  method: '" + method.toUpperCase() + "',",
+          "  headers: {",
+          "    Authorization: `Bearer ${process.env.FINX_TOKEN}`,",
+          "    'X-Tenant-ID': process.env.FINX_TENANT" + (hasBody ? "," : ""),
+          (hasBody ? "    'Content-Type': 'application/json'" : null),
+          "  }" + (hasBody ? "," : ""),
+          (hasBody ? "  body: JSON.stringify(" + (body || '{}') + ")" : null),
+          "});",
+          "const data = await res.json();"
+        ].filter(Boolean).join('\n');
+
+        var pyLines = [
+          "import os, requests",
+          "",
+          "resp = requests." + method + "(",
+          "    '" + url + "',",
+          "    headers={",
+          "        'Authorization': f\"Bearer {os.environ['FINX_TOKEN']}\",",
+          "        'X-Tenant-ID': os.environ['FINX_TENANT']" + (hasBody ? "," : ""),
+          (hasBody ? "        'Content-Type': 'application/json'" : null),
+          "    }" + (hasBody ? "," : ""),
+          (hasBody ? "    json=" + (body ? indent(body, 4).trimStart() : '{}') : null),
+          ")",
+          "data = resp.json()"
+        ].filter(Boolean).join('\n');
+
+        op['x-codeSamples'] = [
+          { lang: 'curl', label: 'cURL', source: curl },
+          { lang: 'JavaScript', label: 'Node.js', source: nodeLines },
+          { lang: 'Python', label: 'Python', source: pyLines }
+        ];
+      });
+    });
+    return spec;
   }
 
   function renderForRoute(route) {
@@ -986,36 +1176,25 @@
     if (!view) return;
     var host = view.querySelector('.redoc-host');
     if (!host || rendered[route]) return;
-    var spec = host.getAttribute('data-spec');
-    if (!spec) return;
+    var specUrl = host.getAttribute('data-spec');
+    if (!specUrl) return;
 
-    loadRedoc().then(function () {
-      try {
+    rendered[route] = true;
+    Promise.all([loadRedoc(), fetchSpec(specUrl)])
+      .then(function (parts) {
+        var spec = injectCodeSamples(parts[1]);
         host.innerHTML = '';
-        window.Redoc.init(spec, {
-          theme: {
-            colors: { primary: { main: '#00D4D4' } },
-            typography: {
-              fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-              headings: { fontFamily: 'Inter, system-ui, sans-serif', fontWeight: '600' },
-              code: { fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }
-            },
-            sidebar: { backgroundColor: '#f3f4f6', textColor: '#062229', activeTextColor: '#00D4D4' },
-            rightPanel: { backgroundColor: '#062229', textColor: '#E8F4F6' }
-          },
-          scrollYOffset: 0,
-          hideDownloadButton: true,
-          expandResponses: '200,201',
-          jsonSampleExpandLevel: 2,
-          nativeScrollbars: false
-        }, host);
-        rendered[route] = true;
-      } catch (e) {
-        host.innerHTML = '<div class="loading-spec">Failed to render spec: ' + (e && e.message ? e.message : e) + '</div>';
-      }
-    }).catch(function (e) {
-      host.innerHTML = '<div class="loading-spec">' + e.message + '</div>';
-    });
+        try {
+          window.Redoc.init(spec, REDOC_OPTIONS, host);
+        } catch (e) {
+          rendered[route] = false;
+          host.innerHTML = '<div class="loading-spec">Failed to render: ' + (e && e.message ? e.message : e) + '</div>';
+        }
+      })
+      .catch(function (e) {
+        rendered[route] = false;
+        host.innerHTML = '<div class="loading-spec">' + (e && e.message ? e.message : e) + '</div>';
+      });
   }
 
   function injectExplorerCtas() {
@@ -1032,12 +1211,12 @@
         cta = document.createElement('a');
         cta.className = 'api-explorer-cta';
         cta.href = '#/docs/glue/api-explorer/' + slug;
-        cta.innerHTML = 'Open interactive API explorer <span aria-hidden="true">→</span>';
+        cta.innerHTML = 'Open interactive API explorer <span aria-hidden="true">\u2192</span>';
       } else if (route === '/docs/glue/api-reference/term-deposit') {
         cta = document.createElement('span');
         cta.className = 'api-explorer-cta is-planned';
         cta.setAttribute('title', 'Planned: OpenAPI spec for Term Deposit service is not yet published');
-        cta.textContent = 'Interactive API explorer · planned';
+        cta.textContent = 'Interactive API explorer \u00b7 planned';
       } else {
         continue;
       }
