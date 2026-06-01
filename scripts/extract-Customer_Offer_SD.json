@@ -1,0 +1,704 @@
+{
+  "file": "Customer+Offer+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Customer Offer SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN v14.0, the Customer Offer Service Domain manages the process of preparing and presenting a product or service offer to a customer. It acts as the offer orchestration layer that prepares the commercial proposal before a formal agreement is created."
+    },
+    {
+      "type": "p",
+      "text": "The SD also holds details of assessments and correspondence shared with the customer, underwriting process decisions, credit rating and collateral submitted by the customer, and final product creation details upon successful offer acceptance."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Customer Offer SD Manages",
+          "Customer Offer SD Does NOT Manage"
+        ],
+        [
+          "Offer preparation and configuration",
+          "Final Customer Agreement — Customer Agreement SD"
+        ],
+        [
+          "Offer features and benefit terms",
+          "Sales Product Agreement — Sales Product Agreement SD"
+        ],
+        [
+          "Offer workflow state and worksteps",
+          "Operational product lifecycle — Product SDs"
+        ],
+        [
+          "Underwriting and credit assessment references",
+          "Master customer profile — Party Directory SD"
+        ],
+        [
+          "Involved party linkage (CIF reference)",
+          ""
+        ],
+        [
+          "Agreement and product initialisation linkage (BQ)",
+          ""
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.2 Illustrative Example"
+    },
+    {
+      "type": "p",
+      "text": "Customer: John Doe | Product Offered: Premium Savings Account | Offer includes: Interest rate proposal, Fee waiver for first year, Free debit card feature"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Call Customer Offer SD whenever a customer offer procedure must be initiated, configured, progressed, or linked to downstream agreements and products."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Trigger Scenario",
+          "Action",
+          "SD Invoked"
+        ],
+        [
+          "Customer applies for Savings Account digitally",
+          "Generate offer procedure; capture product and features opted",
+          "Customer Offer SD — Initiate"
+        ],
+        [
+          "Relationship manager proposes product upgrade",
+          "Generate upgrade offer with revised rates and features",
+          "Customer Offer SD — Update"
+        ],
+        [
+          "Customer accepts offer",
+          "Update workflow status; trigger agreement creation",
+          "Customer Offer SD — Update"
+        ],
+        [
+          "Agreement created",
+          "Link agreement IDs to offer record",
+          "Customer Offer SD — Agreement BQ"
+        ],
+        [
+          "Product account provisioned",
+          "Record account number against offer",
+          "Customer Offer SD — ProductInitialization BQ"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.1 During Product Origination"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A customer applies for a Savings Account through a digital onboarding journey."
+    },
+    {
+      "type": "p",
+      "text": "Action: The orchestration layer calls Customer Offer SD to generate the offer procedure, capturing the product selected and features opted."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.2 During Product Upgrade / Relationship Management"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A relationship manager proposes upgrading a customer from Standard Savings Account to Premium Savings Account."
+    },
+    {
+      "type": "p",
+      "text": "Action: Customer Offer SD generates a special upgrade offer containing revised interest rates and additional features."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. Control Record Structure"
+    },
+    {
+      "type": "p",
+      "text": "A CustomerOfferProcedure Control Record represents the entire lifecycle of a single customer offer. Key components:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "CR Component",
+          "Description"
+        ],
+        [
+          "CustomerOfferProcedure",
+          "Root Control Record representing the entire lifecycle of one customer offer"
+        ],
+        [
+          "CustomerOfferReference",
+          "Converted to string; carries Application ID; full offer object sits in CustomerOfferInvolvement"
+        ],
+        [
+          "CustomerOfferProcessingTask",
+          "Tracks workstep type, status, description, datetime, and work product for each lifecycle stage"
+        ],
+        [
+          "CustomerOfferInvolvedParty",
+          "Captures party reference (name, type, CIF), offer details, amount, and OfferTermAndCondition[]"
+        ],
+        [
+          "ProductandServiceReference",
+          "Records product type, ID, name, description, and version associated with the offer"
+        ],
+        [
+          "CustomerReference",
+          "Captures customer relationship lifecycle status and validity period"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.1 Behavior Qualifiers (BQ)"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Behavior Qualifier",
+          "Operation",
+          "Purpose"
+        ],
+        [
+          "Agreement",
+          "Update / Retrieve",
+          "Links Customer Agreement ID and Sales Product Agreement ID to the offer"
+        ],
+        [
+          "ProductInitialization",
+          "Update / Retrieve",
+          "Records the provisioned account number against the offer"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Offer Feature & Workflow Details"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.1 Offer Feature Types (OfferTermAndCondition[])"
+    },
+    {
+      "type": "p",
+      "text": "An offer may contain multiple configurable features captured as an array. Example feature types:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Feature Type",
+          "Feature Name",
+          "Description"
+        ],
+        [
+          "FeeFeature",
+          "FreeDebitCard",
+          "Complimentary debit card for first year"
+        ],
+        [
+          "InterestFeature",
+          "PromotionalInterest",
+          "Increased promotional interest rate"
+        ],
+        [
+          "ServiceFeature",
+          "FreeStatement",
+          "Free monthly account statement"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.2 Offer Processing Worksteps (CustomerOfferProcessingTask)"
+    },
+    {
+      "type": "p",
+      "text": "The SD tracks processing steps through the offer lifecycle. Supported workstep types:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Workstep Type",
+          "Description"
+        ],
+        [
+          "EligibilityCheck",
+          "Verify product eligibility for the customer"
+        ],
+        [
+          "FeatureSelection",
+          "Configure product features for the offer"
+        ],
+        [
+          "OfferPresentation",
+          "Present the configured offer to the customer"
+        ],
+        [
+          "OfferAcceptance",
+          "Customer formally accepts the offer"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Offer Lifecycle Flow"
+    },
+    {
+      "type": "p",
+      "text": "Customer Offer SD is invoked during the product sales journey, before agreement creation:"
+    },
+    {
+      "type": "p",
+      "text": "Customer Onboarding / Sales Journey → Customer Offer Creation → Customer Accepts Offer → Customer & Sales Product Agreement Creation"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.1 Step A — Initiate the Offer (CR)"
+    },
+    {
+      "type": "p",
+      "text": "Action: POST /CustomerOffer/Initiate"
+    },
+    {
+      "type": "p",
+      "text": "Purpose: Create a CustomerOfferProcedure instance to represent the proposed offer."
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Generates Application ID in CustomerOfferReference.CustomerOffer."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Sets initial WorkstepStatus to InProgress."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Records CustomerReference lifecycle status and offer start date."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.2 Step B — Update Offer Configuration (CR)"
+    },
+    {
+      "type": "p",
+      "text": "Action: PUT /CustomerOffer/{customerofferid}/Update"
+    },
+    {
+      "type": "p",
+      "text": "Purpose: Modify offer configuration. Examples:"
+    },
+    {
+      "type": "p",
+      "text": "◦ Feature Configuration — add FreeDebitCard feature (FeatureAmount: 1000 INR)."
+    },
+    {
+      "type": "p",
+      "text": "◦ Pricing Update — change promotional offer rate (OfferRate: 4%, Percentage)."
+    },
+    {
+      "type": "p",
+      "text": "◦ Workflow Update — advance WorkstepType: OfferPresentation, Status: Completed."
+    },
+    {
+      "type": "p",
+      "text": "◦ Party Capture — record CIF-linked involved party from PRDD."
+    },
+    {
+      "type": "p",
+      "text": "◦ Product Reference — log product type, identifier, version, and description."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.3 BQ Agreement — Link Agreements"
+    },
+    {
+      "type": "p",
+      "text": "Action: PUT /CustomerOffer/{customerofferid}/Agreement/{agreementid}/Update"
+    },
+    {
+      "type": "p",
+      "text": "Purpose: Update the offer with created Customer Agreement ID and Sales Product Agreement ID."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.4 BQ ProductInitialization — Record Account Number"
+    },
+    {
+      "type": "p",
+      "text": "Action: PUT /CustomerOffer/{customerofferid}/ProductInitialization/{productinitializationid}/Update"
+    },
+    {
+      "type": "p",
+      "text": "Purpose: Update the offer with the provisioned account number once the product has been created downstream."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Level of Detail to Capture"
+    },
+    {
+      "type": "p",
+      "text": "Customer Offer SD is a processing domain — not a master data or operational domain. Data captured must focus on offer configuration and workflow state, not operational product data."
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Offer-specific — all data must relate to a specific offer instance (CustomerOfferProcedure)."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Workflow-accurate — workstep status and dates must reflect current offer processing state."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Feature-complete — all offered features and terms captured in OfferTermAndCondition[]."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Party-linked — involved party must be traceable to CIF in PRDD via PartyIdentification."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Agreement-linked — once agreements are created, their IDs must be recorded in the BQ."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Implementation Priority"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Endpoint",
+          "Priority"
+        ],
+        [
+          "POST /CustomerOffer/Initiate",
+          "Initial implementation — Core offer creation"
+        ],
+        [
+          "PUT /CustomerOffer/{customerofferid}/Update",
+          "Initial implementation — Offer configuration and lifecycle"
+        ],
+        [
+          "GET /CustomerOffer/{customerofferid}/Retrieve",
+          "Initial implementation — Full offer state retrieval"
+        ],
+        [
+          "PUT .../{customerofferid}/Agreement/{agreementid}/Update",
+          "Initial implementation — Agreement linkage"
+        ],
+        [
+          "GET .../{customerofferid}/Agreement/{agreementid}/Retrieve",
+          "Initial implementation — Agreement retrieval"
+        ],
+        [
+          "PUT .../{customerofferid}/ProductInitialization/{pid}/Update",
+          "Initial implementation — Account number linkage"
+        ],
+        [
+          "GET .../{customerofferid}/ProductInitialization/{pid}/Retrieve",
+          "Initial implementation — Product initialisation retrieval"
+        ],
+        [
+          "POST /CustomerOffer/{customerofferid}/Execute",
+          "Future phase"
+        ],
+        [
+          "POST /CustomerOffer/{customerofferid}/Request",
+          "Future phase"
+        ],
+        [
+          "PUT /CustomerOffer/{customerofferid}/Control",
+          "Future phase"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. BIAN Field Mapping"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "StatusReason",
+          "CustomerReference.RelationshipLifecycleStatus.StatusReason",
+          "Onboarding Completed",
+          "Reason or explanation describing the current status of a process, product, offer, or workflow."
+        ],
+        [
+          "DateTimeContent",
+          "CustomerReference.RelationshipLifecycleStatus.StatusValidityPeriod.FromDateTime.DateTimeContent",
+          "2026-03-04T12:00:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "ProductandServiceType",
+          "ProductandServiceType",
+          "SavingAccountAgreement",
+          "Classification/type of banking product or service being offered or managed."
+        ],
+        [
+          "Worksteptypevalues",
+          "CustomerOfferProcessingTask.WorkstepType.Worksteptypevalues",
+          "ProductFeatureSelection",
+          "Values or indicators representing the category/type of workflow step within a business process."
+        ],
+        [
+          "WorkstepDescription",
+          "CustomerOfferProcessingTask.WorkstepDescription",
+          "Updating offer with features",
+          "Detailed description explaining the purpose or activity of a workflow step."
+        ],
+        [
+          "DateTimeContent",
+          "CustomerOfferProcessingTask.WorkstepDateTime.DateTimeContent",
+          "2026-03-04T10:10:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "StatusReason",
+          "CustomerOfferProcessingTask.WorkstepStatus.StatusReason",
+          "InProgress",
+          "Reason or explanation describing the current status of a process, product, offer, or workflow."
+        ],
+        [
+          "WorkProductType",
+          "CustomerOfferProcessingTask.WorkstepWorkproduct.WorkProductType",
+          "Form",
+          "Type/category of work product or output generated during a process or workflow"
+        ],
+        [
+          "IdentifierValue",
+          "CustomerOfferProcessingTask.WorkstepWorkproduct.WorkProductIdentifoication.IdentifierValue",
+          "WP-FEAT-2026-0031",
+          "Unique identifier value assigned to a product, process, work item, or entity."
+        ],
+        [
+          "Name",
+          "CustomerOfferInvolvedParty.PartyReference.PartyName.Name",
+          "Rahul Kumar",
+          "Official or descriptive name associated with a product, feature, entity, or process."
+        ],
+        [
+          "PartyType",
+          "CustomerOfferInvolvedParty.PartyReference.PartyType",
+          "Person",
+          "Classification/type of party such as Individual, Organisation, Corporate, or Joint Account Holder."
+        ],
+        [
+          "PartyIdentificationType",
+          "CustomerOfferInvolvedParty.PartyReference.PartyIdentification.PartyIdentificationType",
+          "CustomerIdentificationnumber",
+          "Type/category of identification associated with the party such as Passport, PAN, Aadhaar, or Customer ID."
+        ],
+        [
+          "IdentifierValue",
+          "CustomerOfferInvolvedParty.PartyReference.PartyIdentification.PartyIdentification.IdentifierValue",
+          "CIF00000102",
+          "Unique identifier value assigned to a product, process, work item, or entity."
+        ],
+        [
+          "PartyLegalStructureType",
+          "CustomerOfferInvolvedParty.PartyReference.PartyLegalStructureType",
+          "Individual",
+          "Legal structure/category of the party such as Sole Proprietorship, Partnership, LLP, or Corporation."
+        ],
+        [
+          "OfferDescription",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferDescription",
+          "Savings account offer for new individual customer",
+          "Detailed description of the banking product or service offer."
+        ],
+        [
+          "DateTimeContent",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferEndDate.DateTimeContent",
+          "2026-03-04T09:30:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "RateValue",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferRate.RateValue",
+          "3.5",
+          "Numeric value representing an applicable rate such as interest rate or fee rate."
+        ],
+        [
+          "RateUnit",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferRate.RateUnit",
+          "Percentage",
+          "Unit or basis used for the specified rate value such as percentage per annum."
+        ],
+        [
+          "OfferValue",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferValue",
+          "Standard",
+          "Monetary or business value associated with the product/service offer."
+        ],
+        [
+          "FeatureType",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferTermAndCondition.FeatureType",
+          "FeeFeature",
+          "Classification/type of feature associated with a banking product or service."
+        ],
+        [
+          "Name",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferTermAndCondition.FeatureName.Name",
+          "FreeDebitCard",
+          "Official or descriptive name associated with a product, feature, entity, or process."
+        ],
+        [
+          "StatusReason",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferTermAndCondition.FeatureLifecycleStatus.StatusReason",
+          "Initiated",
+          "Reason or explanation describing the current status of a process, product, offer, or workflow."
+        ],
+        [
+          "FeatureDescription",
+          "CustomerOfferInvolvedParty.CustomerOfferReference.OfferTermAndCondition.FeatureDescription",
+          "Complimentary debit card for first year",
+          "Detailed explanation of a specific product or service feature."
+        ],
+        [
+          "AmountValue",
+          "CustomerOfferInvolvedParty.OfferAmount.AmountValue",
+          "1000",
+          "Monetary amount associated with a transaction, feature, offer, or product."
+        ],
+        [
+          "Currencycode",
+          "CustomerOfferInvolvedParty.OfferAmount.AmountCurrency.Currencycode",
+          "INR",
+          "Standard currency code representing the denomination used for a monetary amount."
+        ],
+        [
+          "AmountType",
+          "CustomerOfferInvolvedParty.OfferAmount.AmountType",
+          "Fixed",
+          "Classification/type of amount such as principal, fee, interest, or limit amount."
+        ],
+        [
+          "IdentifierValue",
+          "ProductandServiceReference.ProductIdentification.ProductIdentification.IdentifierValue",
+          "PROD-SAV-001",
+          "Unique identifier value assigned to a product, process, work item, or entity."
+        ],
+        [
+          "ProductIdentificationType",
+          "ProductandServiceReference.ProductIdentification.ProductIdentificationType",
+          "Modelnumber",
+          "Type/category of product identifier associated with the banking product."
+        ],
+        [
+          "ProductType",
+          "ProductandServiceReference.ProductType",
+          "SavingAccountProduct",
+          "Classification/type of banking product such as savings account, loan, or credit card"
+        ],
+        [
+          "ProductDescription",
+          "ProductandServiceReference.ProductDescription",
+          "Zero-balance digital savings account",
+          "Detailed description explaining the banking product and its purpose."
+        ],
+        [
+          "ProductVersion",
+          "ProductandServiceReference.ProductVersion",
+          "v2.1",
+          "Version or revision number associated with the banking product definition."
+        ],
+        [
+          "Name",
+          "ProductandServiceReference.ProductName.Name",
+          "Prime Savings Account",
+          "Official or descriptive name associated with a product, feature, entity, or process."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Revised YAML:"
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter: Customer Offer Adapter - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}
