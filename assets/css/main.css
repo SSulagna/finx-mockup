@@ -1128,8 +1128,8 @@ pre {
   padding: 2px 6px;
   border-radius: 4px;
 }
-.docs-main a { color: var(--cyan); }
-.docs-main a:hover { color: var(--cyan-bright); text-decoration: underline; }
+.docs-main a:not(.btn) { color: var(--cyan); }
+.docs-main a:not(.btn):hover { color: var(--cyan-bright); text-decoration: underline; }
 
 /* -----------------------------------------------------------------------------
    16. Callout boxes
