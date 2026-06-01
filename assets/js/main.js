@@ -835,6 +835,7 @@
     var expand = $('.finx-assistant-expand');
     var form = $('#finx-assistant-form');
     var input = $('#finx-assistant-input');
+    var prompts = $$('.finx-assistant-prompts [data-finx-prompt]');
     if (toggle) {
       toggle.addEventListener('click', function () {
         var panel = $('#finx-assistant-panel');
@@ -844,6 +845,15 @@
     }
     if (close) close.addEventListener('click', closeAssistant);
     if (expand) expand.addEventListener('click', toggleAssistantExpand);
+    prompts.forEach(function (prompt) {
+      prompt.addEventListener('click', function () {
+        openAssistant();
+        if (input) {
+          input.value = prompt.getAttribute('data-finx-prompt') || '';
+          input.focus();
+        }
+      });
+    });
     if (form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -852,9 +862,11 @@
         addAssistantMessage('user', escapeHtml(query));
         var retrieval = retrieveAssistantMatches(query, 5);
         var pending = addAssistantMessage('bot', 'Thinking with the portal index...');
+        if (pending) pending.classList.add('finx-assistant-msg--thinking');
         if (input) input.value = '';
         askAssistantLLM(query, retrieval).then(function (html) {
           if (pending) {
+            pending.classList.remove('finx-assistant-msg--thinking');
             pending.innerHTML = html;
             var log = $('#finx-assistant-messages');
             if (log) log.scrollTop = log.scrollHeight;
@@ -873,6 +885,51 @@
       if (e.key === 'Escape') closeAssistant();
     });
     updateAssistantScope();
+  }
+
+  // ---------- Dynamic UI polish ----------
+  function bindDynamicPolish() {
+    var reduceMotion = false;
+    try {
+      reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (_) {}
+
+    var revealItems = $$('.section-head, .card, .related-card, .api-sequence, .task-item, .docs-main > h2, .docs-main > h3');
+    revealItems.forEach(function (item, index) {
+      item.classList.add('reveal-surface');
+      item.style.setProperty('--reveal-delay', Math.min(index % 6, 5) * 45 + 'ms');
+    });
+
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+      revealItems.forEach(function (item) { observer.observe(item); });
+    } else {
+      revealItems.forEach(function (item) { item.classList.add('is-visible'); });
+    }
+
+    document.addEventListener('view:enter', function (ev) {
+      var view = ev.detail && ev.detail.view;
+      if (!view) return;
+      $$('.reveal-surface', view).forEach(function (item, index) {
+        item.style.setProperty('--reveal-delay', Math.min(index % 6, 5) * 45 + 'ms');
+        item.classList.add('is-visible');
+      });
+    });
+
+    document.addEventListener('pointermove', function (e) {
+      var card = e.target.closest && e.target.closest('.card');
+      if (!card) return;
+      var rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', Math.round(e.clientX - rect.left) + 'px');
+      card.style.setProperty('--my', Math.round(e.clientY - rect.top) + 'px');
+    });
   }
 
   // ---------- Tab switcher (homepage Products section) ----------
@@ -1008,6 +1065,7 @@
     bindTabs();
     bindAssistant();
     bindCommentFeedback();
+    bindDynamicPolish();
 
     // Theme: restore saved preference
     try {

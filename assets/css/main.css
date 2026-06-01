@@ -584,15 +584,31 @@ body.tier-internal #internal-banner {
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-lg);
   padding: 28px;
+  position: relative;
+  overflow: hidden;
   color: inherit;
   transition: all var(--transition);
 }
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 20%), rgba(0, 212, 212, 0.16), transparent 34%);
+  transition: opacity var(--transition);
+}
+.card > * {
+  position: relative;
+  z-index: 1;
+}
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   border-color: var(--cyan-dim);
   box-shadow: var(--shadow-md);
   color: inherit;
 }
+.card:hover::before { opacity: 1; }
 
 .card--gradient {
   background: var(--gradient-card);
@@ -840,11 +856,25 @@ body.tier-internal #internal-banner {
   color: var(--text-primary);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.36), 0 0 30px rgba(0, 212, 212, 0.12);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition);
+}
+.finx-assistant-toggle::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 1px solid rgba(0, 212, 212, 0.34);
+  opacity: 0;
+  animation: finx-assistant-ring 2600ms ease-out infinite;
 }
 .finx-assistant-toggle:hover,
 .finx-assistant-toggle:focus-visible {
+  transform: translateY(-2px);
   border-color: var(--cyan);
   background: linear-gradient(135deg, rgba(46, 230, 230, 0.22), rgba(15, 69, 85, 0.98));
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.42), 0 0 42px rgba(0, 212, 212, 0.18);
 }
 .finx-assistant-toggle-icon {
   width: 28px;
@@ -876,6 +906,8 @@ body.tier-internal #internal-banner {
   background: rgba(6, 34, 41, 0.98);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48), 0 0 50px rgba(0, 212, 212, 0.1);
   backdrop-filter: blur(18px);
+  transform-origin: 100% 100%;
+  animation: finx-panel-pop 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .finx-assistant-panel[hidden] { display: none; }
 .finx-assistant-panel.is-expanded {
@@ -951,6 +983,33 @@ body.tier-internal #internal-banner {
   color: var(--internal-primary);
   background: rgba(180, 147, 244, 0.08);
 }
+.finx-assistant-prompts {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-dark);
+  overflow-x: auto;
+  background: rgba(3, 19, 25, 0.38);
+}
+.finx-assistant-prompts button {
+  flex: 0 0 auto;
+  border: 1px solid rgba(0, 212, 212, 0.24);
+  border-radius: 999px;
+  background: rgba(0, 212, 212, 0.08);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.finx-assistant-prompts button:hover,
+.finx-assistant-prompts button:focus-visible {
+  color: var(--bg-deep);
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
 .finx-assistant-messages {
   display: flex;
   flex-direction: column;
@@ -965,6 +1024,7 @@ body.tier-internal #internal-banner {
   border-radius: 8px;
   font-size: 13.5px;
   line-height: 1.55;
+  animation: finx-message-in 180ms ease-out both;
 }
 .finx-assistant-msg--bot {
   align-self: flex-start;
@@ -987,6 +1047,18 @@ body.tier-internal #internal-banner {
 .finx-assistant-msg ol,
 .finx-assistant-msg ul { margin: 8px 0 0 18px; }
 .finx-assistant-msg li { margin-bottom: 6px; }
+.finx-assistant-msg--thinking {
+  position: relative;
+  overflow: hidden;
+}
+.finx-assistant-msg--thinking::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 212, 0.12), transparent);
+  animation: finx-thinking-sheen 1200ms ease-in-out infinite;
+}
 .finx-assistant-form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1031,6 +1103,77 @@ body.tier-internal #internal-banner {
 }
 .finx-assistant-form button:hover,
 .finx-assistant-form button:focus-visible { background: var(--cyan-bright); }
+
+/* -----------------------------------------------------------------------------
+   Dynamic polish layer
+   ----------------------------------------------------------------------------- */
+@keyframes finx-grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 60px 30px, 30px 60px; }
+}
+@keyframes finx-watermark-breathe {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.72; transform: translate(-50%, -50%) scale(1.018); }
+}
+@keyframes finx-assistant-ring {
+  0% { opacity: 0.55; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.28); }
+}
+@keyframes finx-panel-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes finx-message-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes finx-thinking-sheen {
+  to { transform: translateX(100%); }
+}
+.hero-grid {
+  animation: finx-grid-drift 28s linear infinite;
+  will-change: background-position;
+}
+.x-watermark {
+  animation: finx-watermark-breathe 8s ease-in-out infinite;
+}
+.reveal-surface {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 520ms ease, transform 520ms ease, border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-surface.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.section-head.reveal-surface,
+.docs-main > h2.reveal-surface,
+.docs-main > h3.reveal-surface {
+  transform: translateY(10px);
+}
+.section-head.reveal-surface.is-visible,
+.docs-main > h2.reveal-surface.is-visible,
+.docs-main > h3.reveal-surface.is-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-grid,
+  .x-watermark,
+  .finx-assistant-toggle::after,
+  .finx-assistant-panel,
+  .finx-assistant-msg,
+  .finx-assistant-msg--thinking::after,
+  .reveal-surface {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal-surface {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 .search-live-state[hidden] { display: none; }
 .search-modal-live-list {
@@ -2212,14 +2355,14 @@ body[data-route-palette="internal"] {
 /* =============================================================================
    GENERIC CARD (used on subpages outside the original homepage card classes)
    ============================================================================= */
-.card {
+.card { 
   background: var(--bg-card);
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-lg);
   padding: 24px;
   transition: all var(--transition);
 }
-.card:hover { border-color: var(--cyan-dim); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.card:hover { border-color: var(--cyan-dim); transform: translateY(-4px); box-shadow: var(--shadow-md); }
 .card-eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
 .card-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
 .card-text { font-size: 13.5px; line-height: 1.6; color: var(--text-secondary); }
@@ -2229,6 +2372,25 @@ body[data-route-palette="internal"] {
 .card--path { border-top: 3px solid var(--cyan); padding-top: 22px; }
 .card--positive { border-color: rgba(0, 212, 212, 0.3); }
 .card--negative { border-color: rgba(244, 195, 109, 0.25); }
+.card.reveal-surface,
+.related-card.reveal-surface,
+.api-sequence.reveal-surface,
+.task-item.reveal-surface {
+  transition: opacity 520ms ease, transform 520ms ease, border-color var(--transition), box-shadow var(--transition), background var(--transition), color var(--transition);
+}
+.card.reveal-surface:not(.is-visible),
+.related-card.reveal-surface:not(.is-visible),
+.api-sequence.reveal-surface:not(.is-visible),
+.task-item.reveal-surface:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.card.reveal-surface.is-visible,
+.related-card.reveal-surface.is-visible,
+.api-sequence.reveal-surface.is-visible,
+.task-item.reveal-surface.is-visible {
+  opacity: 1;
+}
 
 .role-card { display: flex; flex-direction: column; gap: 8px; }
 .role-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 6px; }
