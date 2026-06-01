@@ -1,0 +1,565 @@
+{
+  "file": "Customer+Agreement+Service+Domain.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Customer Agreement Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Customer Agreement"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN 14.0, the Customer Agreement Service Domain maintains the master legal and regulatory agreements governing the overall relationship between the bank and a specific customer."
+    },
+    {
+      "type": "p",
+      "text": "This agreement represents the overarching contractual framework under which one or more Sales Product Agreements are subsequently established. It acts as the primary legal contract and policy container between the bank and a customer."
+    },
+    {
+      "type": "p",
+      "text": "The Customer Agreement:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Captures master legal terms, regulatory terms, policies and conditions",
+        "Defines regulatory, compliance, and jurisdictional considerations",
+        "Establishes governing provisions applicable across all product relationships",
+        "Serves as the contractual reference for all linked Sales Product Agreements"
+      ]
+    },
+    {
+      "type": "p",
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Attribute",
+          "Detail"
+        ],
+        [
+          "What it manages",
+          "Master legal terms, regulatory terms, policies, jurisdictional rules, authorised signatories"
+        ],
+        [
+          "What it does NOT do",
+          "Manage product-specific terms (handled by Sales Product Agreement SD)"
+        ],
+        [
+          "What it does NOT do",
+          "Manage operational account behaviour (handled by product SDs: Current Account, Loan, Card, etc.)"
+        ],
+        [
+          "Primary role",
+          "Legal foundation upon which all product agreements are executed"
+        ],
+        [
+          "Control Record (CR)",
+          "One Customer Agreement CR per customer master relationship"
+        ],
+        [
+          "Behaviour Qualifiers",
+          "LegalTerms BQ, RegulatoryTerms BQ, PolicyTerms BQ — structured legal/regulatory/policy components under each CR"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Invoke this SD whenever a master contractual relationship must be established, validated, or maintained."
+    },
+    {
+      "type": "p",
+      "text": "2.1 During Customer Onboarding (Pre-Product Setup)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A new corporate customer is being onboarded. Before any account, loan, or facility is created, the master agreement must be executed."
+    },
+    {
+      "type": "p",
+      "text": "Action: The orchestration layer invokes the Customer Agreement SD to initiate a Customer Agreement Control Record. This ensures:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Legal terms are established",
+        "Regulatory compliance clauses are accepted",
+        "Jurisdictional rules are recorded",
+        "Authorised signatories are captured"
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Only after the Customer Agreement CR is established can Sales Product Agreements be initiated."
+    },
+    {
+      "type": "p",
+      "text": "2.2 During Product Origination"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A customer applies for a Personal Loan. Before initiating the Sales Product Agreement, the bank must confirm a valid Customer Agreement exists."
+    },
+    {
+      "type": "p",
+      "text": "Action: The Sales Product Agreement SD invokes the Customer Agreement SD to:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Retrieve the active Customer Agreement instance",
+        "Validate that lending products are permitted under the master agreement",
+        "Confirm that the agreement status is not suspended or terminated",
+        "Verify that required regulatory clauses are included"
+      ]
+    },
+    {
+      "type": "p",
+      "text": "2.3 During Compliance / Regulatory Review"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A regulatory rule change requires updated AML or cross-border provisions."
+    },
+    {
+      "type": "p",
+      "text": "Action: The Customer Agreement SD is invoked to Update the master agreement terms. All linked Sales Product Agreements remain legally subordinate to this updated master agreement."
+    },
+    {
+      "type": "p",
+      "text": "2.4 During Dispute or Legal Determination"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A dispute arises regarding liability terms."
+    },
+    {
+      "type": "p",
+      "text": "Action: Operations retrieve the Customer Agreement CR to determine governing law, limitation of liability clauses, and arbitration mechanisms."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "CR & BQ Structure"
+    },
+    {
+      "type": "p",
+      "text": "This is a Legal Agreement Management domain. For each master agreement established for a customer, a separate Customer Agreement Control Record (CR) will be created. For each structured component of the agreement, a separate Behaviour Qualifier (BQ) instance is created under the CR."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Component",
+          "Purpose"
+        ],
+        [
+          "Customer Agreement (CR)",
+          "Master legal relationship record per customer. Captures agreement type, jurisdiction, validity period, signatories, and linked product agreements."
+        ],
+        [
+          "LegalTerms BQ (not implemented yet)",
+          "General banking terms & conditions, liability clauses, dispute resolution, governing law. Supports 1:M — multiple law references per BQ."
+        ],
+        [
+          "RegulatoryTerms BQ (not implemented yet)",
+          "KYC declaration, FATCA/CRS self-certification, data privacy consent, AML clauses. Supports 1:M — one CR to many BQ instances."
+        ],
+        [
+          "PolicyTerms BQ (not implemented yet)",
+          "Bank policies on digital banking usage, fee revisions, service eligibility conditions. Supports 1:M — one CR to many BQ instances."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Example structure:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Customer Agreement (CR) — Retail Banking Master Agreement",
+        "LegalTerms BQ — General T&Cs, liability, dispute resolution, governing law",
+        "RegulatoryTerms BQ — KYC, FATCA/CRS, data privacy consent",
+        "PolicyTerms BQ — Digital banking policy, fee revision policy, service eligibility"
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "Behaviour Qualifiers — Scope & Endpoints"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "BQ / CR",
+          "Endpoints",
+          "Status"
+        ],
+        [
+          "CR",
+          "POST /CustomerAgreement/Evaluate PUT /CustomerAgreement/{id}/Update GET /CustomerAgreement/{id}/Retrieve GET /CustomerAgreement/customerinformationprofile/{cifid}/Retrieve",
+          "✅ Implemented"
+        ],
+        [
+          "LegalTerms BQ",
+          "POST /CustomerAgreement/{id}/LegalTerms/Evaluate PUT /CustomerAgreement/{id}/LegalTerms/{legaltermsid}/Update GET /CustomerAgreement/{id}/LegalTerms/{legaltermsid}/Retrieve",
+          "Not Implemented"
+        ],
+        [
+          "RegulatoryTerms BQ",
+          "POST /CustomerAgreement/{id}/RegulatoryTerms/Evaluate PUT /CustomerAgreement/{id}/RegulatoryTerms/{regulatorytermsid}/Update GET /CustomerAgreement/{id}/RegulatoryTerms/Retrieve",
+          "Not Implemented"
+        ],
+        [
+          "PolicyTerms BQ",
+          "POST /CustomerAgreement/{id}/PolicyTerms/Evaluate PUT /CustomerAgreement/{id}/PolicyTerms/{policytermsid}/Update GET /CustomerAgreement/{id}/PolicyTerms/Retrieve",
+          "Not Implemented"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "Lifecycle Invocation"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Step",
+          "Action",
+          "Endpoint",
+          "Purpose"
+        ],
+        [
+          "A",
+          "Establish Customer Agreement",
+          "POST /CustomerAgreement/Evaluate",
+          "Create and assess a new CR. Establishes the master legal relationship, captures governing provisions, confirms agreement is valid before any Sales Product Agreement is initiated."
+        ],
+        [
+          "B",
+          "Capture Legal Terms",
+          "POST /CustomerAgreement/{id}/LegalTerms/Evaluate",
+          "Create and assess a LegalTerms BQ. Records structured legal clauses, defines governing law and liability provisions, ensures enforceability."
+        ],
+        [
+          "C",
+          "Update Legal Terms",
+          "PUT /CustomerAgreement/{id}/LegalTerms/{legaltermsid}/Update",
+          "Amend an existing LegalTerms BQ when legal clauses change due to regulatory updates, policy revisions, or jurisdictional adjustments."
+        ],
+        [
+          "D",
+          "Capture Regulatory Terms",
+          "POST /CustomerAgreement/{id}/RegulatoryTerms/Evaluate",
+          "Create and assess a RegulatoryTerms BQ. Records KYC, AML, FATCA/CRS, and data privacy clauses."
+        ],
+        [
+          "E",
+          "Update Regulatory Terms",
+          "PUT /CustomerAgreement/{id}/RegulatoryTerms/{regulatorytermsid}/Update",
+          "Amend an existing RegulatoryTerms BQ when regulatory frameworks change."
+        ],
+        [
+          "F",
+          "Capture Policy Terms",
+          "POST /CustomerAgreement/{id}/PolicyTerms/Evaluate",
+          "Create and assess a PolicyTerms BQ. Records bank policies applicable to the customer relationship."
+        ],
+        [
+          "G",
+          "Update Policy Terms",
+          "PUT /CustomerAgreement/{id}/PolicyTerms/{policytermsid}/Update",
+          "Amend an existing PolicyTerms BQ when internal bank policies are revised."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "5.1 Lifecycle Update Triggers"
+    },
+    {
+      "type": "p",
+      "text": "The following events require update operations on the Customer Agreement:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Agreement terms are revised",
+        "Regulatory frameworks change (e.g. new AML rules, cross-border provisions)",
+        "Customer status changes impact agreement applicability",
+        "Legal reviews require structured updates",
+        "Authorised signatories change"
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "Level of Details to Capture"
+    },
+    {
+      "type": "p",
+      "text": "This is a Legal Agreement Management domain — not a financial processing domain. Data captured must represent structured agreement metadata, not operational or transactional data."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Data Category",
+          "Details Captured"
+        ],
+        [
+          "Agreement Identity",
+          "Agreement Type, Jurisdiction, Agreement Valid From/To Date (DateTimePeriod)"
+        ],
+        [
+          "Customer Reference",
+          "Customer ID (CIF), Legal Entity Reference, Organisation Name, Organisation ID, Organisation Type"
+        ],
+        [
+          "Organisation Details",
+          "Organisation Date (Incorporation Date), Organisation Name"
+        ],
+        [
+          "Signatories",
+          "Agreement Signatories Responsible Parties (array — 1:M for multiple signatories)"
+        ],
+        [
+          "Linked Products",
+          "Sales Product Agreement References (array — 1:M for multiple product links)"
+        ],
+        [
+          "Document References",
+          "Document Directory Entry Instance Reference — links to stored agreement documents"
+        ],
+        [
+          "Party Lifecycle",
+          "Party Lifecycle Management Reference — Phase Name, Phase Status"
+        ],
+        [
+          "Legal Terms",
+          "Jurisdiction, Applicable Law References (array — law type, description, penalty, guideline, rule name, rule ID, rule status, interpretation)"
+        ],
+        [
+          "Regulatory Terms",
+          "Regulatory Authority, Applicable Regulation References (array — regulation definition, rule name, rule ID, rule dates, rule status, interpretation)"
+        ],
+        [
+          "Policy Terms",
+          "Bank Policy Rule Type, Policy Rule References (policy definition, name, ID, status, dates, involved party, interpretation)"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "BIAN Specification Enhancements & Proposed Changes"
+    },
+    {
+      "type": "p",
+      "text": "The following enhancements were applied while preserving BIAN structure:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Enhancement",
+          "Detail"
+        ],
+        [
+          "PartyReference → string (for v13, not needed for v14)",
+          "PartyReference property modified to contain a string to avoid recursive loop generation in schema"
+        ],
+        [
+          "AgreementSignatoriesResponsibleParties → array",
+          "Made an array (1:M) to support multiple signatories per agreement"
+        ],
+        [
+          "SalesProductAgreementReference → array",
+          "Made an array (1:M) to support multiple product agreements linked to a single Customer Agreement CR"
+        ],
+        [
+          "LegalTerms.ApplicableLawReference → array",
+          "Made an array (1:M) to capture multiple legal agreements within one BQ"
+        ],
+        [
+          "RegulatoryTerms BQ → 1:M",
+          "Entire RegulatoryTerms BQ object supports 1:M relationship (one CR to many BQ instances). ApplicableRegulationReference also made an array."
+        ],
+        [
+          "PolicyTerms BQ → 1:M",
+          "Entire PolicyTerms BQ object supports 1:M relationship (one CR to many BQ instances)"
+        ],
+        [
+          "AgreementValidFromToDate → DateTimePeriod",
+          "Changed data type from DateTime to DateTimePeriod so both agreement start and end date can be stored in a single field"
+        ],
+        [
+          "Custom CIF Retrieve endpoint",
+          "Added /CustomerAgreement/customerinformationprofile/{customerinformationprofileid}/Retrieve to allow retrieval using CIF ID instead of UUID"
+        ],
+        [
+          "CIF ID stored in DB",
+          "CIF ID is passed and stored in Customer Agreement table instead of UUID for direct lookup"
+        ],
+        [
+          "Own DB schema",
+          "This SD has its own DB schema to store data in accordance with BIAN API payloads"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "BIAN Field Mapping"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "PartyReference",
+          "CustomerReference.PartyReference",
+          "CUST102345",
+          "Unique identifier used to represent the customer/party within the banking system."
+        ],
+        [
+          "OrganisationType",
+          "LegalEntityReference.OrganisationType",
+          "Organisation",
+          "Specifies the category or type of organisation such as corporate, partnership, government entity, or private company."
+        ],
+        [
+          "OrganisationIdentification",
+          "LegalEntityReference.OrganisationIdentification.OrganisationIdentification.IdentifierValue",
+          "ORG458921",
+          "Unique identification number assigned to the organisation/legal entity."
+        ],
+        [
+          "OrganisationIdentificationStartDate",
+          "LegalEntityReference.OrganisationIdentification.OrganisationIdentification.IdentifierStartDate.DateTimeContent",
+          "2024-05-10",
+          "Date and time from which the organisation identifier becomes active or valid."
+        ],
+        [
+          "OrganisationIdentificationEndDate",
+          "LegalEntityReference.OrganisationIdentification.OrganisationIdentification.IdentifierEndDate.DateTimeContent",
+          "2030-12-31",
+          "Date and time until which the organisation identifier remains valid."
+        ],
+        [
+          "OrganisationDate",
+          "LegalEntityReference.OrganisationDate.OrganisatioDate.DateTimeContent",
+          "2008-03-15",
+          "Significant business-related date associated with the organisation, such as incorporation or establishment date."
+        ],
+        [
+          "OrganisationDateType",
+          "LegalEntityReference.OrganisationDate.OrganisatioDateType",
+          "IncorporationDate",
+          "Defines the purpose/type of organisation date, for example IncorporationDate or RegistrationDate."
+        ],
+        [
+          "OrganisationName",
+          "LegalEntityReference.OrganisationName.Name",
+          "ABC Manufacturing Pvt Ltd",
+          "Official registered name of the organisation/legal entity."
+        ],
+        [
+          "AgreementType",
+          "AgreementType",
+          "Retail Banking Customer Agreement",
+          "Specifies the type/category of agreement established between the bank and the customer."
+        ],
+        [
+          "AgreementValidFrom",
+          "AgreementValidFromToDate.FromDateTime.DateTimeContent",
+          "2024-05-10",
+          "Start date from which the agreement becomes effective."
+        ],
+        [
+          "AgreementValidTo",
+          "AgreementValidFromToDate.ToDateTime.DateTimeContent",
+          "2027-05-10",
+          "Expiry/end date until which the agreement remains valid."
+        ],
+        [
+          "AgreementSignatories ID",
+          "AgreementSignatoriesResponsibleParties[].PartyReference",
+          "CUST102345",
+          "Identifier of the customer or party authorised to sign or approve the agreement."
+        ],
+        [
+          "DocumentDirectory EntryID",
+          "DocumentDirectoryEntryInstanceReference.DocumentDirectoryEntryIdentification",
+          "DDXXXXXXXXXX",
+          "Unique identifier of the document record stored in the document directory repository."
+        ],
+        [
+          "ProductAgreementType",
+          "SalesProductAgreementReference[].ProductAgreementType",
+          "Savings Account Agreement",
+          "Specifies the type of product-level agreement associated with the banking product or service."
+        ],
+        [
+          "ProductAgreementID",
+          "SalesProductAgreementReference[].ProductAgreementIdentification.IdentifierValue",
+          "PAG-00045789",
+          "Unique identifier assigned to the specific product agreement."
+        ],
+        [
+          "PartyLifecyclePhase",
+          "PartyLife-cycleManagementReference.PhaseName",
+          "Onboarding",
+          "Indicates the current lifecycle stage of the customer/party, such as onboarding, active, suspended, or closed."
+        ],
+        [
+          "PartyLifecycleStatus",
+          "PartyLife-cycleManagementReference.PhaseStatus.StatusReason",
+          "Completed",
+          "Represents the current operational status of the customer lifecycle process."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter Document : Customer Agreement Adapter - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "Yaml File :"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}

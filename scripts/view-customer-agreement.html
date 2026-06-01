@@ -1,0 +1,227 @@
+  <!-- DOCS: API reference (Customer Agreement) -->
+  <section class="view" data-route="/docs/glue/api-reference/customer-agreement" data-tier="external" data-layout="docs" data-section="glue" data-title="Customer Agreement · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-reference/savings-account" class="docs-nav-link">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="#/docs/glue/api-reference/product-directory" class="docs-nav-link">Product Directory</a>
+      <a href="#/docs/glue/api-reference/customer-product-service-directory" class="docs-nav-link">Customer Product &amp; Service Directory</a>
+      <a href="#/docs/glue/api-reference/customer-offer" class="docs-nav-link">Customer Offer</a>
+      <a href="#/docs/glue/api-reference/customer-agreement" class="docs-nav-link is-active">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="#/docs/glue/api-reference/position-keeping" class="docs-nav-link">Position Keeping</a>
+      <a href="#/docs/glue/api-reference/payment-order-initiation" class="docs-nav-link">Payment Order Initiation</a>
+      <a href="#/docs/glue/api-reference/document-directory" class="docs-nav-link">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Customer Agreement</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Customer Agreement</h1>
+      <p class="page-lead">The Customer Agreement service domain captures the legally binding terms accepted by a customer at onboarding and at material life events: master terms, regulatory disclosures, product-specific addenda, and consent records. Section boundaries on this page are reconstructed from the source document&#x27;s table of contents because the export carries styled paragraphs rather than native headings.</p>
+      <h2 class="h3" id="overview">Overview</h2>
+      <p>Customer Agreement</p>
+      <h2 class="h3" id="what-is-this-service-domain">What Is This Service Domain?</h2>
+      <p>In BIAN 14.0, the Customer Agreement Service Domain maintains the master legal and regulatory agreements governing the overall relationship between the bank and a specific customer.</p>
+      <p>This agreement represents the overarching contractual framework under which one or more Sales Product Agreements are subsequently established. It acts as the primary legal contract and policy container between the bank and a customer.</p>
+      <p>The Customer Agreement:</p>
+      <ul>
+        <li>Captures master legal terms, regulatory terms, policies and conditions</li>
+        <li>Defines regulatory, compliance, and jurisdictional considerations</li>
+        <li>Establishes governing provisions applicable across all product relationships</li>
+        <li>Serves as the contractual reference for all linked Sales Product Agreements</li>
+      </ul>
+      <p>1.1 Key Distinction</p>
+      <table class="docs-table">
+        <thead><tr><th>Attribute</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>What it manages</td><td>Master legal terms, regulatory terms, policies, jurisdictional rules, authorised signatories</td></tr>
+          <tr><td>What it does NOT do</td><td>Manage product-specific terms (handled by Sales Product Agreement SD)</td></tr>
+          <tr><td>What it does NOT do</td><td>Manage operational account behaviour (handled by product SDs: Current Account, Loan, Card, etc.)</td></tr>
+          <tr><td>Primary role</td><td>Legal foundation upon which all product agreements are executed</td></tr>
+          <tr><td>Control Record (CR)</td><td>One Customer Agreement CR per customer master relationship</td></tr>
+          <tr><td>Behaviour Qualifiers</td><td>LegalTerms BQ, RegulatoryTerms BQ, PolicyTerms BQ, structured legal/regulatory/policy components under each CR</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="when-to-use-this-service-domain">When to Use This Service Domain</h2>
+      <p>Invoke this SD whenever a master contractual relationship must be established, validated, or maintained.</p>
+      <p>2.1 During Customer Onboarding (Pre-Product Setup)</p>
+      <p>Scenario: A new corporate customer is being onboarded. Before any account, loan, or facility is created, the master agreement must be executed.</p>
+      <p>Action: The orchestration layer invokes the Customer Agreement SD to initiate a Customer Agreement Control Record. This ensures:</p>
+      <ul>
+        <li>Legal terms are established</li>
+        <li>Regulatory compliance clauses are accepted</li>
+        <li>Jurisdictional rules are recorded</li>
+        <li>Authorised signatories are captured</li>
+      </ul>
+      <p>Only after the Customer Agreement CR is established can Sales Product Agreements be initiated.</p>
+      <p>2.2 During Product Origination</p>
+      <p>Scenario: A customer applies for a Personal Loan. Before initiating the Sales Product Agreement, the bank must confirm a valid Customer Agreement exists.</p>
+      <p>Action: The Sales Product Agreement SD invokes the Customer Agreement SD to:</p>
+      <ul>
+        <li>Retrieve the active Customer Agreement instance</li>
+        <li>Validate that lending products are permitted under the master agreement</li>
+        <li>Confirm that the agreement status is not suspended or terminated</li>
+        <li>Verify that required regulatory clauses are included</li>
+      </ul>
+      <p>2.3 During Compliance / Regulatory Review</p>
+      <p>Scenario: A regulatory rule change requires updated AML or cross-border provisions.</p>
+      <p>Action: The Customer Agreement SD is invoked to Update the master agreement terms. All linked Sales Product Agreements remain legally subordinate to this updated master agreement.</p>
+      <p>2.4 During Dispute or Legal Determination</p>
+      <p>Scenario: A dispute arises regarding liability terms.</p>
+      <p>Action: Operations retrieve the Customer Agreement CR to determine governing law, limitation of liability clauses, and arbitration mechanisms.</p>
+      <h2 class="h3" id="cr-bq-structure">CR &amp; BQ Structure</h2>
+      <p>This is a Legal Agreement Management domain. For each master agreement established for a customer, a separate Customer Agreement Control Record (CR) will be created. For each structured component of the agreement, a separate Behaviour Qualifier (BQ) instance is created under the CR.</p>
+      <table class="docs-table">
+        <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Customer Agreement (CR)</td><td>Master legal relationship record per customer. Captures agreement type, jurisdiction, validity period, signatories, and linked product agreements.</td></tr>
+          <tr><td>LegalTerms BQ (not implemented yet)</td><td>General banking terms &amp; conditions, liability clauses, dispute resolution, governing law. Supports 1:M, multiple law references per BQ.</td></tr>
+          <tr><td>RegulatoryTerms BQ (not implemented yet)</td><td>KYC declaration, FATCA/CRS self-certification, data privacy consent, AML clauses. Supports 1:M, one CR to many BQ instances.</td></tr>
+          <tr><td>PolicyTerms BQ (not implemented yet)</td><td>Bank policies on digital banking usage, fee revisions, service eligibility conditions. Supports 1:M, one CR to many BQ instances.</td></tr>
+        </tbody>
+      </table>
+      <p>Example structure:</p>
+      <ul>
+        <li>Customer Agreement (CR), Retail Banking Master Agreement</li>
+        <li>LegalTerms BQ, General T&amp;Cs, liability, dispute resolution, governing law</li>
+        <li>RegulatoryTerms BQ, KYC, FATCA/CRS, data privacy consent</li>
+        <li>PolicyTerms BQ, Digital banking policy, fee revision policy, service eligibility</li>
+      </ul>
+      <h2 class="h3" id="behaviour-qualifiers-scope-endpoints">Behaviour Qualifiers, Scope &amp; Endpoints</h2>
+      <table class="docs-table">
+        <thead><tr><th>BQ / CR</th><th>Endpoints</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>CR</td><td>POST /CustomerAgreement/Evaluate PUT /CustomerAgreement/{id}/Update GET /CustomerAgreement/{id}/Retrieve GET /CustomerAgreement/customerinformationprofile/{cifid}/Retrieve</td><td>✅ Implemented</td></tr>
+          <tr><td>LegalTerms BQ</td><td>POST /CustomerAgreement/{id}/LegalTerms/Evaluate PUT /CustomerAgreement/{id}/LegalTerms/{legaltermsid}/Update GET /CustomerAgreement/{id}/LegalTerms/{legaltermsid}/Retrieve</td><td>Not Implemented</td></tr>
+          <tr><td>RegulatoryTerms BQ</td><td>POST /CustomerAgreement/{id}/RegulatoryTerms/Evaluate PUT /CustomerAgreement/{id}/RegulatoryTerms/{regulatorytermsid}/Update GET /CustomerAgreement/{id}/RegulatoryTerms/Retrieve</td><td>Not Implemented</td></tr>
+          <tr><td>PolicyTerms BQ</td><td>POST /CustomerAgreement/{id}/PolicyTerms/Evaluate PUT /CustomerAgreement/{id}/PolicyTerms/{policytermsid}/Update GET /CustomerAgreement/{id}/PolicyTerms/Retrieve</td><td>Not Implemented</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="lifecycle-invocation">Lifecycle Invocation</h2>
+      <table class="docs-table">
+        <thead><tr><th>Step</th><th>Action</th><th>Endpoint</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>Establish Customer Agreement</td><td>POST /CustomerAgreement/Evaluate</td><td>Create and assess a new CR. Establishes the master legal relationship, captures governing provisions, confirms agreement is valid before any Sales Product Agreement is initiated.</td></tr>
+          <tr><td>B</td><td>Capture Legal Terms</td><td>POST /CustomerAgreement/{id}/LegalTerms/Evaluate</td><td>Create and assess a LegalTerms BQ. Records structured legal clauses, defines governing law and liability provisions, ensures enforceability.</td></tr>
+          <tr><td>C</td><td>Update Legal Terms</td><td>PUT /CustomerAgreement/{id}/LegalTerms/{legaltermsid}/Update</td><td>Amend an existing LegalTerms BQ when legal clauses change due to regulatory updates, policy revisions, or jurisdictional adjustments.</td></tr>
+          <tr><td>D</td><td>Capture Regulatory Terms</td><td>POST /CustomerAgreement/{id}/RegulatoryTerms/Evaluate</td><td>Create and assess a RegulatoryTerms BQ. Records KYC, AML, FATCA/CRS, and data privacy clauses.</td></tr>
+          <tr><td>E</td><td>Update Regulatory Terms</td><td>PUT /CustomerAgreement/{id}/RegulatoryTerms/{regulatorytermsid}/Update</td><td>Amend an existing RegulatoryTerms BQ when regulatory frameworks change.</td></tr>
+          <tr><td>F</td><td>Capture Policy Terms</td><td>POST /CustomerAgreement/{id}/PolicyTerms/Evaluate</td><td>Create and assess a PolicyTerms BQ. Records bank policies applicable to the customer relationship.</td></tr>
+          <tr><td>G</td><td>Update Policy Terms</td><td>PUT /CustomerAgreement/{id}/PolicyTerms/{policytermsid}/Update</td><td>Amend an existing PolicyTerms BQ when internal bank policies are revised.</td></tr>
+        </tbody>
+      </table>
+      <p>5.1 Lifecycle Update Triggers</p>
+      <p>The following events require update operations on the Customer Agreement:</p>
+      <ul>
+        <li>Agreement terms are revised</li>
+        <li>Regulatory frameworks change (e.g. new AML rules, cross-border provisions)</li>
+        <li>Customer status changes impact agreement applicability</li>
+        <li>Legal reviews require structured updates</li>
+        <li>Authorised signatories change</li>
+      </ul>
+      <h2 class="h3" id="level-of-details-to-capture">Level of Details to Capture</h2>
+      <p>This is a Legal Agreement Management domain, not a financial processing domain. Data captured must represent structured agreement metadata, not operational or transactional data.</p>
+      <table class="docs-table">
+        <thead><tr><th>Data Category</th><th>Details Captured</th></tr></thead>
+        <tbody>
+          <tr><td>Agreement Identity</td><td>Agreement Type, Jurisdiction, Agreement Valid From/To Date (DateTimePeriod)</td></tr>
+          <tr><td>Customer Reference</td><td>Customer ID (CIF), Legal Entity Reference, Organisation Name, Organisation ID, Organisation Type</td></tr>
+          <tr><td>Organisation Details</td><td>Organisation Date (Incorporation Date), Organisation Name</td></tr>
+          <tr><td>Signatories</td><td>Agreement Signatories Responsible Parties (array, 1:M for multiple signatories)</td></tr>
+          <tr><td>Linked Products</td><td>Sales Product Agreement References (array, 1:M for multiple product links)</td></tr>
+          <tr><td>Document References</td><td>Document Directory Entry Instance Reference, links to stored agreement documents</td></tr>
+          <tr><td>Party Lifecycle</td><td>Party Lifecycle Management Reference, Phase Name, Phase Status</td></tr>
+          <tr><td>Legal Terms</td><td>Jurisdiction, Applicable Law References (array, law type, description, penalty, guideline, rule name, rule ID, rule status, interpretation)</td></tr>
+          <tr><td>Regulatory Terms</td><td>Regulatory Authority, Applicable Regulation References (array, regulation definition, rule name, rule ID, rule dates, rule status, interpretation)</td></tr>
+          <tr><td>Policy Terms</td><td>Bank Policy Rule Type, Policy Rule References (policy definition, name, ID, status, dates, involved party, interpretation)</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-specification-enhancements-proposed-changes">BIAN Specification Enhancements &amp; Proposed Changes</h2>
+      <p>The following enhancements were applied while preserving BIAN structure:</p>
+      <table class="docs-table">
+        <thead><tr><th>Enhancement</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>PartyReference → string (for v13, not needed for v14)</td><td>PartyReference property modified to contain a string to avoid recursive loop generation in schema</td></tr>
+          <tr><td>AgreementSignatoriesResponsibleParties → array</td><td>Made an array (1:M) to support multiple signatories per agreement</td></tr>
+          <tr><td>SalesProductAgreementReference → array</td><td>Made an array (1:M) to support multiple product agreements linked to a single Customer Agreement CR</td></tr>
+          <tr><td>LegalTerms.ApplicableLawReference → array</td><td>Made an array (1:M) to capture multiple legal agreements within one BQ</td></tr>
+          <tr><td>RegulatoryTerms BQ → 1:M</td><td>Entire RegulatoryTerms BQ object supports 1:M relationship (one CR to many BQ instances). ApplicableRegulationReference also made an array.</td></tr>
+          <tr><td>PolicyTerms BQ → 1:M</td><td>Entire PolicyTerms BQ object supports 1:M relationship (one CR to many BQ instances)</td></tr>
+          <tr><td>AgreementValidFromToDate → DateTimePeriod</td><td>Changed data type from DateTime to DateTimePeriod so both agreement start and end date can be stored in a single field</td></tr>
+          <tr><td>Custom CIF Retrieve endpoint</td><td>Added /CustomerAgreement/customerinformationprofile/{customerinformationprofileid}/Retrieve to allow retrieval using CIF ID instead of UUID</td></tr>
+          <tr><td>CIF ID stored in DB</td><td>CIF ID is passed and stored in Customer Agreement table instead of UUID for direct lookup</td></tr>
+          <tr><td>Own DB schema</td><td>This SD has its own DB schema to store data in accordance with BIAN API payloads</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Data</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>PartyReference</td><td>CustomerReference.PartyReference</td><td>CUST102345</td><td>Unique identifier used to represent the customer/party within the banking system.</td></tr>
+          <tr><td>OrganisationType</td><td>LegalEntityReference.OrganisationType</td><td>Organisation</td><td>Specifies the category or type of organisation such as corporate, partnership, government entity, or private company.</td></tr>
+          <tr><td>OrganisationIdentification</td><td>LegalEntityReference.OrganisationIdentification.OrganisationIdentification.IdentifierValue</td><td>ORG458921</td><td>Unique identification number assigned to the organisation/legal entity.</td></tr>
+          <tr><td>OrganisationIdentificationStartDate</td><td>LegalEntityReference.OrganisationIdentification.OrganisationIdentification.IdentifierStartDate.DateTimeContent</td><td>2024-05-10</td><td>Date and time from which the organisation identifier becomes active or valid.</td></tr>
+          <tr><td>OrganisationIdentificationEndDate</td><td>LegalEntityReference.OrganisationIdentification.OrganisationIdentification.IdentifierEndDate.DateTimeContent</td><td>2030-12-31</td><td>Date and time until which the organisation identifier remains valid.</td></tr>
+          <tr><td>OrganisationDate</td><td>LegalEntityReference.OrganisationDate.OrganisatioDate.DateTimeContent</td><td>2008-03-15</td><td>Significant business-related date associated with the organisation, such as incorporation or establishment date.</td></tr>
+          <tr><td>OrganisationDateType</td><td>LegalEntityReference.OrganisationDate.OrganisatioDateType</td><td>IncorporationDate</td><td>Defines the purpose/type of organisation date, for example IncorporationDate or RegistrationDate.</td></tr>
+          <tr><td>OrganisationName</td><td>LegalEntityReference.OrganisationName.Name</td><td>ABC Manufacturing Pvt Ltd</td><td>Official registered name of the organisation/legal entity.</td></tr>
+          <tr><td>AgreementType</td><td>AgreementType</td><td>Retail Banking Customer Agreement</td><td>Specifies the type/category of agreement established between the bank and the customer.</td></tr>
+          <tr><td>AgreementValidFrom</td><td>AgreementValidFromToDate.FromDateTime.DateTimeContent</td><td>2024-05-10</td><td>Start date from which the agreement becomes effective.</td></tr>
+          <tr><td>AgreementValidTo</td><td>AgreementValidFromToDate.ToDateTime.DateTimeContent</td><td>2027-05-10</td><td>Expiry/end date until which the agreement remains valid.</td></tr>
+          <tr><td>AgreementSignatories ID</td><td>AgreementSignatoriesResponsibleParties[].PartyReference</td><td>CUST102345</td><td>Identifier of the customer or party authorised to sign or approve the agreement.</td></tr>
+          <tr><td>DocumentDirectory EntryID</td><td>DocumentDirectoryEntryInstanceReference.DocumentDirectoryEntryIdentification</td><td>DDXXXXXXXXXX</td><td>Unique identifier of the document record stored in the document directory repository.</td></tr>
+          <tr><td>ProductAgreementType</td><td>SalesProductAgreementReference[].ProductAgreementType</td><td>Savings Account Agreement</td><td>Specifies the type of product-level agreement associated with the banking product or service.</td></tr>
+          <tr><td>ProductAgreementID</td><td>SalesProductAgreementReference[].ProductAgreementIdentification.IdentifierValue</td><td>PAG-00045789</td><td>Unique identifier assigned to the specific product agreement.</td></tr>
+          <tr><td>PartyLifecyclePhase</td><td>PartyLife-cycleManagementReference.PhaseName</td><td>Onboarding</td><td>Indicates the current lifecycle stage of the customer/party, such as onboarding, active, suspended, or closed.</td></tr>
+          <tr><td>PartyLifecycleStatus</td><td>PartyLife-cycleManagementReference.PhaseStatus.StatusReason</td><td>Completed</td><td>Represents the current operational status of the customer lifecycle process.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Customer Agreement</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#overview" class="toc-link">Overview</a>
+      <a href="#what-is-this-service-domain" class="toc-link">What Is This Service Domain?</a>
+      <a href="#when-to-use-this-service-domain" class="toc-link">When to Use This Service Domain</a>
+      <a href="#cr-bq-structure" class="toc-link">CR &amp; BQ Structure</a>
+      <a href="#behaviour-qualifiers-scope-endpoints" class="toc-link">Behaviour Qualifiers, Scope &amp; Endpoints</a>
+      <a href="#lifecycle-invocation" class="toc-link">Lifecycle Invocation</a>
+      <a href="#level-of-details-to-capture" class="toc-link">Level of Details to Capture</a>
+      <a href="#bian-specification-enhancements-proposed-changes" class="toc-link">BIAN Specification Enhancements &amp; Proposed Changes</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>
