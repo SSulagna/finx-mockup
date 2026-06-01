@@ -27,7 +27,7 @@
   /* --- Colors: text on dark backgrounds --- */
   --text-primary: #E8F4F6;
   --text-secondary: #A8C4CC;
-  --text-muted: #6B8A93;
+  --text-muted: #7E9DA6;
   --text-dim: #4A6670;
 
   /* --- Colors: internal layer (purple, distinct from public) --- */
@@ -487,7 +487,7 @@ body.tier-internal #internal-banner {
   font-size: 14px;
   line-height: 1;
   color: inherit;
-  opacity: 0.7;
+  opacity: 0.85;
   cursor: pointer;
   transition: opacity var(--transition), background var(--transition);
 }
