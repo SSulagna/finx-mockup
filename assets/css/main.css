@@ -1400,6 +1400,51 @@ pre {
   .params-row { grid-template-columns: 1fr; gap: 8px; }
 }
 
+/* Reference tables (BIAN field mapping, balance/date type tables) */
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 28px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+}
+.docs-table thead { background: rgba(168, 196, 204, 0.06); }
+.docs-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-dark);
+  white-space: nowrap;
+}
+.docs-table td {
+  padding: 10px 14px;
+  vertical-align: top;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(168, 196, 204, 0.08);
+}
+.docs-table tr:last-child td { border-bottom: none; }
+.docs-table tr:nth-child(even) td { background: rgba(168, 196, 204, 0.02); }
+.docs-table code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+  background: rgba(0, 212, 212, 0.06);
+  padding: 1px 6px;
+  border-radius: 4px;
+  word-break: break-word;
+}
+.docs-table .sub-row td:first-child {
+  font-weight: 600;
+  color: var(--cyan);
+  background: rgba(0, 212, 212, 0.04);
+}
+
 /* -----------------------------------------------------------------------------
    20. Endpoint header (API reference top block)
    ----------------------------------------------------------------------------- */
@@ -1575,6 +1620,7 @@ pre {
 
 .docs-nav-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; }
 .docs-nav-group { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 6px; }
+.docs-nav-sub { font-size: 10.5px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--cyan-dim); margin: 10px 0 4px; padding-left: 2px; }
 .docs-nav-link { display: block; font-size: 13px; color: var(--text-secondary); padding: 6px 0; transition: color var(--transition); }
 .docs-nav-link:hover { color: var(--cyan); }
 .docs-nav-link.is-active { color: var(--cyan); font-weight: 600; }

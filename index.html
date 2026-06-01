@@ -4445,10 +4445,22 @@ Content-Type: application/json</code></pre>
       <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
 
       <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
       <a href="#/docs/glue/api-reference" class="docs-nav-link is-active">Party Lifecycle</a>
-      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Account Management API reference">Account Management</a>
-      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Payments API reference">Payments</a>
-      <a href="#/docs/glue/api-reference" class="docs-nav-link" title="Planned: Document Directory API reference">Document Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Party Reference Data Directory reference">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Term Deposit reference">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product &amp; Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Position Keeping reference">Position Keeping</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Payment Order Initiation reference">Payment Order Initiation</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Document Directory reference">Document Directory</a>
 
       <div class="docs-nav-group">Journey Guides</div>
       <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
@@ -4591,6 +4603,232 @@ Content-Type: application/json</code></pre>
       <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">See this endpoint used in a six-step onboarding flow.</p></a>
       <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
       <a href="#/architecture" class="card card--link"><h3 class="card-title">Architecture →</h3><p class="card-text">How BIAN service domains shape the canonical contract.</p></a>
+    </div></div></aside>
+  </section>
+
+  <!-- DOCS: API reference (Current Account) -->
+  <section class="view" data-route="/docs/glue/api-reference/current-account" data-tier="external" data-layout="docs" data-section="glue" data-title="Current Account · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Party Reference Data Directory reference">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link is-active">Current Account</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Term Deposit reference">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product &amp; Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Position Keeping reference">Position Keeping</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Payment Order Initiation reference">Payment Order Initiation</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Document Directory reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Current Account</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Current Account</h1>
+      <p class="page-lead">The Current Account service domain maintains and exposes the operational state of a specific <code>AccountInstanceReference</code>: balances, restrictions, entitlements, lifecycle attributes, and currency denominations. It is the live runtime view of a single current account, not a directory, a product agreement, or a holdings registry.</p>
+
+      <div class="callout callout--info"><strong>Scope.</strong> This SD owns runtime account state. It does not own customer profile data (handled by Party Reference Data Directory), product agreement configuration (Sales Product Agreement), or the customer holdings registry (Customer Product &amp; Service Directory).</div>
+
+      <h2 class="h3" id="operations">Operations</h2>
+      <p>Three control-record operations cover the full lifecycle. All three operate on a single <code>account.id</code>.</p>
+      <table class="docs-table">
+        <thead><tr><th>Operation</th><th>HTTP</th><th>Path</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Initiate</strong></td><td><span class="method-badge method-post">POST</span></td><td><code>/v2/accounts</code></td><td>Create a current account instance in <code>ACCOUNT_STATUS_PENDING</code>.</td></tr>
+          <tr><td><strong>Update</strong></td><td><span class="method-badge method-put">PUT</span></td><td><code>/v2/accounts/{account.id}</code></td><td>Apply entitlements, restrictions, and parameters; transition to <code>ACCOUNT_STATUS_OPEN</code>.</td></tr>
+          <tr><td><strong>Retrieve</strong></td><td><span class="method-badge method-get">GET</span></td><td><code>/v2/accounts/{account.id}</code></td><td>Return full operational state: balances, entitlements, restrictions, dates.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="h3" id="when-to-use">When to use this SD</h2>
+      <p>Invoke whenever real-time account state must be retrieved or reflected in a consuming system or channel.</p>
+      <table class="docs-table">
+        <thead><tr><th>Trigger</th><th>Action</th><th>Upstream source</th></tr></thead>
+        <tbody>
+          <tr><td>Customer account dashboard view</td><td>Retrieve account state</td><td><code>GET /v2/accounts</code></td></tr>
+          <tr><td>Balance inquiry</td><td>Retrieve live balances</td><td><code>GET /v1/balances/live</code></td></tr>
+          <tr><td>Product rule display (limits, etc.)</td><td>Retrieve entitlement definitions</td><td><code>GET /v1/product-versions</code></td></tr>
+          <tr><td>New account onboarding</td><td>Initiate then Update</td><td><code>POST</code> + <code>PUT /v2/accounts</code></td></tr>
+          <tr><td>Operator freeze or unfreeze</td><td>Update with restriction template + instance</td><td><code>PUT /v2/accounts/{account.id}</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout--info"><strong>Freeze semantics.</strong> Only a bank operator can freeze or unfreeze an account. A frozen account blocks transactions in both directions; customers retain login and document access. No customer notification is emitted on freeze or unfreeze.</div>
+
+      <h2 class="h3" id="data-quality">Data quality requirements</h2>
+      <p>The Current Account SD is an operational account-instance domain, not a directory or contract domain. Every payload must meet these standards.</p>
+      <table class="docs-table">
+        <thead><tr><th>Requirement</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td>Instance-specific</td><td>All data relates to a single <code>AccountInstanceReference</code>. No shared or generic defaults.</td></tr>
+          <tr><td>Runtime accurate</td><td>Balance and status sourced live from the core. No cached or stale values.</td></tr>
+          <tr><td>Balance-aligned</td><td>BIAN balance types map directly to core posting phases.</td></tr>
+          <tr><td>Lifecycle-aware</td><td><code>OpenDate</code> populated only when <code>StatusReason = OPEN</code>.</td></tr>
+          <tr><td>Externally sourced</td><td>Operational state is sourced live from the Thought Machine core through the platform adapter layer.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="h3" id="relationship-model">Relationship model</h2>
+      <p>For each <code>AccountInstanceReference</code> (a 10-digit unique number, e.g. <code>XXXXXXXXXX</code>), the SD payload carries multiple child arrays. Each array can hold one or many records depending on the account's configuration.</p>
+      <div class="code-panel">
+        <div class="code-bar"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-language">Payload skeleton</div><button class="code-copy" type="button">Copy</button></div>
+<pre><code>{
+  "AccountInstanceReference": "XXXXXXXXXX",
+  "accountbalances":               [ /* AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance */ ],
+  "accountdate":                   [ /* OpenDate (conditional), EffectiveDate, CreatingDate */ ],
+  "accountcurrency":               [ /* primary and alternate denominations */ ],
+  "entitlementoptiondefinition":   [ /* product parameters from core product versions */ ],
+  "entitlementoptionsetting":      [ /* account-level overrides applied at initiation */ ],
+  "restrictionoptiondefinition":   [ /* restriction templates from the product version */ ],
+  "restrictionoptionsetting":      [ /* account-level restriction instances */ ]
+}</code></pre>
+      </div>
+
+      <h2 class="h3" id="balance-mapping">Balance type mapping</h2>
+      <table class="docs-table">
+        <thead><tr><th>Core balance phase</th><th>BIAN <code>BalanceType</code></th></tr></thead>
+        <tbody>
+          <tr><td><code>posting_phase_committed</code></td><td><code>AvailableBalance</code></td></tr>
+          <tr><td><code>posting_phase_pending_incoming</code></td><td><code>ExpectedIncomingBalance</code></td></tr>
+          <tr><td><code>posting_phase_pending_outgoing</code></td><td><code>ExpectedOutgoingBalance</code></td></tr>
+        </tbody>
+      </table>
+      <p><strong>Debit/credit indicator rule.</strong> <code>amount &gt; 0</code> sets <code>BalanceIndicator = Credit</code>; <code>amount &lt; 0</code> sets <code>BalanceIndicator = Debit</code>.</p>
+
+      <h2 class="h3" id="date-mapping">Account date type mapping</h2>
+      <table class="docs-table">
+        <thead><tr><th>BIAN <code>DateType</code></th><th>Source field</th><th>Condition</th></tr></thead>
+        <tbody>
+          <tr><td><code>OpenDate</code></td><td><code>source_opentimestamp</code></td><td>Only when <code>StatusReason = OPEN</code></td></tr>
+          <tr><td><code>EffectiveDate</code></td><td><code>activation_timestamp</code></td><td>Always populated</td></tr>
+          <tr><td><code>CreatingDate</code></td><td><code>vault_createtimestamp</code></td><td>Always populated</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="h3" id="parameter-placement">Parameter placement</h2>
+      <p>Parameters are placed by scope. Product-scoped values land in definition arrays; instance-scoped values land in setting arrays.</p>
+      <table class="docs-table">
+        <thead><tr><th>Parameter level</th><th>BIAN destination array</th></tr></thead>
+        <tbody>
+          <tr><td>Product level</td><td><code>entitlementoptiondefinition[]</code></td></tr>
+          <tr><td>Account level</td><td><code>entitlementoptionsetting[]</code></td></tr>
+          <tr><td>Restriction templates</td><td><code>restrictionoptiondefinition[]</code></td></tr>
+          <tr><td>Restriction instances</td><td><code>restrictionoptionsetting[]</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="h3" id="lifecycle">Account lifecycle flow</h2>
+      <h3 id="initiation-sequence" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Initiation sequence</h3>
+      <ol>
+        <li><strong>Initiate.</strong> <code>POST /v2/accounts</code> with empty parameter values; account is created with status <code>ACCOUNT_STATUS_PENDING</code>.</li>
+        <li><strong>Account ID returned.</strong> The core returns an <code>account.id</code> in the 10-digit format (<code>XXXXXXXXXX</code>).</li>
+        <li><strong>Apply parameters.</strong> <code>POST /v1/parameter-values:batchCreate</code> using <code>EntitlementOptionSetting[]</code> values.</li>
+        <li><strong>Activate.</strong> <code>PUT /v2/accounts/{account.id}</code>; status transitions to <code>ACCOUNT_STATUS_OPEN</code>.</li>
+      </ol>
+      <h3 id="status-lifecycle" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Status lifecycle</h3>
+      <ul>
+        <li><code>ACCOUNT_STATUS_PENDING</code>: account created; parameters not applied.</li>
+        <li><code>ACCOUNT_STATUS_OPEN</code>: account activated and fully operational.</li>
+        <li>Other statuses are reflected as-is from the core in <code>AccountDetails.AccountStatus.StatusReason</code>.</li>
+      </ul>
+
+      <h2 class="h3" id="bian-notes">Implementation notes on BIAN 14.0</h2>
+      <p>The following choices were made within this implementation while preserving full BIAN alignment. They are recorded here so consumers can read the payload without surprise.</p>
+      <table class="docs-table">
+        <thead><tr><th>Choice</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>Array-shaped attributes</td><td>Seven attributes are represented as arrays because real account configurations carry multiple concurrent values (currencies, balances, restrictions). Single-value scalars would force lossy flattening.</td></tr>
+          <tr><td>Standard <code>BalanceType</code> enumeration</td><td><code>AvailableBalance</code>, <code>ExpectedIncomingBalance</code>, and <code>ExpectedOutgoingBalance</code> are used because they map cleanly to the three core posting phases and avoid bespoke balance taxonomy.</td></tr>
+          <tr><td><code>CustomerReference</code> typed as <code>InvolvedParty</code></td><td>Represented as <code>InvolvedParty</code> rather than <code>ItemInventory</code> because the relationship is a party-to-account ownership, which is the BIAN party-model intent.</td></tr>
+          <tr><td><code>DepositLimit</code> typed as string</td><td>Encoded as a string to break a circular reference in the schema definition. The value space is unchanged.</td></tr>
+          <tr><td>No additional behaviour qualifiers</td><td>All choices stay inside the existing SD structure; no new BQs are introduced.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="h3" id="field-mapping">BIAN field mapping</h2>
+      <p>The full field-by-field mapping for the Current Account control record. Sample values are illustrative; real responses use the same shapes with tenant data.</p>
+      <table class="docs-table">
+        <thead><tr><th>Field</th><th>JSON path</th><th>Sample</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>ProductAgreementType</td><td><code>CurrentAccount.ProductInstanceReference.ProductAgreementType</code></td><td><code>CurrentAccountAgreement</code></td><td>Type of product agreement associated with this current account instance.</td></tr>
+          <tr><td>ProductAgreementIdentification</td><td><code>CurrentAccount.ProductInstanceReference.ProductAgreementIdentification.IdentifierValue</code></td><td><code>e2e_current_account_glass</code></td><td>Unique identifier of the product agreement linked to this account.</td></tr>
+          <tr><td>ProductAgreementIdentification DateTimeType</td><td><code>ProductInstanceReference.ProductAgreementIdentification.IdentifierStartDate.DateTimeType</code></td><td><code>OpenDate</code></td><td>Marks which lifecycle date anchors the agreement identifier.</td></tr>
+          <tr><td>AgreementType</td><td><code>CurrentAccount.ProductInstanceReference.AgreementType</code></td><td><code>CustomerAgreement</code></td><td>Type of customer agreement governing the product.</td></tr>
+          <tr><td>AgreementVersion</td><td><code>CurrentAccount.ProductInstanceReference.AgreementVersion</code></td><td><code>1077</code></td><td>Smart-contract version identifier linked to the account.</td></tr>
+          <tr><td>AccountIdentificationType</td><td><code>CurrentAccount.CurrentAccountNumber.AccountIdentification.AccountIdentificationType</code></td><td><code>AccountNumber</code></td><td>Identifies the type of account identification used.</td></tr>
+          <tr><td>CustomerReference</td><td><code>CurrentAccount.CustomerReference.PartyReference</code></td><td><code>3f97d088-365e-414c-92fb-403a8fcbf98c</code></td><td>Reference to the party who owns this current account.</td></tr>
+          <tr><td>AccountType</td><td><code>CurrentAccount.AccountType</code></td><td><code>StandardCurrentAccount</code></td><td>Classifies the account as a current account.</td></tr>
+          <tr><td>AccountCurrency</td><td><code>CurrentAccount.AccountCurrency.CurrencyCode</code></td><td><code>USD</code></td><td>Currency permitted on this account. Repeats inside the <code>AccountCurrency[]</code> array.</td></tr>
+          <tr><td>AccountCurrencyType</td><td><code>CurrentAccount.AccountCurrency[].AccountCurrencyType</code></td><td><code>BaseCurrency</code></td><td>Indicates whether the currency is the base or a secondary currency.</td></tr>
+          <tr class="sub-row"><td colspan="4">EntitlementOptionDefinition[]</td></tr>
+          <tr><td>EntitlementOptionDefinition[]</td><td><code>CurrentAccount.EntitlementOptionDefinition.*</code> (ObligationOrEntitlementDefinition, AgreementAction.EventType, EventValue, EventIdentification.IdentifierValue, ArrangementStartDate.EventIdentification.DateTimeContent)</td><td>(empty at initiation)</td><td>Product-level parameter definitions. No parameters are created at the initiate step.</td></tr>
+          <tr class="sub-row"><td colspan="4">EntitlementOptionSetting[]</td></tr>
+          <tr><td>EntitlementOptionSetting[]</td><td><code>CurrentAccount.EntitlementOptionSetting.*</code> (ObligationOrEntitlementDefinition, AgreementAction.EventType, EventValue, EventIdentification.IdentifierValue, AgreementStatus.StatusReason, ArrangementIdentification.IdentifierValue, ArrangementStartDate / ArrangementEndDate.EventIdentification.DateTimeContent)</td><td>(applied on Update)</td><td>Account-level parameter settings. Not passed during initiate; applied during the Update call.</td></tr>
+          <tr class="sub-row"><td colspan="4">RestrictionOptionDefinition[]</td></tr>
+          <tr><td>Account Restriction Identifier</td><td><code>CurrentAccount.RestrictionOptionDefinition[].AccountRestrictionIdentifier.IdentifierValue</code></td><td><code>RESTR-FREEZE-001</code></td><td>Unique identifier for this restriction instance. Correlates the Definition entry with its Setting entry and tracks the restriction across its full lifecycle.</td></tr>
+          <tr><td>Account Restriction Type</td><td><code>CurrentAccount.RestrictionOptionDefinition[].AccountRestrictionType</code></td><td><code>FullAccountFreeze</code></td><td>Classifies the kind of restriction being defined. For a freeze, identifies that all transactional access is being restricted.</td></tr>
+          <tr><td>Account Restriction Description</td><td><code>CurrentAccount.RestrictionOptionDefinition[].AccountRestrictionDescription</code></td><td>Complete freeze of all debit and credit transactions initiated by a bank employee.</td><td>Human-readable explanation of the restriction, used for audit trails and internal review.</td></tr>
+          <tr class="sub-row"><td colspan="4">RestrictionOptionSetting[]</td></tr>
+          <tr><td>Account Restriction Identifier</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionIdentifier.IdentifierValue</code></td><td><code>RESTR-FREEZE-001</code></td><td>Must match the identifier in <code>RestrictionOptionDefinition</code> so the status setting is linked to the correct restriction definition.</td></tr>
+          <tr><td>Account Restriction Type</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionType</code></td><td><code>FullAccountFreeze</code></td><td>Repeats the restriction type so downstream systems can filter and look up by type without joining to the definition record.</td></tr>
+          <tr><td>Account Restriction Status Type</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionStatus.AccountRestrictionStatusType</code></td><td><code>Active</code></td><td>Primary toggle. BIAN enumeration value that governs whether the restriction is enforced.</td></tr>
+          <tr><td>Account Restriction Status Reason</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionStatus.StatusReason</code></td><td>Account frozen by bank employee, pending investigation.</td><td>Human-readable explanation of why the restriction is being activated. Serves as audit narrative.</td></tr>
+          <tr><td>Account Restriction Status Date</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionStatus.StatusDateTime</code></td><td><code>2026-05-11T10:30:00Z</code></td><td>Timestamp recording when the restriction status was set to Active. Anchors the freeze event in the account timeline.</td></tr>
+          <tr><td>Account Restriction Regulator ID</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionRegulator.PartyReference</code></td><td><code>EMP-00482</code></td><td>Identifies the party responsible for applying the restriction. Mirrors the involved-party reference.</td></tr>
+          <tr><td>Account Restriction Regulator</td><td><code>CurrentAccount.RestrictionOptionSetting[].AccountRestrictionRegulator.InvolvementReference</code></td><td><code>BankEmployee</code></td><td>Confirms the role of the regulating party applying the restriction.</td></tr>
+          <tr class="sub-row"><td colspan="4">Account-level fields</td></tr>
+          <tr><td>AssociationType</td><td><code>CurrentAccount.AssociationType</code></td><td><code>PartyIsOwnerOfAccount</code></td><td>Defines the relationship between the party and the account.</td></tr>
+          <tr><td>IdentifierStartDate</td><td><code>CurrentAccountNumber.AccountIdentification.IdentifierStartDate.DateTimeContent</code></td><td><code>2026-03-02T04:58:18.920540Z</code></td><td>Lifecycle date anchoring the account identification. Carried inside the <code>accountdate[]</code> array.</td></tr>
+          <tr><td>AccountName</td><td><code>CurrentAccount.AccountDetails.AccountName.Name</code></td><td>(tenant-supplied)</td><td>Human-readable alias or name of the current account.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Current Account</em> service domain in version 14.0, control-record operations Initiate, Update, and Retrieve. Behaviour qualifiers other than those shown are out of scope for the current implementation.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#operations" class="toc-link">Operations</a>
+      <a href="#when-to-use" class="toc-link">When to use</a>
+      <a href="#data-quality" class="toc-link">Data quality</a>
+      <a href="#relationship-model" class="toc-link">Relationship model</a>
+      <a href="#balance-mapping" class="toc-link">Balance type mapping</a>
+      <a href="#date-mapping" class="toc-link">Date type mapping</a>
+      <a href="#parameter-placement" class="toc-link">Parameter placement</a>
+      <a href="#lifecycle" class="toc-link">Lifecycle</a>
+      <a href="#bian-notes" class="toc-link">BIAN 14.0 notes</a>
+      <a href="#field-mapping" class="toc-link">Field mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for the customer who owns this account.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end flow that lands an open current account.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
     </div></div></aside>
   </section>
 
