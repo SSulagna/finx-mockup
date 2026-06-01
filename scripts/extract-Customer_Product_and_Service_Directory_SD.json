@@ -1,0 +1,730 @@
+{
+  "file": "Customer+Product+and+Service+Directory+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Customer Product and Service Directory SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN v14.0, the Customer Product and Service Directory (CPSD) Service Domain maintains a consolidated directory — a catalog — of the most important details for the current products and services held by a specific customer."
+    },
+    {
+      "type": "p",
+      "text": "Role: It acts as the master index or registry of customer holdings. It is the primary source for a customer 360 view of what products and services a customer owns."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "CPSD SD Manages",
+          "CPSD SD Does NOT Manage"
+        ],
+        [
+          "Consolidated directory (registry) of customer holdings",
+          "Operational account balances — managed by Product SDs"
+        ],
+        [
+          "Product instance references (account IDs) per customer",
+          "Contract terms and agreements — managed by Sales Product Agreement SD"
+        ],
+        [
+          "Product metadata (type, name, status, version, features)",
+          "Customer profile master data — managed by Party Directory SD"
+        ],
+        [
+          "Service holdings per customer (AdministrativeService, FinancialService)",
+          "Deep operational transaction data — managed by respective Product SDs"
+        ],
+        [
+          "Lightweight eligibility reference for origination checks",
+          ""
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Key Rule: CPSD stores lightweight reference data only. It does not duplicate operational data managed by Product SDs or contract data managed by Sales Product Agreement SD."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Call the CPSD SD in any scenario requiring visibility of what products and services a customer holds, without querying the full Core Banking System."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Scenario",
+          "Action",
+          "Data Source / Target"
+        ],
+        [
+          "Customer applies for gold account requiring an existing Mortgage",
+          "Customer Offer SD queries CPSD to verify Mortgage product exists for Customer ID",
+          "CPSD Product BQ — Retrieve"
+        ],
+        [
+          "Customer logs into mobile banking dashboard",
+          "App calls CPSD to get list of active product instance IDs for display",
+          "CPSD CR + Product BQ — Retrieve"
+        ],
+        [
+          "Relationship Manager reviews customer wallet share",
+          "Query CPSD to see full spread of products the customer owns",
+          "CPSD CR + Product BQ — Retrieve"
+        ],
+        [
+          "New account provisioned in CBS",
+          "Orchestration layer registers Product BQ and publishes contract details",
+          "CPSD Product BQ — Register + Update"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.1 During Origination (Eligibility Checks)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A customer applies for a Gold status account which requires them to already hold a Mortgage."
+    },
+    {
+      "type": "p",
+      "text": "Action: The Customer Offer SD queries CPSD to verify if a Mortgage product exists for that Customer ID. No need to query CBS directly."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.2 During Servicing (Dashboard View)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A customer logs into mobile banking. The app needs to display all their accounts (Loans, Cards, Savings) on the home screen."
+    },
+    {
+      "type": "p",
+      "text": "Action: The app calls CPSD to get the list of active product instance IDs and associated metadata for the dashboard. A lightweight, fast query."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.3 During Relationship Management (Wallet Share)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A Relationship Manager needs to see the full spread of products a customer owns."
+    },
+    {
+      "type": "p",
+      "text": "Action: They query CPSD to view the complete customer wallet share, including all product types and service holdings."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. Level of Detail to Capture"
+    },
+    {
+      "type": "p",
+      "text": "CPSD is a Directory/Reference domain — not a processing domain. Data captured must be lightweight, not deep operational data."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Level",
+          "Record Type",
+          "Example"
+        ],
+        [
+          "Product Type",
+          "One CR record per product type",
+          "Savings Account Product, Current Account Product"
+        ],
+        [
+          "Account Instance",
+          "One Product BQ record per account",
+          "Savings Basic Act 1, Savings Basic Act 2, Savings Premium Act 1"
+        ],
+        [
+          "Service Type",
+          "One CR record per service type",
+          "AdministrativeService, FinancialService"
+        ],
+        [
+          "Service Instance",
+          "One Service BQ record per service",
+          "Monthly paper statement, Sweep service"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.1 Control Record (CR) per Customer"
+    },
+    {
+      "type": "p",
+      "text": "One CR record is created per customer, serving as the root directory entry. It captures:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "CustomerReference (CIF) — party identification linkage."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Party involvement role and validity period."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Directory entry status and validity."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ProductAgreementReference for agreement linkage."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.2 Product BQ — One Per Account Instance"
+    },
+    {
+      "type": "p",
+      "text": "A separate Product BQ record is created for each account instance a customer holds. Key fields:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ProductInstanceReference — account number and issuing authority."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ProductIdentification — TM Product ID, open/close dates."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ProductName, ProductType, ProductDescription, ProductVersion."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ProductLifecycleStatus — current status with validity period (from/to)."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ProductFeature — feature type, specification, name, and lifecycle status."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.3 Service BQ — One Per Service Instance"
+    },
+    {
+      "type": "p",
+      "text": "A separate Service BQ record is created for each service the customer has opted for. The structure mirrors the Product BQ pattern. Service BQ is planned for a future implementation phase."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. When and How to Invoke"
+    },
+    {
+      "type": "p",
+      "text": "CPSD must be invoked once core confirms customer creation (new Customer ID received from CBS) and again whenever an account is provisioned or updated."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Step",
+          "Endpoint",
+          "Purpose"
+        ],
+        [
+          "A — Register CR",
+          "POST .../Register",
+          "Create directory entry; assert customer creation. Call immediately on new Customer ID from CBS."
+        ],
+        [
+          "B — Register Product BQ",
+          "POST .../Product/Register",
+          "Link customer to Account ID. Skippable if customer created without account."
+        ],
+        [
+          "C — Update Product BQ",
+          "PUT .../Product/{id}/Update",
+          "Publish contract/parameter specifics from CBS; enables downstream display without querying CBS."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.1 Subsequent Lifecycle Update Triggers"
+    },
+    {
+      "type": "p",
+      "text": "The Product BQ Update endpoint must be called again on the following CBS events:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Trigger Event in CBS",
+          "CPSD Update Required"
+        ],
+        [
+          "Fee parameter change (e.g. inactivity_fee 5.00 → 6.00)",
+          "PUT .../Product/{productid}/Update — update ProductFeature with new values"
+        ],
+        [
+          "Account enters Dormancy",
+          "PUT .../Product/{productid}/Update — update ProductLifecycleStatus.StatusReason"
+        ],
+        [
+          "Account marked pending closure",
+          "PUT .../Product/{productid}/Update — update status and ValidityPeriod ToDateTime"
+        ],
+        [
+          "Customer created without account",
+          "POST .../Register (CR only) — Product BQ registered later on account creation"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Proposed Changes to BIAN Specification"
+    },
+    {
+      "type": "p",
+      "text": "The following changes were applied to BIAN v14.0 to support practical implementation:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Change",
+          "Description & Rationale"
+        ],
+        [
+          "PartyReference → string (10 CR paths)",
+          "Prevents recursive loop generation across multiple paths including EntryStatus, UsageLog, UpdateLog, EntryInstanceReference, CustomerReference, ServicerReference, and ServiceAgreementReference paths."
+        ],
+        [
+          "Product BQ → array (1:M)",
+          "Enables 1 CR to hold many Product BQ records; real customers hold multiple accounts of different types."
+        ],
+        [
+          "Service BQ → array (1:M)",
+          "Enables 1 CR to hold many Service BQ records; real customers may opt for multiple services."
+        ],
+        [
+          "Generic search by CustomerReference",
+          "Non-standard BIAN endpoint to return all CR and BQ details for a CustomerReference; required for Customer 360 view."
+        ],
+        [
+          "Search by ProductInstanceReference",
+          "Non-standard BIAN endpoint to return BQ Product details for a specific ProductInstanceReference (account number)."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "PartyReference paths converted to string:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "CustomerReference.PartyReference",
+        "ServicerReference.PartyReference"
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Implementation Priority"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Endpoint",
+          "Priority"
+        ],
+        [
+          "POST /CustomerProductandServiceDirectory/Register",
+          "Initial implementation — CR creation"
+        ],
+        [
+          "GET /CustomerProductandServiceDirectory/{id}/Retrieve",
+          "Initial implementation — CR retrieval"
+        ],
+        [
+          "POST /…/{id}/Product/Register",
+          "Initial implementation — Product BQ creation"
+        ],
+        [
+          "GET /…/{id}/Product/Retrieve",
+          "Initial implementation — Product BQ retrieval"
+        ],
+        [
+          "PUT /…/{id}/Product/{productid}/Update",
+          "Initial implementation — Product BQ update"
+        ],
+        [
+          "PUT /…/{id}/Update",
+          "Initial implementation — CR update"
+        ],
+        [
+          "GET /…/{partyrefid}/CustomerProductServices/Retrieve",
+          "Initial implementation — to be discussed"
+        ],
+        [
+          "Service BQ endpoints",
+          "Future phase"
+        ],
+        [
+          "Execute, Request, Control CR endpoints",
+          "Future phase"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Note: Endpoint 7 (CustomerProductServices/Retrieve by party reference data directory ID) requires further discussion before implementation."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Data Ownership & Persistence"
+    },
+    {
+      "type": "p",
+      "text": "The CPSD SD maintains its own database schema to store data in accordance with BIAN API payloads. This SD owns its data — it does not rely on CBS or other SDs for its stored data:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Schema Entity",
+          "Data Stored"
+        ],
+        [
+          "Directory CR Records",
+          "CustomerProductAndServiceDirectoryEntry — status, validity period, CustomerReference (CIF), ProductAgreementReference"
+        ],
+        [
+          "Product BQ Records",
+          "One record per account instance: ProductInstanceReference, ProductIdentification, ProductName, ProductType, ProductLifecycleStatus, ProductVersion, ProductFeature"
+        ],
+        [
+          "Service BQ Records",
+          "One record per service instance (same structure as Product BQ): service reference, type, lifecycle status"
+        ],
+        [
+          "Status & Validity Records",
+          "ValidFromDate, ValidToDate, StatusReason for both CR and BQ records"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. Related Service Domains & Systems"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Related SD / System",
+          "Relationship"
+        ],
+        [
+          "Product SDs (Current Account, Savings Account, Loan, etc.)",
+          "Source of operational product data (balances, transactions). CPSD stores lightweight reference only; does not duplicate operational data."
+        ],
+        [
+          "Sales Product Agreement SD",
+          "Holds formal contract terms. CPSD references the agreement via ProductAgreementReference but does not manage agreement content."
+        ],
+        [
+          "Customer Offer SD",
+          "Queries CPSD during origination for eligibility checks (e.g. verify Mortgage product exists before offering Gold account)."
+        ],
+        [
+          "Party Directory SD",
+          "Authoritative source of customer profile master data. CPSD references customer via CIF (CustomerReference.PartyReference)."
+        ],
+        [
+          "Mobile Banking / Sales Systems",
+          "Primary consumers of CPSD; query it for the Customer 360 dashboard view and wallet share without hitting CBS directly."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. BIAN Field Mapping"
+    },
+    {
+      "type": "p",
+      "text": "CR:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "Directory Entry Status",
+          "CustomerProductAndServiceDirectoryEntryStatus.StatusReason.Text",
+          "Obsolete",
+          "Current status of the document directory entry such as active, inactive, pending, or archived."
+        ],
+        [
+          "Entry Status Validity Start DateTime",
+          "CustomerProductAndServiceDirectoryEntryStatus.StatusValidityPeriod.FromDateTime.DateTimeContent.Text",
+          "2025-01-01 00:00:00",
+          "Date and time from which the directory entry status becomes effective."
+        ],
+        [
+          "DateTimeType",
+          "CustomerProductAndServiceDirectoryEntryStatus.StatusValidityPeriod.FromDateTime.DateTimeType",
+          "ValidFromDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "Entry Status Validity End DateTime",
+          "CustomerProductAndServiceDirectoryEntryStatus.StatusValidityPeriod.ToDateTime.DateTimeContent.Text",
+          "2025-11-01 00:00:00",
+          "Date and time until which the directory entry status remains valid."
+        ],
+        [
+          "DateTimeType",
+          "CustomerProductAndServiceDirectoryEntryStatus.StatusValidityPeriod.ToDateTime.DateTimeType",
+          "ValidToDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "Directory Entry ID",
+          "CustomerProductAndServiceDirectoryEntryInstanceReference.IdentifierValue.Value",
+          "CPSD-0001",
+          "Unique identifier assigned to the document directory entry"
+        ],
+        [
+          "Party CIF ID",
+          "CustomerReference.PartyReference",
+          "CIFXXXXXXXXXX",
+          "Unique Customer Information File (CIF) identifier assigned to the customer/party within the banking system."
+        ],
+        [
+          "Involvement Party Role",
+          "CustomerReference.PartyInvolvement.PartyRoleType.Text",
+          "Customer",
+          "Role performed by the involved party in a business relationship or process such as owner, guarantor, or signatory."
+        ],
+        [
+          "Party Role Validity Start Date",
+          "CustomerReference.PartyInvolvement.PartyRoleValidityPeriod.FromDateTime.DateTimeContent.Text",
+          "2025-01-01 00:00:00",
+          "Date from which the party role assignment becomes effective."
+        ],
+        [
+          "DateTimeType",
+          "CustomerReference.PartyInvolvement.PartyRoleValidityPeriod.FromDateTime.DateTimeType",
+          "Activation Date",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "Party Role Validity End Date",
+          "CustomerReference.PartyInvolvement.PartyRoleValidityPeriod.ToDateTime.DateTimeContent.Text",
+          "2025-11-01 00:00:00",
+          "Date until which the party role assignment remains valid."
+        ],
+        [
+          "DateTimeType",
+          "CustomerReference.PartyInvolvement.PartyRoleValidityPeriod.ToDateTime.DateTimeType",
+          "Deactivation Date",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "ProductAgreementType",
+          "ProductAgreementReference.ProductAgreementType",
+          "CurrentAccountAgreement",
+          "Classification/type of agreement associated with a banking product or service."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BQ Products:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "Account Number",
+          "ProductInstanceReference.IdentifierValue.Value",
+          "XXXXXXXXXX - 10-digit unique number",
+          "Unique account identifier/number assigned by the bank to distinguish and manage a customer account."
+        ],
+        [
+          "Customer ID",
+          "ProductInstanceReference.IdentifierIssuingAuthority.PartyReference",
+          "CUST-1001",
+          "Unique identifier assigned to the customer within the banking system."
+        ],
+        [
+          "Account Opening DateTime",
+          "ProductIdentification.ProductIdentification.IdentifierStartDate.DateTimeContent.Text",
+          "2025-01-01 00:00:00",
+          "Date and time when the account was officially opened or activated."
+        ],
+        [
+          "DateTimeType (Open)",
+          "ProductIdentification.ProductIdentification.IdentifierStartDate.DateTimeType",
+          "OpenDate",
+          "Specifies that the recorded date and time corresponds to the account opening event."
+        ],
+        [
+          "Account Closing DateTime",
+          "ProductIdentification.ProductIdentification.IdentifierEndDate.DateTimeContent.Text",
+          "2025-11-01 00:00:00",
+          "Specifies that the recorded date and time corresponds to the account closing event."
+        ],
+        [
+          "DateTimeType (Close)",
+          "ProductIdentification.ProductIdentification.IdentifierEndDate.DateTimeType",
+          "CloseDate",
+          "Date and time when the account was officially closed or terminated."
+        ],
+        [
+          "Product Identification Type",
+          "ProductIdentification.ProductIdentificationType",
+          "Manufacturersitemnumber",
+          "Classification/type of identifier associated with the banking product."
+        ],
+        [
+          "Product Name",
+          "ProductName.Name",
+          "Vault Tiered Savings Account",
+          "Official name assigned to the banking product linked to the account."
+        ],
+        [
+          "Product Priority",
+          "ProductPriority.Text",
+          "Standard",
+          "Priority level assigned to the banking product for business or operational processing."
+        ],
+        [
+          "Product Description",
+          "ProductDescription.Text",
+          "A tiered savings account with configurable interest accrual, inactivity logic, and withdrawal limits",
+          "Detailed description explaining the banking product and its characteristics."
+        ],
+        [
+          "Product Type",
+          "ProductType",
+          "CurrentAccountProduct",
+          "Classification/type of banking product"
+        ],
+        [
+          "Account Status",
+          "ProductLifecycleStatus.ProductStatus.StatusReason.Text",
+          "Obsolete",
+          "Current operational or lifecycle status of the account"
+        ],
+        [
+          "Account Status Start Time",
+          "ProductLifecycleStatus.ProductStatus.StatusValidityPeriod.FromDateTime.DateTimeContent.Text",
+          "2025-01-01 00:00:00",
+          "Date and time from which the account status becomes effective."
+        ],
+        [
+          "DateTimeType (ValidFrom)",
+          "ProductLifecycleStatus.ProductStatus.StatusValidityPeriod.FromDateTime.DateTimeType",
+          "ValidFromDate",
+          "Specifies that the recorded date and time represents the validity start period of the account status."
+        ],
+        [
+          "Account Status End Time",
+          "ProductLifecycleStatus.ProductStatus.StatusValidityPeriod.ToDateTime.DateTimeContent.Text",
+          "2025-11-01 00:00:00",
+          "Date and time until which the account status remains valid."
+        ],
+        [
+          "DateTimeType (ValidTo)",
+          "ProductLifecycleStatus.ProductStatus.StatusValidityPeriod.ToDateTime.DateTimeType",
+          "ValidToDate",
+          "Specifies that the recorded date and time represents the validity end period of the account status."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "The attached YAML is for reference:"
+    },
+    {
+      "type": "p",
+      "text": "TM Adapter Doc: Customer Product and Service Directory Adapter - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}
