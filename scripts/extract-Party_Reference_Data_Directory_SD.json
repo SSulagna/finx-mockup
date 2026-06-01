@@ -1,0 +1,1015 @@
+{
+  "file": "Party+Reference+Data+Directory+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Party Reference Data Directory SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN v14.0, the Party Reference Data Directory (PRDD) Service Domain maintains a consolidated master registry of Party profiles used across the enterprise."
+    },
+    {
+      "type": "p",
+      "text": "Role: PRDD acts as the authoritative master index (registry) of Party identities and key reference attributes across all banking systems. It provides a canonical Party profile that all downstream systems rely on — eliminating the need for each SD to maintain its own party structure."
+    },
+    {
+      "type": "p",
+      "text": "Key Classification: This is a Catalog / Directory Domain — not a Processing Domain. It stores lightweight, canonical, identity-focused, non-transactional data."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "PRDD SD Manages",
+          "PRDD SD Does NOT Manage"
+        ],
+        [
+          "Canonical Party identity and profile",
+          "Transactional data (balances, transactions) — Product SDs"
+        ],
+        [
+          "Party type classification (Individual, Corporate, etc.)",
+          "Contract and agreement terms — Sales Product Agreement SD"
+        ],
+        [
+          "Party identifiers (Passport, PAN, CIF)",
+          "Customer product holdings registry — CPSD SD"
+        ],
+        [
+          "Demographic data (socio-economic, employment, education)",
+          "Offer origination — Customer Offer SD"
+        ],
+        [
+          "KYC reference data (nationality, residency, political exposure)",
+          "Operational account management — Current/Savings Account SDs"
+        ],
+        [
+          "Contact details (email, phone, addresses)",
+          ""
+        ],
+        [
+          "Party status (Active, Suspended, Deceased, Dormant)",
+          ""
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. Party Types"
+    },
+    {
+      "type": "p",
+      "text": "A Party in the PRDD may represent any of the following entity types:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Party Type",
+          "Example",
+          "Key Attributes"
+        ],
+        [
+          "Individual",
+          "Retail Customer (John Doe)",
+          "Name, DOB, Identification, Residential Address"
+        ],
+        [
+          "Organization",
+          "Corporate Customer",
+          "Legal Name, Corporate Address, Registration Number"
+        ],
+        [
+          "Employee",
+          "Bank Staff",
+          "Employee ID, Role, Department"
+        ],
+        [
+          "Counterparty",
+          "Trading counterparty",
+          "Legal Entity Identifier, Classification"
+        ],
+        [
+          "Agent / Intermediary",
+          "Broker, Distributor",
+          "Agent Code, Authorization Details"
+        ],
+        [
+          "Service Provider",
+          "Vendor, Outsourced Partner",
+          "Service Agreement Reference, Contact Details"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Invoke PRDD whenever a system needs a validated, canonical Party identity or reference data — instead of querying heavy Core Banking Systems."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Scenario",
+          "Action",
+          "PRDD Endpoint"
+        ],
+        [
+          "New Individual Customer onboarded in CBS",
+          "Register CR to assert party existence and type; populate demographics and reference BQs",
+          "CR Register + BQ Demographics + BQ Reference Update"
+        ],
+        [
+          "Customer applies for Mortgage",
+          "Loan Origination SD queries PRDD to validate party, confirm type, retrieve KYC and risk classification",
+          "CR Retrieve + BQ Reference Retrieve"
+        ],
+        [
+          "Mobile app loads customer profile",
+          "App queries PRDD to retrieve display name, classification, status, and linked identifiers without hitting CBS",
+          "CR Retrieve"
+        ],
+        [
+          "AML system performs screening",
+          "System retrieves Party profile, identifiers, and classifications before screening",
+          "CR Retrieve + BQ Reference Retrieve"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.1 During Party Creation (Onboarding)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A new Individual Customer (John Doe) is created in Core Banking."
+    },
+    {
+      "type": "p",
+      "text": "Action: Once CBS confirms party creation and returns the new Party ID, the orchestration layer calls POST /PartyReferenceDataDirectory/Register. A CR is created to assert party existence, party type, and directory entry identifier. All downstream systems then use this same Party reference."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.2 During Product Origination"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: Customer applies for a Mortgage."
+    },
+    {
+      "type": "p",
+      "text": "Action: The Loan Origination system queries PRDD to validate party existence, confirm party type (Individual/Corporate), retrieve KYC classification, and retrieve risk category. This prevents each SD from storing its own party structure."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.3 During Servicing (Mobile App)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A mobile app loads customer profile data."
+    },
+    {
+      "type": "p",
+      "text": "Action: The app queries PRDD to retrieve display name, party classification, status (Active/Suspended/Deceased/Dormant), and linked identifiers — without querying heavy core systems."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "3.4 During Compliance / Risk Checks"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: AML system performs screening."
+    },
+    {
+      "type": "p",
+      "text": "Action: System retrieves Party profile, identifiers, and classifications from PRDD before screening. Ensures consistent, canonical identity data for compliance checks."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Control Record & Behavior Qualifier Structure"
+    },
+    {
+      "type": "p",
+      "text": "One Control Record (CR) is created per party. BQ cardinality varies:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "CR / BQ",
+          "Description & Cardinality"
+        ],
+        [
+          "CR — CustomerProductAndServiceDirectoryEntry",
+          "One CR per party. Holds PartyReference, PartyName, PartyIdentification[], PartyType, DirectoryEntryDate."
+        ],
+        [
+          "BQ Demographics",
+          "1:1 with CR. Socio-EconomicClassification, Ethnicity, Religion, Employment, EducationHistory."
+        ],
+        [
+          "BQ Reference",
+          "1:1 with CR. KYC data, addresses, contact details, political exposure, CustomerSinceDate."
+        ],
+        [
+          "BQ Associations",
+          "1:N with CR (array). Party relationships and associations — multiple records per party."
+        ],
+        [
+          "BQ Bank Relations",
+          "1:N with CR (array). Bank relationship records — multiple records per party."
+        ],
+        [
+          "BQ CorePartyProfile (Non-BIAN)",
+          "1:1 with CR. Utility BQ for Core Banking System party creation. Contains CorePartyProfileDetails."
+        ],
+        [
+          "BQ DirectoryRecord (Non-BIAN)",
+          "Search BQ. Accepts Filter/FilterCriteria and returns DirectoryRecordDetails for matched parties."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Cardinality Rule: Associations BQ and Bank Relations BQ are 1:N (array) with the CR. All other BQs are 1:1 with the CR."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Level of Detail to Capture"
+    },
+    {
+      "type": "p",
+      "text": "PRDD is a Directory/Catalog domain. Data must be lightweight, canonical, identity-focused, and non-transactional:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Data Category",
+          "Fields Captured"
+        ],
+        [
+          "Identity",
+          "FirstName, MiddleName, FamilyName, FullName, LegalName, PartyType, DirectoryEntryDate"
+        ],
+        [
+          "Identification",
+          "PartyIdentification[] — type, value, start/end dates (e.g. Passport, PAN, CIF)"
+        ],
+        [
+          "Demographics",
+          "Socio-EconomicClassification, Ethnicity, Religion, Employment, EducationHistory"
+        ],
+        [
+          "KYC & Compliance",
+          "GovernmentIssuedIdentityReference, ResidencyStatus, Nationality, PoliticalExposureType, PoliticalExposureDescriptionRecord"
+        ],
+        [
+          "Contact Details",
+          "eMailAddress, CellPhoneNumber[] (Primary + Secondary), ResidentialAddress[], PartyAddress[]"
+        ],
+        [
+          "Status & Dates",
+          "PartyActivityIndicator, CustomerSinceDate, DateofBirth, DirectoryEntryDate"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. When and How to Invoke"
+    },
+    {
+      "type": "p",
+      "text": "PRDD is invoked at party creation and at any subsequent lifecycle event requiring identity or reference data update:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Step",
+          "Endpoint",
+          "Purpose"
+        ],
+        [
+          "A — Register CR",
+          "POST .../Register",
+          "Assert party creation; record party type and directory entry identifier"
+        ],
+        [
+          "B — Update Demographics",
+          "PUT .../Demographics/{id}/Update",
+          "Populate socio-economic, employment, and education data"
+        ],
+        [
+          "C — Update Reference",
+          "PUT .../Reference/{id}/Update",
+          "Populate KYC, addresses, contacts, political exposure"
+        ],
+        [
+          "D — CorePartyProfile Register",
+          "POST .../CorePartyProfile/Register",
+          "Create party in CBS using structured CorePartyProfileDetails (Non-BIAN Utility API)"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.1 Non-BIAN Utility API Endpoints"
+    },
+    {
+      "type": "p",
+      "text": "Two Non-BIAN Utility API endpoints extend PRDD for CBS-specific operations:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "CorePartyProfile/Register — Sends structured party data to CBS for core party creation. Accepts CorePartyProfileDetails containing Salutation, NameInformation, EmailAddress, MobileNumber[], DateOfBirth, PartyIdentificationValue, CorePartyCountry. Uses CIF ID (format: CIFXXXXXXXXXX) as party identifier."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "DirectoryRecord/Register — Party search endpoint. Accepts Filter and FilterCriteria objects; returns DirectoryRecordDetails of matched parties. Supports search by CustomerReference, ProductReference, OfferReference, and other business identifiers."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Proposed Changes to BIAN Specification"
+    },
+    {
+      "type": "p",
+      "text": "The following modifications were made to BIAN v14.0 for practical implementation:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Change",
+          "Description & Rationale"
+        ],
+        [
+          "New BQ — CoreParty",
+          "Basic Customer Information BQ for Core Banking party creation. Non-BIAN Utility API."
+        ],
+        [
+          "New BQ — DirectoryRecord",
+          "Search operations BQ against PRDD. Non-BIAN Utility API."
+        ],
+        [
+          "New Objects (13)",
+          "NameInformation, Salutation, EmailAddress, MobileNumber (array), DateOfBirth, PartyIdentificationValue, CorePartyCountry, DirectoryRecord, DirectoryRecordDetails, Filter, FilterCriteria, CorePartyProfile, CorePartyProfileDetails"
+        ],
+        [
+          "Array — PartyIdentification",
+          "Party may hold multiple identification documents of different types"
+        ],
+        [
+          "Array — ResidentialAddress / CorporateAddress / PartyAddress",
+          "Party may have multiple address records (residential, correspondence, etc.)"
+        ],
+        [
+          "Array — GovernmentIssuedDocumentDetails",
+          "Party may hold multiple government-issued documents"
+        ],
+        [
+          "Array — DocumentDirectoryEntryInstanceReference",
+          "Multiple document directory references per party"
+        ],
+        [
+          "Array — AssociateObligationorDependencyDescription",
+          "Multiple obligation/dependency descriptions per association"
+        ],
+        [
+          "Array — Associations BQ",
+          "1:N cardinality — one CR holds many Associations records"
+        ],
+        [
+          "Array — Bank Relations BQ",
+          "1:N cardinality — one CR holds many Bank Relations records"
+        ],
+        [
+          "EthnicityReligion split",
+          "v14 change: single 'EthnicityReligion' attribute split into separate 'Ethnicity' and 'Religion' attributes"
+        ],
+        [
+          "Party — PartyActivityIndicator + IndustryCode",
+          "New attribute and object added in v14 vs v13"
+        ],
+        [
+          "InvolvedParty — string fields",
+          "PartyReference and InvolvementReference both modified to string to avoid recursive loop"
+        ],
+        [
+          "ProductAgreement / PartyObligationOrEntitlement / Country",
+          "Extended payloads in v14; Country now includes CountryName and CountryCode"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "Array-normalised attributes:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "PartyIdentification — multiple identification documents per party",
+        "GovernmentIssuedDocumentDetails — multiple government documents per party",
+        "DocumentDirectoryEntryInstanceReference — multiple document directory references",
+        "ResidentialAddress, CorporateAddress, PartyAddress — multiple addresses per party",
+        "AssociateObligationorDependencyDescription — multiple obligation/dependency descriptions"
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. Implementation Priority"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Endpoint",
+          "Priority"
+        ],
+        [
+          "POST /PartyReferenceDataDirectory/Register",
+          "Initial implementation — CR creation"
+        ],
+        [
+          "PUT /PartyReferenceDataDirectory/{id}/Update",
+          "Initial implementation — CR update"
+        ],
+        [
+          "GET /PartyReferenceDataDirectory/{id}/Retrieve",
+          "Initial implementation — CR retrieval"
+        ],
+        [
+          "PUT /…/{id}/Demographics/{demographicsid}/Update",
+          "Initial implementation — BQ Demographics update"
+        ],
+        [
+          "GET /…/{id}/Demographics/{demographicsid}/Retrieve",
+          "Initial implementation — BQ Demographics retrieval"
+        ],
+        [
+          "PUT /…/{id}/Reference/{referenceid}/Update",
+          "Initial implementation — BQ Reference update"
+        ],
+        [
+          "GET /…/{id}/Reference/{referenceid}/Retrieve",
+          "Initial implementation — BQ Reference retrieval"
+        ],
+        [
+          "POST /…/{id}/CorePartyProfile/Register (Non-BIAN)",
+          "Initial implementation — Core Banking party creation"
+        ],
+        [
+          "POST /…/DirectoryRecord/Register (Non-BIAN)",
+          "Initial implementation — Party search/retrieval"
+        ],
+        [
+          "Associations BQ endpoints",
+          "Future phase"
+        ],
+        [
+          "Bank Relations BQ endpoints",
+          "Future phase"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Important identifier rule: The human-readable party ID must be passed in all endpoints except CorePartyProfile/Register, which uses CIF ID (format: CIFXXXXXXXXXX)."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "9. BIAN Field Mapping"
+    },
+    {
+      "type": "p",
+      "text": "CR: PartyReferenceDataDirectoryEntry"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "FirstName",
+          "PartyReference.PartyName.FirstName",
+          "Arjun",
+          "Given name or personal name of the party/customer."
+        ],
+        [
+          "MiddleName",
+          "PartyReference.PartyName.MiddleName",
+          "Kumar",
+          "Middle name of the party/customer, if applicable."
+        ],
+        [
+          "FamilyName",
+          "PartyReference.PartyName.FamilyName",
+          "Venkataraman",
+          "Family name, surname, or last name of the party/customer."
+        ],
+        [
+          "FullName",
+          "PartyReference.PartyName.FullName",
+          "Arjun Kumar Venkataraman",
+          "Complete name of the party/customer including all name components."
+        ],
+        [
+          "LegalName",
+          "PartyReference.PartyName.LegalName",
+          "Arjun Kumar Venkataraman",
+          "Official legal name registered for the party/customer."
+        ],
+        [
+          "DateTimeContent",
+          "PartyReference.PartyDateTime.DateTimeContent",
+          "2025-03-10T00:00:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "TimeZoneCode",
+          "PartyReference.PartyDateTime.TimeZoneCode",
+          "IST",
+          "Code representing the applicable time zone for the recorded date and time."
+        ],
+        [
+          "DateTimeType",
+          "PartyReference.PartyDateTime.DateTimeType",
+          "OpenDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "PartyIdentificationType",
+          "PartyReference.PartyIdentification.PartyIdentificationType",
+          "Passportnumber",
+          "Passportnumber"
+        ],
+        [
+          "IdentifierValue",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierValue",
+          "P1234567",
+          "P1234567"
+        ],
+        [
+          "DateTimeContent",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierStartDate.DateTimeContent",
+          "2020-01-01T00:00:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "TimeZoneCode",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierStartDate.TimeZoneCode",
+          "IST",
+          "Code representing the applicable time zone for the recorded date and time."
+        ],
+        [
+          "DateTimeType",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierStartDate.DateTimeType",
+          "ValidFromDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "DateTimeContent",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierEndDate.DateTimeContent",
+          "2030-01-01T00:00:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "TimeZoneCode",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierEndDate.TimeZoneCode",
+          "IST",
+          "Code representing the applicable time zone for the recorded date and time."
+        ],
+        [
+          "DateTimeType",
+          "PartyReference.PartyIdentification.PartyIdentification.IdentifierEndDate.DateTimeType",
+          "ExpiryDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "PartyIdentificationType",
+          "PartyReference.PartyIdentificationType",
+          "Customeridentificationnumber",
+          "Type/category of identification associated with the party."
+        ],
+        [
+          "IdentifierValue",
+          "PartyReference.PartyIdentification.IdentifierValue",
+          "ABCDE1234F",
+          "Unique identifier value assigned to a party, entity, or business object."
+        ],
+        [
+          "DateTimeContent",
+          "PartyReference.PartyIdentification.IdentifierStartDate.DateTimeContent",
+          "2015-06-01T00:00:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "TimeZoneCode",
+          "PartyReference.PartyIdentification.IdentifierStartDate.TimeZoneCode",
+          "IST",
+          "Code representing the applicable time zone for the recorded date and time."
+        ],
+        [
+          "DateTimeType",
+          "PartyReference.PartyIdentification.IdentifierStartDate.DateTimeType",
+          "EffectiveDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "DirectoryEntryDateType",
+          "DirectoryEntryDateType",
+          "OpenDate",
+          "Specifies the purpose/type of the directory entry date."
+        ],
+        [
+          "DateTimeContent",
+          "DirectoryEntryDate.DateTimeContent",
+          "2025-03-10T00:00:00",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "TimeZoneCode",
+          "DirectoryEntryDate.TimeZoneCode",
+          "IST",
+          "Code representing the applicable time zone for the recorded date and time."
+        ],
+        [
+          "DateTimeType",
+          "DirectoryEntryDate.DateTimeType",
+          "OpenDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "PartyType",
+          "PartyType",
+          "Person",
+          "Classification/type of party such as Individual, Organisation, Corporate, or Joint Account Holder."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BQ: Demographics"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "Socio-EconomicClassification",
+          "Socio-EconomicClassification",
+          "MiddleIncome",
+          "Classification that represents the social and economic category or segment associated with the party/customer."
+        ],
+        [
+          "Ethnicity",
+          "Ethnicity",
+          "Asian",
+          "Ethnic or cultural background associated with the party/customer."
+        ],
+        [
+          "Religion",
+          "Religion",
+          "Hindu",
+          "Religious affiliation or belief associated with the party/customer."
+        ],
+        [
+          "PartyReference",
+          "Employment.PartyReference",
+          "CUST-001",
+          "Unique reference identifier representing a customer, organisation, or involved party within the banking system."
+        ],
+        [
+          "InvolvementReference",
+          "Employment.InvolvementReference",
+          "EMP-ANALYST-2018",
+          "Reference identifier indicating the role or involvement of a party in a specific business activity or relationship."
+        ],
+        [
+          "EmploymentHistory",
+          "EmploymentHistory",
+          "Employed full-time since June 2018 as a Business Analyst at a private banking firm in Chennai. Prior: junior analyst at a fintech startup 2015–2018.",
+          "Historical employment details of the party/customer including employer information, job roles, and employment periods."
+        ],
+        [
+          "EducationHistory",
+          "EducationHistory",
+          "B.E. (Computer Science) – Anna University, Chennai, 2012. PG Diploma in Banking & Finance – NIBM Pune, 2014.",
+          "Historical educational background of the party/customer including qualifications, institutions, and study periods."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BQ: Reference"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "PartyNameSalutation",
+          "PartyNameSalutation",
+          "Mister",
+          "Title or salutation associated with the party/customer such as Mr., Mrs., Dr., or Ms."
+        ],
+        [
+          "PartyIdentificationType",
+          "GovernmentIssuedIdentityReference.PartyIdentificationType",
+          "Taxidentificationnumber",
+          "Type/category of identification associated with the party"
+        ],
+        [
+          "IdentifierValue",
+          "GovernmentIssuedIdentityReference.PartyIdentification.IdentifierValue",
+          "TAX-128971",
+          "Unique identifier value assigned to a party, document, address, or entity."
+        ],
+        [
+          "DocumentDirectoryEntryIdentification",
+          "DocumentDirectoryEntryInstanceReference.DocumentDirectoryEntryIdentification",
+          "DOC-101",
+          "Unique identifier assigned to a document entry stored in the document directory repository."
+        ],
+        [
+          "StatusReason",
+          "ResidencyStatus.StatusReason",
+          "PermanentResident",
+          "Reason or explanation describing the current status of a process, transaction, or entity."
+        ],
+        [
+          "DateTimeContent",
+          "DateofBirth.DateTimeContent",
+          "20-10-1990",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "DateTimeType",
+          "DateofBirth.DateTimeType",
+          "ValueDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "PartyReference",
+          "Nationality.NationalRegulatoryAuthority.PartyReference",
+          "Federal Reserve System",
+          "Unique reference identifier representing a customer, organisation, or involved party within the banking system."
+        ],
+        [
+          "Name",
+          "Nationality.CountryName.Name",
+          "India",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "AddressType",
+          "ResidentialAddress.AddressType",
+          "Residential",
+          "Classification/type of address such as residential, mailing, office, or permanent address."
+        ],
+        [
+          "AddressLine",
+          "ResidentialAddress.AddressLine",
+          "501/27",
+          "Textual address line containing street or location details."
+        ],
+        [
+          "Name",
+          "ResidentialAddress.StreetName.Name",
+          "Nariman Point Road",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "BuildingNumber",
+          "ResidentialAddress.BuildingNumber",
+          "15A",
+          "Number or identifier assigned to a building or premises within an address."
+        ],
+        [
+          "IdentifierValue",
+          "ResidentialAddress.PostCode.IdentifierValue",
+          "400021",
+          "Unique identifier value assigned to a party, document, address, or entity."
+        ],
+        [
+          "Name",
+          "ResidentialAddress.TownName.Name",
+          "Mumbai, Maharashtra",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "CountrySubDivision",
+          "ResidentialAddress.CountrySubDivision",
+          "Province",
+          "Administrative subdivision within a country such as state, province, or region."
+        ],
+        [
+          "Name",
+          "ResidentialAddress.Country.CountryName.Name",
+          "India",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "ContactPointType",
+          "eMailAddress.ContactPointType",
+          "ElectronicAddress",
+          "Type of contact information such as mobile, email, phone, fax, or social media contact."
+        ],
+        [
+          "PartyLocationType",
+          "eMailAddress.PartyLocationType",
+          "LocationIsContactPointAddressOfParty",
+          "Classification/type of party location such as residential, business, branch, or correspondence location."
+        ],
+        [
+          "IdentifierValue",
+          "eMailAddress.LocationReference.LocationIdentification.IdentifierValue",
+          "arjun.v@gmail.com",
+          "Unique identifier value assigned to a party, document, address, or entity."
+        ],
+        [
+          "Name",
+          "eMailAddress.LocationReference.LocationName.Name",
+          "PrimaryEmail",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "ContactPointType",
+          "CellPhoneNumber.ContactPointType",
+          "PhoneNumber",
+          "Type of contact information such as mobile, email, phone, fax, or social media contact."
+        ],
+        [
+          "PartyLocationType",
+          "CellPhoneNumber.PartyLocationType",
+          "LocationIsContactPointAddressOfParty",
+          "Classification/type of party location such as residential, business, branch, or correspondence location."
+        ],
+        [
+          "IdentifierValue",
+          "CellPhoneNumber.LocationReference.LocationIdentification.IdentifierValue",
+          "+91-9293328912",
+          "Unique identifier value assigned to a party, document, address, or entity."
+        ],
+        [
+          "Name",
+          "CellPhoneNumber.LocationReference.LocationName.Name",
+          "PrimaryContactNumber",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "ContactPointType",
+          "CellPhoneNumber.ContactPointType",
+          "PhoneNumber",
+          "Type of contact information such as mobile, email, phone, fax, or social media contact."
+        ],
+        [
+          "PartyLocationType",
+          "CellPhoneNumber.PartyLocationType",
+          "LocationIsContactPointAddressOfParty",
+          "Classification/type of party location such as residential, business, branch, or correspondence location."
+        ],
+        [
+          "IdentifierValue",
+          "CellPhoneNumber.LocationReference.LocationIdentification.IdentifierValue",
+          "+91-6925628919",
+          "Unique identifier value assigned to a party, document, address, or entity."
+        ],
+        [
+          "Name",
+          "CellPhoneNumber.LocationReference.LocationName.Name",
+          "SecondaryContactNumber",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "PoliticalExposureType",
+          "PoliticalExposureType",
+          "Politicalexposuredomestic",
+          "Indicates the category/type of politically exposed person (PEP) classification associated with the party."
+        ],
+        [
+          "PoliticalExposureDescriptionRecord",
+          "PoliticalExposureDescriptionRecord",
+          "Family member of political member",
+          "Detailed description or supporting information related to the party’s political exposure status."
+        ],
+        [
+          "DateTimeContent",
+          "CustomerSinceDate.DateTimeContent",
+          "10-07-2025",
+          "Actual date and time value associated with a business event or record."
+        ],
+        [
+          "AddressType",
+          "PartyAddress.AddressType",
+          "Correspondence",
+          "Classification/type of address such as residential, mailing, office, or permanent address."
+        ],
+        [
+          "AddressLine",
+          "PartyAddress.AddressLine",
+          "202/139",
+          "Textual address line containing street or location details."
+        ],
+        [
+          "Name",
+          "PartyAddress.StreetName.Name",
+          "Rajiv Gandhi Salai",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "BuildingNumber",
+          "PartyAddress.BuildingNumber",
+          "42B",
+          "Number or identifier assigned to a building or premises within an address."
+        ],
+        [
+          "IdentifierValue",
+          "PartyAddress.PostCode.IdentifierValue",
+          "600096",
+          "Unique identifier value assigned to a party, document, address, or entity."
+        ],
+        [
+          "Name",
+          "PartyAddress.TownName.Name",
+          "Chennai, Tamil Nadu",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ],
+        [
+          "CountrySubDivision",
+          "PartyAddress.CountrySubDivision",
+          "Province",
+          "Administrative subdivision within a country such as state, province, or region."
+        ],
+        [
+          "Name",
+          "PartyAddress.Country.CountryName.Name",
+          "India",
+          "Official or descriptive name associated with a person, organisation, address component, or entity."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Revised YAML:"
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter: Customer Product and Service Directory SD - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}

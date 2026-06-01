@@ -4447,7 +4447,7 @@ Content-Type: application/json</code></pre>
       <div class="docs-nav-group">API Reference</div>
       <div class="docs-nav-sub">Party &amp; Customer</div>
       <a href="#/docs/glue/api-reference" class="docs-nav-link is-active">Party Lifecycle</a>
-      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Party Reference Data Directory reference">Party Reference Data</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
       <div class="docs-nav-sub">Accounts &amp; Deposits</div>
       <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
       <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
@@ -4625,7 +4625,7 @@ Content-Type: application/json</code></pre>
       <div class="docs-nav-group">API Reference</div>
       <div class="docs-nav-sub">Party &amp; Customer</div>
       <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
-      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Party Reference Data Directory reference">Party Reference Data</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
       <div class="docs-nav-sub">Accounts &amp; Deposits</div>
       <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link is-active">Current Account</a>
       <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
@@ -4851,7 +4851,7 @@ Content-Type: application/json</code></pre>
       <div class="docs-nav-group">API Reference</div>
       <div class="docs-nav-sub">Party &amp; Customer</div>
       <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
-      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Party Reference Data Directory reference">Party Reference Data</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
       <div class="docs-nav-sub">Accounts &amp; Deposits</div>
       <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
       <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
@@ -5040,6 +5040,321 @@ Content-Type: application/json</code></pre>
       <a href="#term-deposit-specific-parameters" class="toc-link">Term Deposit-Specific Parameters</a>
       <a href="#account-lifecycle-flow" class="toc-link">Account Lifecycle Flow</a>
       <a href="#status-lifecycle" class="toc-link">Status Lifecycle</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>
+
+    <!-- DOCS: API reference (Party Reference Data Directory) -->
+  <section class="view" data-route="/docs/glue/api-reference/party-reference-data" data-tier="external" data-layout="docs" data-section="glue" data-title="Party Reference Data Directory · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link is-active">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product & Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Position Keeping reference">Position Keeping</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Payment Order Initiation reference">Payment Order Initiation</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Document Directory reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Party Reference Data Directory</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Party Reference Data Directory</h1>
+      <p class="page-lead">The Party Reference Data Directory service domain maintains the authoritative master record of customer profile data: identifiers, names, contact details, document references, and consent history. Other service domains read party data from here; they do not duplicate it.</p>
+      <div class="callout callout--info"><strong>Scope.</strong> This SD owns customer master data. Lifecycle orchestration belongs to Party Lifecycle Management; document artifacts belong to Document Directory; agreement terms belong to Customer Agreement.</div>
+
+      <h2 class="h3" id="what-is-this-service-domain">What Is This Service Domain?</h2>
+      <p>In BIAN v14.0, the Party Reference Data Directory (PRDD) Service Domain maintains a consolidated master registry of Party profiles used across the enterprise.</p>
+      <p>Role: PRDD acts as the authoritative master index (registry) of Party identities and key reference attributes across all banking systems. It provides a canonical Party profile that all downstream systems rely on, eliminating the need for each SD to maintain its own party structure.</p>
+      <p>Key Classification: This is a Catalog / Directory Domain, not a Processing Domain. It stores lightweight, canonical, identity-focused, non-transactional data.</p>
+      <h2 class="h3" id="key-distinction">Key Distinction</h2>
+      <table class="docs-table">
+        <thead><tr><th>PRDD SD Manages</th><th>PRDD SD Does NOT Manage</th></tr></thead>
+        <tbody>
+          <tr><td>Canonical Party identity and profile</td><td>Transactional data (balances, transactions), Product SDs</td></tr>
+          <tr><td>Party type classification (Individual, Corporate, etc.)</td><td>Contract and agreement terms, Sales Product Agreement SD</td></tr>
+          <tr><td>Party identifiers (Passport, PAN, CIF)</td><td>Customer product holdings registry, CPSD SD</td></tr>
+          <tr><td>Demographic data (socio-economic, employment, education)</td><td>Offer origination, Customer Offer SD</td></tr>
+          <tr><td>KYC reference data (nationality, residency, political exposure)</td><td>Operational account management, Current/Savings Account SDs</td></tr>
+          <tr><td>Contact details (email, phone, addresses)</td><td></td></tr>
+          <tr><td>Party status (Active, Suspended, Deceased, Dormant)</td><td></td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="party-types">Party Types</h2>
+      <p>A Party in the PRDD may represent any of the following entity types:</p>
+      <table class="docs-table">
+        <thead><tr><th>Party Type</th><th>Example</th><th>Key Attributes</th></tr></thead>
+        <tbody>
+          <tr><td>Individual</td><td>Retail Customer (John Doe)</td><td>Name, DOB, Identification, Residential Address</td></tr>
+          <tr><td>Organization</td><td>Corporate Customer</td><td>Legal Name, Corporate Address, Registration Number</td></tr>
+          <tr><td>Employee</td><td>Bank Staff</td><td>Employee ID, Role, Department</td></tr>
+          <tr><td>Counterparty</td><td>Trading counterparty</td><td>Legal Entity Identifier, Classification</td></tr>
+          <tr><td>Agent / Intermediary</td><td>Broker, Distributor</td><td>Agent Code, Authorization Details</td></tr>
+          <tr><td>Service Provider</td><td>Vendor, Outsourced Partner</td><td>Service Agreement Reference, Contact Details</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="when-to-use-this-service-domain">When to Use This Service Domain</h2>
+      <p>Invoke PRDD whenever a system needs a validated, canonical Party identity or reference data, instead of querying heavy Core Banking Systems.</p>
+      <table class="docs-table">
+        <thead><tr><th>Scenario</th><th>Action</th><th>PRDD Endpoint</th></tr></thead>
+        <tbody>
+          <tr><td>New Individual Customer onboarded in CBS</td><td>Register CR to assert party existence and type; populate demographics and reference BQs</td><td>CR Register + BQ Demographics + BQ Reference Update</td></tr>
+          <tr><td>Customer applies for Mortgage</td><td>Loan Origination SD queries PRDD to validate party, confirm type, retrieve KYC and risk classification</td><td>CR Retrieve + BQ Reference Retrieve</td></tr>
+          <tr><td>Mobile app loads customer profile</td><td>App queries PRDD to retrieve display name, classification, status, and linked identifiers without hitting CBS</td><td>CR Retrieve</td></tr>
+          <tr><td>AML system performs screening</td><td>System retrieves Party profile, identifiers, and classifications before screening</td><td>CR Retrieve + BQ Reference Retrieve</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="during-party-creation-onboarding">During Party Creation (Onboarding)</h2>
+      <p>Scenario: A new Individual Customer (John Doe) is created in Core Banking.</p>
+      <p>Action: Once CBS confirms party creation and returns the new Party ID, the orchestration layer calls POST /PartyReferenceDataDirectory/Register. A CR is created to assert party existence, party type, and directory entry identifier. All downstream systems then use this same Party reference.</p>
+      <h2 class="h3" id="during-product-origination">During Product Origination</h2>
+      <p>Scenario: Customer applies for a Mortgage.</p>
+      <p>Action: The Loan Origination system queries PRDD to validate party existence, confirm party type (Individual/Corporate), retrieve KYC classification, and retrieve risk category. This prevents each SD from storing its own party structure.</p>
+      <h2 class="h3" id="during-servicing-mobile-app">During Servicing (Mobile App)</h2>
+      <p>Scenario: A mobile app loads customer profile data.</p>
+      <p>Action: The app queries PRDD to retrieve display name, party classification, status (Active/Suspended/Deceased/Dormant), and linked identifiers, without querying heavy core systems.</p>
+      <h2 class="h3" id="during-compliance-risk-checks">During Compliance / Risk Checks</h2>
+      <p>Scenario: AML system performs screening.</p>
+      <p>Action: System retrieves Party profile, identifiers, and classifications from PRDD before screening. Ensures consistent, canonical identity data for compliance checks.</p>
+      <h2 class="h3" id="control-record-behavior-qualifier-structure">Control Record &amp; Behavior Qualifier Structure</h2>
+      <p>One Control Record (CR) is created per party. BQ cardinality varies:</p>
+      <table class="docs-table">
+        <thead><tr><th>CR / BQ</th><th>Description &amp; Cardinality</th></tr></thead>
+        <tbody>
+          <tr><td>CR, CustomerProductAndServiceDirectoryEntry</td><td>One CR per party. Holds PartyReference, PartyName, PartyIdentification[], PartyType, DirectoryEntryDate.</td></tr>
+          <tr><td>BQ Demographics</td><td>1:1 with CR. Socio-EconomicClassification, Ethnicity, Religion, Employment, EducationHistory.</td></tr>
+          <tr><td>BQ Reference</td><td>1:1 with CR. KYC data, addresses, contact details, political exposure, CustomerSinceDate.</td></tr>
+          <tr><td>BQ Associations</td><td>1:N with CR (array). Party relationships and associations, multiple records per party.</td></tr>
+          <tr><td>BQ Bank Relations</td><td>1:N with CR (array). Bank relationship records, multiple records per party.</td></tr>
+          <tr><td>BQ CorePartyProfile (Non-BIAN)</td><td>1:1 with CR. Utility BQ for Core Banking System party creation. Contains CorePartyProfileDetails.</td></tr>
+          <tr><td>BQ DirectoryRecord (Non-BIAN)</td><td>Search BQ. Accepts Filter/FilterCriteria and returns DirectoryRecordDetails for matched parties.</td></tr>
+        </tbody>
+      </table>
+      <p>Cardinality Rule: Associations BQ and Bank Relations BQ are 1:N (array) with the CR. All other BQs are 1:1 with the CR.</p>
+      <h2 class="h3" id="level-of-detail-to-capture">Level of Detail to Capture</h2>
+      <p>PRDD is a Directory/Catalog domain. Data must be lightweight, canonical, identity-focused, and non-transactional:</p>
+      <table class="docs-table">
+        <thead><tr><th>Data Category</th><th>Fields Captured</th></tr></thead>
+        <tbody>
+          <tr><td>Identity</td><td>FirstName, MiddleName, FamilyName, FullName, LegalName, PartyType, DirectoryEntryDate</td></tr>
+          <tr><td>Identification</td><td>PartyIdentification[], type, value, start/end dates (e.g. Passport, PAN, CIF)</td></tr>
+          <tr><td>Demographics</td><td>Socio-EconomicClassification, Ethnicity, Religion, Employment, EducationHistory</td></tr>
+          <tr><td>KYC &amp; Compliance</td><td>GovernmentIssuedIdentityReference, ResidencyStatus, Nationality, PoliticalExposureType, PoliticalExposureDescriptionRecord</td></tr>
+          <tr><td>Contact Details</td><td>eMailAddress, CellPhoneNumber[] (Primary + Secondary), ResidentialAddress[], PartyAddress[]</td></tr>
+          <tr><td>Status &amp; Dates</td><td>PartyActivityIndicator, CustomerSinceDate, DateofBirth, DirectoryEntryDate</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="when-and-how-to-invoke">When and How to Invoke</h2>
+      <p>PRDD is invoked at party creation and at any subsequent lifecycle event requiring identity or reference data update:</p>
+      <table class="docs-table">
+        <thead><tr><th>Step</th><th>Endpoint</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>A, Register CR</td><td>POST .../Register</td><td>Assert party creation; record party type and directory entry identifier</td></tr>
+          <tr><td>B, Update Demographics</td><td>PUT .../Demographics/{id}/Update</td><td>Populate socio-economic, employment, and education data</td></tr>
+          <tr><td>C, Update Reference</td><td>PUT .../Reference/{id}/Update</td><td>Populate KYC, addresses, contacts, political exposure</td></tr>
+          <tr><td>D, CorePartyProfile Register</td><td>POST .../CorePartyProfile/Register</td><td>Create party in CBS using structured CorePartyProfileDetails (Non-BIAN Utility API)</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="non-bian-utility-api-endpoints">Non-BIAN Utility API Endpoints</h2>
+      <p>Two Non-BIAN Utility API endpoints extend PRDD for CBS-specific operations:</p>
+      <ul>
+        <li>CorePartyProfile/Register, Sends structured party data to CBS for core party creation. Accepts CorePartyProfileDetails containing Salutation, NameInformation, EmailAddress, MobileNumber[], DateOfBirth, PartyIdentificationValue, CorePartyCountry. Uses CIF ID (format: CIFXXXXXXXXXX) as party identifier.</li>
+        <li>DirectoryRecord/Register, Party search endpoint. Accepts Filter and FilterCriteria objects; returns DirectoryRecordDetails of matched parties. Supports search by CustomerReference, ProductReference, OfferReference, and other business identifiers.</li>
+      </ul>
+      <h2 class="h3" id="implementation-notes-on-bian-140">Implementation notes on BIAN 14.0</h2>
+      <p>The following modifications were made to BIAN v14.0 for practical implementation:</p>
+      <table class="docs-table">
+        <thead><tr><th>Change</th><th>Description &amp; Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>New BQ, CoreParty</td><td>Basic Customer Information BQ for Core Banking party creation. Non-BIAN Utility API.</td></tr>
+          <tr><td>New BQ, DirectoryRecord</td><td>Search operations BQ against PRDD. Non-BIAN Utility API.</td></tr>
+          <tr><td>New Objects (13)</td><td>NameInformation, Salutation, EmailAddress, MobileNumber (array), DateOfBirth, PartyIdentificationValue, CorePartyCountry, DirectoryRecord, DirectoryRecordDetails, Filter, FilterCriteria, CorePartyProfile, CorePartyProfileDetails</td></tr>
+          <tr><td>Array, PartyIdentification</td><td>Party may hold multiple identification documents of different types</td></tr>
+          <tr><td>Array, ResidentialAddress / CorporateAddress / PartyAddress</td><td>Party may have multiple address records (residential, correspondence, etc.)</td></tr>
+          <tr><td>Array, GovernmentIssuedDocumentDetails</td><td>Party may hold multiple government-issued documents</td></tr>
+          <tr><td>Array, DocumentDirectoryEntryInstanceReference</td><td>Multiple document directory references per party</td></tr>
+          <tr><td>Array, AssociateObligationorDependencyDescription</td><td>Multiple obligation/dependency descriptions per association</td></tr>
+          <tr><td>Array, Associations BQ</td><td>1:N cardinality, one CR holds many Associations records</td></tr>
+          <tr><td>Array, Bank Relations BQ</td><td>1:N cardinality, one CR holds many Bank Relations records</td></tr>
+          <tr><td>EthnicityReligion split</td><td>v14 change: single &#x27;EthnicityReligion&#x27; attribute split into separate &#x27;Ethnicity&#x27; and &#x27;Religion&#x27; attributes</td></tr>
+          <tr><td>Party, PartyActivityIndicator + IndustryCode</td><td>New attribute and object added in v14 vs v13</td></tr>
+          <tr><td>InvolvedParty, string fields</td><td>PartyReference and InvolvementReference both modified to string to avoid recursive loop</td></tr>
+          <tr><td>ProductAgreement / PartyObligationOrEntitlement / Country</td><td>Extended payloads in v14; Country now includes CountryName and CountryCode</td></tr>
+        </tbody>
+      </table>
+      <h3 id="array-normalised-attributes" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Array-normalised attributes:</h3>
+      <ul>
+        <li>PartyIdentification, multiple identification documents per party</li>
+        <li>GovernmentIssuedDocumentDetails, multiple government documents per party</li>
+        <li>DocumentDirectoryEntryInstanceReference, multiple document directory references</li>
+        <li>ResidentialAddress, CorporateAddress, PartyAddress, multiple addresses per party</li>
+        <li>AssociateObligationorDependencyDescription, multiple obligation/dependency descriptions</li>
+      </ul>
+      <h2 class="h3" id="implementation-priority">Implementation Priority</h2>
+      <table class="docs-table">
+        <thead><tr><th>Endpoint</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>POST /PartyReferenceDataDirectory/Register</td><td>Initial implementation, CR creation</td></tr>
+          <tr><td>PUT /PartyReferenceDataDirectory/{id}/Update</td><td>Initial implementation, CR update</td></tr>
+          <tr><td>GET /PartyReferenceDataDirectory/{id}/Retrieve</td><td>Initial implementation, CR retrieval</td></tr>
+          <tr><td>PUT /…/{id}/Demographics/{demographicsid}/Update</td><td>Initial implementation, BQ Demographics update</td></tr>
+          <tr><td>GET /…/{id}/Demographics/{demographicsid}/Retrieve</td><td>Initial implementation, BQ Demographics retrieval</td></tr>
+          <tr><td>PUT /…/{id}/Reference/{referenceid}/Update</td><td>Initial implementation, BQ Reference update</td></tr>
+          <tr><td>GET /…/{id}/Reference/{referenceid}/Retrieve</td><td>Initial implementation, BQ Reference retrieval</td></tr>
+          <tr><td>POST /…/{id}/CorePartyProfile/Register (Non-BIAN)</td><td>Initial implementation, Core Banking party creation</td></tr>
+          <tr><td>POST /…/DirectoryRecord/Register (Non-BIAN)</td><td>Initial implementation, Party search/retrieval</td></tr>
+          <tr><td>Associations BQ endpoints</td><td>Future phase</td></tr>
+          <tr><td>Bank Relations BQ endpoints</td><td>Future phase</td></tr>
+        </tbody>
+      </table>
+      <p>Important identifier rule: The human-readable party ID must be passed in all endpoints except CorePartyProfile/Register, which uses CIF ID (format: CIFXXXXXXXXXX).</p>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <p>CR: PartyReferenceDataDirectoryEntry</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Data</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>FirstName</td><td>PartyReference.PartyName.FirstName</td><td>Arjun</td><td>Given name or personal name of the party/customer.</td></tr>
+          <tr><td>MiddleName</td><td>PartyReference.PartyName.MiddleName</td><td>Kumar</td><td>Middle name of the party/customer, if applicable.</td></tr>
+          <tr><td>FamilyName</td><td>PartyReference.PartyName.FamilyName</td><td>Venkataraman</td><td>Family name, surname, or last name of the party/customer.</td></tr>
+          <tr><td>FullName</td><td>PartyReference.PartyName.FullName</td><td>Arjun Kumar Venkataraman</td><td>Complete name of the party/customer including all name components.</td></tr>
+          <tr><td>LegalName</td><td>PartyReference.PartyName.LegalName</td><td>Arjun Kumar Venkataraman</td><td>Official legal name registered for the party/customer.</td></tr>
+          <tr><td>DateTimeContent</td><td>PartyReference.PartyDateTime.DateTimeContent</td><td>2025-03-10T00:00:00</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>TimeZoneCode</td><td>PartyReference.PartyDateTime.TimeZoneCode</td><td>IST</td><td>Code representing the applicable time zone for the recorded date and time.</td></tr>
+          <tr><td>DateTimeType</td><td>PartyReference.PartyDateTime.DateTimeType</td><td>OpenDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>PartyIdentificationType</td><td>PartyReference.PartyIdentification.PartyIdentificationType</td><td>Passportnumber</td><td>Passportnumber</td></tr>
+          <tr><td>IdentifierValue</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierValue</td><td>P1234567</td><td>P1234567</td></tr>
+          <tr><td>DateTimeContent</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierStartDate.DateTimeContent</td><td>2020-01-01T00:00:00</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>TimeZoneCode</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierStartDate.TimeZoneCode</td><td>IST</td><td>Code representing the applicable time zone for the recorded date and time.</td></tr>
+          <tr><td>DateTimeType</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierStartDate.DateTimeType</td><td>ValidFromDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>DateTimeContent</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierEndDate.DateTimeContent</td><td>2030-01-01T00:00:00</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>TimeZoneCode</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierEndDate.TimeZoneCode</td><td>IST</td><td>Code representing the applicable time zone for the recorded date and time.</td></tr>
+          <tr><td>DateTimeType</td><td>PartyReference.PartyIdentification.PartyIdentification.IdentifierEndDate.DateTimeType</td><td>ExpiryDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>PartyIdentificationType</td><td>PartyReference.PartyIdentificationType</td><td>Customeridentificationnumber</td><td>Type/category of identification associated with the party.</td></tr>
+          <tr><td>IdentifierValue</td><td>PartyReference.PartyIdentification.IdentifierValue</td><td>ABCDE1234F</td><td>Unique identifier value assigned to a party, entity, or business object.</td></tr>
+          <tr><td>DateTimeContent</td><td>PartyReference.PartyIdentification.IdentifierStartDate.DateTimeContent</td><td>2015-06-01T00:00:00</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>TimeZoneCode</td><td>PartyReference.PartyIdentification.IdentifierStartDate.TimeZoneCode</td><td>IST</td><td>Code representing the applicable time zone for the recorded date and time.</td></tr>
+          <tr><td>DateTimeType</td><td>PartyReference.PartyIdentification.IdentifierStartDate.DateTimeType</td><td>EffectiveDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>DirectoryEntryDateType</td><td>DirectoryEntryDateType</td><td>OpenDate</td><td>Specifies the purpose/type of the directory entry date.</td></tr>
+          <tr><td>DateTimeContent</td><td>DirectoryEntryDate.DateTimeContent</td><td>2025-03-10T00:00:00</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>TimeZoneCode</td><td>DirectoryEntryDate.TimeZoneCode</td><td>IST</td><td>Code representing the applicable time zone for the recorded date and time.</td></tr>
+          <tr><td>DateTimeType</td><td>DirectoryEntryDate.DateTimeType</td><td>OpenDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>PartyType</td><td>PartyType</td><td>Person</td><td>Classification/type of party such as Individual, Organisation, Corporate, or Joint Account Holder.</td></tr>
+        </tbody>
+      </table>
+      <p>BQ: Demographics</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Data</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Socio-EconomicClassification</td><td>Socio-EconomicClassification</td><td>MiddleIncome</td><td>Classification that represents the social and economic category or segment associated with the party/customer.</td></tr>
+          <tr><td>Ethnicity</td><td>Ethnicity</td><td>Asian</td><td>Ethnic or cultural background associated with the party/customer.</td></tr>
+          <tr><td>Religion</td><td>Religion</td><td>Hindu</td><td>Religious affiliation or belief associated with the party/customer.</td></tr>
+          <tr><td>PartyReference</td><td>Employment.PartyReference</td><td>CUST-001</td><td>Unique reference identifier representing a customer, organisation, or involved party within the banking system.</td></tr>
+          <tr><td>InvolvementReference</td><td>Employment.InvolvementReference</td><td>EMP-ANALYST-2018</td><td>Reference identifier indicating the role or involvement of a party in a specific business activity or relationship.</td></tr>
+          <tr><td>EmploymentHistory</td><td>EmploymentHistory</td><td>Employed full-time since June 2018 as a Business Analyst at a private banking firm in Chennai. Prior: junior analyst at a fintech startup 2015-2018.</td><td>Historical employment details of the party/customer including employer information, job roles, and employment periods.</td></tr>
+          <tr><td>EducationHistory</td><td>EducationHistory</td><td>B.E. (Computer Science) - Anna University, Chennai, 2012. PG Diploma in Banking &amp; Finance - NIBM Pune, 2014.</td><td>Historical educational background of the party/customer including qualifications, institutions, and study periods.</td></tr>
+        </tbody>
+      </table>
+      <p>BQ: Reference</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Data</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>PartyNameSalutation</td><td>PartyNameSalutation</td><td>Mister</td><td>Title or salutation associated with the party/customer such as Mr., Mrs., Dr., or Ms.</td></tr>
+          <tr><td>PartyIdentificationType</td><td>GovernmentIssuedIdentityReference.PartyIdentificationType</td><td>Taxidentificationnumber</td><td>Type/category of identification associated with the party</td></tr>
+          <tr><td>IdentifierValue</td><td>GovernmentIssuedIdentityReference.PartyIdentification.IdentifierValue</td><td>TAX-128971</td><td>Unique identifier value assigned to a party, document, address, or entity.</td></tr>
+          <tr><td>DocumentDirectoryEntryIdentification</td><td>DocumentDirectoryEntryInstanceReference.DocumentDirectoryEntryIdentification</td><td>DOC-101</td><td>Unique identifier assigned to a document entry stored in the document directory repository.</td></tr>
+          <tr><td>StatusReason</td><td>ResidencyStatus.StatusReason</td><td>PermanentResident</td><td>Reason or explanation describing the current status of a process, transaction, or entity.</td></tr>
+          <tr><td>DateTimeContent</td><td>DateofBirth.DateTimeContent</td><td>20-10-1990</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>DateTimeType</td><td>DateofBirth.DateTimeType</td><td>ValueDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>PartyReference</td><td>Nationality.NationalRegulatoryAuthority.PartyReference</td><td>Federal Reserve System</td><td>Unique reference identifier representing a customer, organisation, or involved party within the banking system.</td></tr>
+          <tr><td>Name</td><td>Nationality.CountryName.Name</td><td>India</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>AddressType</td><td>ResidentialAddress.AddressType</td><td>Residential</td><td>Classification/type of address such as residential, mailing, office, or permanent address.</td></tr>
+          <tr><td>AddressLine</td><td>ResidentialAddress.AddressLine</td><td>501/27</td><td>Textual address line containing street or location details.</td></tr>
+          <tr><td>Name</td><td>ResidentialAddress.StreetName.Name</td><td>Nariman Point Road</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>BuildingNumber</td><td>ResidentialAddress.BuildingNumber</td><td>15A</td><td>Number or identifier assigned to a building or premises within an address.</td></tr>
+          <tr><td>IdentifierValue</td><td>ResidentialAddress.PostCode.IdentifierValue</td><td>400021</td><td>Unique identifier value assigned to a party, document, address, or entity.</td></tr>
+          <tr><td>Name</td><td>ResidentialAddress.TownName.Name</td><td>Mumbai, Maharashtra</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>CountrySubDivision</td><td>ResidentialAddress.CountrySubDivision</td><td>Province</td><td>Administrative subdivision within a country such as state, province, or region.</td></tr>
+          <tr><td>Name</td><td>ResidentialAddress.Country.CountryName.Name</td><td>India</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>ContactPointType</td><td>eMailAddress.ContactPointType</td><td>ElectronicAddress</td><td>Type of contact information such as mobile, email, phone, fax, or social media contact.</td></tr>
+          <tr><td>PartyLocationType</td><td>eMailAddress.PartyLocationType</td><td>LocationIsContactPointAddressOfParty</td><td>Classification/type of party location such as residential, business, branch, or correspondence location.</td></tr>
+          <tr><td>IdentifierValue</td><td>eMailAddress.LocationReference.LocationIdentification.IdentifierValue</td><td>arjun.v@gmail.com</td><td>Unique identifier value assigned to a party, document, address, or entity.</td></tr>
+          <tr><td>Name</td><td>eMailAddress.LocationReference.LocationName.Name</td><td>PrimaryEmail</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>ContactPointType</td><td>CellPhoneNumber.ContactPointType</td><td>PhoneNumber</td><td>Type of contact information such as mobile, email, phone, fax, or social media contact.</td></tr>
+          <tr><td>PartyLocationType</td><td>CellPhoneNumber.PartyLocationType</td><td>LocationIsContactPointAddressOfParty</td><td>Classification/type of party location such as residential, business, branch, or correspondence location.</td></tr>
+          <tr><td>IdentifierValue</td><td>CellPhoneNumber.LocationReference.LocationIdentification.IdentifierValue</td><td>+91-9293328912</td><td>Unique identifier value assigned to a party, document, address, or entity.</td></tr>
+          <tr><td>Name</td><td>CellPhoneNumber.LocationReference.LocationName.Name</td><td>PrimaryContactNumber</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>ContactPointType</td><td>CellPhoneNumber.ContactPointType</td><td>PhoneNumber</td><td>Type of contact information such as mobile, email, phone, fax, or social media contact.</td></tr>
+          <tr><td>PartyLocationType</td><td>CellPhoneNumber.PartyLocationType</td><td>LocationIsContactPointAddressOfParty</td><td>Classification/type of party location such as residential, business, branch, or correspondence location.</td></tr>
+          <tr><td>IdentifierValue</td><td>CellPhoneNumber.LocationReference.LocationIdentification.IdentifierValue</td><td>+91-6925628919</td><td>Unique identifier value assigned to a party, document, address, or entity.</td></tr>
+          <tr><td>Name</td><td>CellPhoneNumber.LocationReference.LocationName.Name</td><td>SecondaryContactNumber</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>PoliticalExposureType</td><td>PoliticalExposureType</td><td>Politicalexposuredomestic</td><td>Indicates the category/type of politically exposed person (PEP) classification associated with the party.</td></tr>
+          <tr><td>PoliticalExposureDescriptionRecord</td><td>PoliticalExposureDescriptionRecord</td><td>Family member of political member</td><td>Detailed description or supporting information related to the party’s political exposure status.</td></tr>
+          <tr><td>DateTimeContent</td><td>CustomerSinceDate.DateTimeContent</td><td>10-07-2025</td><td>Actual date and time value associated with a business event or record.</td></tr>
+          <tr><td>AddressType</td><td>PartyAddress.AddressType</td><td>Correspondence</td><td>Classification/type of address such as residential, mailing, office, or permanent address.</td></tr>
+          <tr><td>AddressLine</td><td>PartyAddress.AddressLine</td><td>202/139</td><td>Textual address line containing street or location details.</td></tr>
+          <tr><td>Name</td><td>PartyAddress.StreetName.Name</td><td>Rajiv Gandhi Salai</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>BuildingNumber</td><td>PartyAddress.BuildingNumber</td><td>42B</td><td>Number or identifier assigned to a building or premises within an address.</td></tr>
+          <tr><td>IdentifierValue</td><td>PartyAddress.PostCode.IdentifierValue</td><td>600096</td><td>Unique identifier value assigned to a party, document, address, or entity.</td></tr>
+          <tr><td>Name</td><td>PartyAddress.TownName.Name</td><td>Chennai, Tamil Nadu</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+          <tr><td>CountrySubDivision</td><td>PartyAddress.CountrySubDivision</td><td>Province</td><td>Administrative subdivision within a country such as state, province, or region.</td></tr>
+          <tr><td>Name</td><td>PartyAddress.Country.CountryName.Name</td><td>India</td><td>Official or descriptive name associated with a person, organisation, address component, or entity.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Party Reference Data Directory</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#what-is-this-service-domain" class="toc-link">What Is This Service Domain?</a>
+      <a href="#key-distinction" class="toc-link">Key Distinction</a>
+      <a href="#party-types" class="toc-link">Party Types</a>
+      <a href="#when-to-use-this-service-domain" class="toc-link">When to Use This Service Domain</a>
+      <a href="#during-party-creation-onboarding" class="toc-link">During Party Creation (Onboarding)</a>
+      <a href="#during-product-origination" class="toc-link">During Product Origination</a>
+      <a href="#during-servicing-mobile-app" class="toc-link">During Servicing (Mobile App)</a>
+      <a href="#during-compliance-risk-checks" class="toc-link">During Compliance / Risk Checks</a>
+      <a href="#control-record-behavior-qualifier-structure" class="toc-link">Control Record &amp; Behavior Qualifier Structure</a>
+      <a href="#level-of-detail-to-capture" class="toc-link">Level of Detail to Capture</a>
+      <a href="#when-and-how-to-invoke" class="toc-link">When and How to Invoke</a>
+      <a href="#non-bian-utility-api-endpoints" class="toc-link">Non-BIAN Utility API Endpoints</a>
+      <a href="#implementation-notes-on-bian-140" class="toc-link">Implementation notes on BIAN 14.0</a>
+      <a href="#implementation-priority" class="toc-link">Implementation Priority</a>
       <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
