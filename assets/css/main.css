@@ -35,6 +35,9 @@
   --internal-bg: rgba(180, 147, 244, 0.12);
   --internal-border: rgba(180, 147, 244, 0.3);
 
+  /* --- Internal banner height (0 when not in internal view; 32px when body.tier-internal) --- */
+  --banner-h: 0px;
+
   /* --- Colors: borders --- */
   --border-dark: rgba(168, 196, 204, 0.12);
   --border-medium: rgba(168, 196, 204, 0.2);
@@ -296,12 +299,36 @@ pre {
    ----------------------------------------------------------------------------- */
 .nav {
   position: sticky;
-  top: 0;
+  top: var(--banner-h);
   z-index: 50;
   background: rgba(6, 34, 41, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-dark);
+}
+
+/* Internal-view banner. Renders above the nav whenever body.tier-internal is set. */
+#internal-banner {
+  display: none;
+}
+body.tier-internal { --banner-h: 32px; }
+body.tier-internal #internal-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  height: 32px;
+  padding: 0 16px;
+  background: var(--internal-primary);
+  color: #1B0F3A;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  text-align: center;
+  border-bottom: 1px solid rgba(27, 15, 58, 0.2);
 }
 
 .nav-inner {
@@ -713,7 +740,7 @@ pre {
    ----------------------------------------------------------------------------- */
 .draft-tag {
   position: fixed;
-  top: 12px;
+  top: calc(12px + var(--banner-h));
   right: 12px;
   z-index: 60;
   background: var(--cyan-soft);
@@ -874,7 +901,7 @@ pre {
    ----------------------------------------------------------------------------- */
 .subnav {
   position: sticky;
-  top: 64px;
+  top: calc(64px + var(--banner-h));
   z-index: 49;
   background: rgba(10, 53, 64, 0.85);
   backdrop-filter: blur(20px);
@@ -946,9 +973,9 @@ pre {
 
 .docs-sidebar {
   position: sticky;
-  top: 112px;
+  top: calc(112px + var(--banner-h));
   align-self: start;
-  max-height: calc(100vh - 112px);
+  max-height: calc(100vh - 112px - var(--banner-h));
   overflow-y: auto;
   padding: 32px 24px 64px 0;
   border-right: 1px solid var(--border-dark);
@@ -1001,9 +1028,9 @@ pre {
 
 .docs-aside {
   position: sticky;
-  top: 112px;
+  top: calc(112px + var(--banner-h));
   align-self: start;
-  max-height: calc(100vh - 112px);
+  max-height: calc(100vh - 112px - var(--banner-h));
   overflow-y: auto;
   padding: 48px 0 64px 24px;
   font-size: 12.5px;
@@ -1623,16 +1650,16 @@ pre {
   border-right: 1px solid var(--border-dark);
   padding: 32px 20px 32px 32px;
   position: sticky;
-  top: 60px;
+  top: calc(60px + var(--banner-h));
   align-self: start;
-  max-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px - var(--banner-h));
   overflow-y: auto;
 }
 .docs-toc {
   border-left: 1px solid var(--border-dark);
   padding: 32px 24px;
   position: sticky;
-  top: 60px;
+  top: calc(60px + var(--banner-h));
   align-self: start;
 }
 .docs-main { padding: 32px 40px; max-width: 760px; }
@@ -2181,7 +2208,7 @@ html[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
 /* --- Mobile menu drawer --- */
 .mobile-menu {
   position: fixed;
-  top: 64px;
+  top: calc(64px + var(--banner-h));
   left: 0;
   right: 0;
   bottom: 0;

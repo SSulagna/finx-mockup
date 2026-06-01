@@ -235,6 +235,8 @@
     }
     currentTier = resolvedTier;
     updateTierChips();
+    updateStateIndicator();
+    updateStaffLinks();
 
     if (parsed.route !== getCurrentRoute()) navigate(parsed.route);
     else applyTierFilter(); // route unchanged but params may have changed
@@ -442,6 +444,7 @@
 
   // ---------- State indicator ----------
   function updateStateIndicator() {
+    document.body.classList.toggle('tier-internal', currentTier === 'internal');
     var el = $('#state-indicator'); if (!el) return;
     var unlocked = isUnlocked();
     el.classList.toggle('signed-in', unlocked);
