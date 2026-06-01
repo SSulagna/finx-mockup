@@ -4614,6 +4614,7 @@ Content-Type: application/json</code></pre>
       <h2 class="h3" id="onboarding-completion">Onboarding Completion</h2>
       <p>Once all downstream SDs (PRDD, Customer Offer, Savings Account, Customer Agreement, CPSD) are successfully created and their procedures closed, PUT .../Update is called a final time to set the lifecycle phase to OnboardingComplete and status reason to Completed.</p>
       <h2 class="h3" id="identity-proofing-bq-jumio-integration">Identity Proofing BQ, Jumio Integration</h2>
+      <p>Three BQ endpoints orchestrate Jumio identity verification. The adapter handles the 10-step Jumio sequence asynchronously while exposing a simple Initiate, Retrieve pattern to the channel.</p>
       <h2 class="h3" id="initiate-flow">Initiate Flow</h2>
       <p>POST /PartyLifecycleManagement/{id}/IdentityProofing/Initiate triggers the Jumio IDV workflow. The channel passes user consent and Document Directory IDs. The adapter returns the Identity Proofing BQ ID immediately and then asynchronously orchestrates the complete 10-step Jumio sequence.</p>
       <p>Mandatory Task JSON attributes: userConsent.userIp, userConsent.userLocation.country, userConsent.userLocation.state, userConsent.consent.obtained (must be exactly &#x27;yes&#x27;), userConsent.consent.obtainedAt. Any missing or invalid value causes immediate rejection.</p>
@@ -4638,6 +4639,7 @@ Content-Type: application/json</code></pre>
         <li>Workflow definition key 2, face/selfie not required; only front and back ID document images needed.</li>
       </ul>
       <h2 class="h3" id="qualification-bq-amlpep-screening">Qualification BQ, AML/PEP Screening</h2>
+      <p>Three BQ endpoints orchestrate ComplyAdvantage AML and PEP screening. Initiate triggers the workflow, Update captures manual review decisions, Retrieve exposes the result.</p>
       <h2 class="h3" id="initiate-flow-2">Initiate Flow</h2>
       <p>POST .../Qualification/Initiate triggers the ComplyAdvantage screening workflow. The full customer profile (name, DOB, nationality, address, IDs, contact, profession, source of wealth) is serialized as a JSON string and passed inside QualificationTaskRecord.Task. The complete CA workflow response is persisted: workflow_instance_identifier in InstructionIdentification, overall status in InstructionStatus, step-level JSON in InstructionResult and InstructionDescription.</p>
       <h2 class="h3" id="update-flow">Update Flow</h2>
@@ -5088,6 +5090,7 @@ Content-Type: application/json</code></pre>
       </table>
 
       <h2 class="h3" id="lifecycle">Account lifecycle flow</h2>
+      <p>Account creation is a four-step sequence followed by an explicit status transition. The full lifecycle is summarised below.</p>
       <h3 id="initiation-sequence" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Initiation sequence</h3>
       <ol>
         <li><strong>Initiate.</strong> <code>POST /v2/accounts</code> with empty parameter values; account is created with status <code>ACCOUNT_STATUS_PENDING</code>.</li>
@@ -7253,6 +7256,7 @@ Content-Type: application/json</code></pre>
         </tbody>
       </table>
       <h2 class="h3" id="offer-feature-workflow-details">Offer Feature &amp; Workflow Details</h2>
+      <p>Offer composition splits into two arrays: configurable features (rates, fees, services) and processing worksteps (validation, approval, provisioning). Both are detailed below.</p>
       <h2 class="h3" id="offer-feature-types-offertermandcondition">Offer Feature Types (OfferTermAndCondition[])</h2>
       <p>An offer may contain multiple configurable features captured as an array. Example feature types:</p>
       <table class="docs-table">
