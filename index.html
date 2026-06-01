@@ -5832,13 +5832,13 @@ Content-Type: application/json</code></pre>
         <li>Only transactions are restricted on frozen accounts; customers can still access their accounts and view documents.</li>
         <li>No notification is sent to customers when their accounts are frozen or unfrozen.</li>
       </ul>
-      <h2 class="h3" id="bian-structural-enhancements-proposed-changes-to">BIAN Structural Enhancements, Proposed Changes to Standard</h2>
+      <h2 class="h3" id="implementation-notes-on-bian-140">Implementation notes on BIAN 14.0</h2>
       <p>The following enhancements to the BIAN v14 standard are recommended based on implementation experience:</p>
       <table class="docs-table">
         <thead><tr><th>Enhancement</th><th>Rationale</th></tr></thead>
         <tbody>
           <tr><td>Array-based attribute standardisation</td><td>AccountCurrency, AccountBalance, AccountDate, EntitlementOptionDefinition/Setting, RestrictionOptionDefinition/Setting should all be defined as arrays. Real implementations always contain multiple values.</td></tr>
-          <tr><td>Standard BalanceType enumeration</td><td>BIAN should prescribe standard enums: AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance, to prevent institution-specific naming.</td></tr>
+          <tr><td>Standard BalanceType enumeration</td><td>BIAN 14.0 does not prescribe a standard BalanceType enumeration, allowing institution-specific naming. This implementation uses AvailableBalance, ExpectedIncomingBalance, and ExpectedOutgoingBalance to map directly to the three Thought Machine posting phases and avoid bespoke balance taxonomy.</td></tr>
           <tr><td>DepositLimit as string</td><td>Changed from object to string to resolve circular referencing in the YAML schema definition.</td></tr>
           <tr><td>No new BQ introduced</td><td>All enhancements retained inside existing SD structure. No domain boundary violation. Full BIAN alignment maintained.</td></tr>
         </tbody>
@@ -5915,7 +5915,7 @@ Content-Type: application/json</code></pre>
       <a href="#product-rule-display" class="toc-link">Product Rule Display</a>
       <a href="#re-invocation-triggers-lifecycle-updates" class="toc-link">Re-invocation Triggers (Lifecycle Updates)</a>
       <a href="#freeze-and-unfreeze-account" class="toc-link">Freeze and Unfreeze Account</a>
-      <a href="#bian-structural-enhancements-proposed-changes-to" class="toc-link">BIAN Structural Enhancements, Proposed Changes to Standard</a>
+      <a href="#implementation-notes-on-bian-140" class="toc-link">Implementation notes on BIAN 14.0</a>
       <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
     </aside>
     <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
