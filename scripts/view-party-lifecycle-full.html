@@ -1,0 +1,337 @@
+  <!-- DOCS: API reference (Party Lifecycle Management) -->
+  <section class="view" data-route="/docs/glue/api-reference/api-reference" data-tier="external" data-layout="docs" data-section="glue" data-title="Party Lifecycle Management · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link is-active">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-reference/savings-account" class="docs-nav-link">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="#/docs/glue/api-reference/product-directory" class="docs-nav-link">Product Directory</a>
+      <a href="#/docs/glue/api-reference/customer-product-service-directory" class="docs-nav-link">Customer Product &amp; Service Directory</a>
+      <a href="#/docs/glue/api-reference/customer-offer" class="docs-nav-link">Customer Offer</a>
+      <a href="#/docs/glue/api-reference/customer-agreement" class="docs-nav-link">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="#/docs/glue/api-reference/position-keeping" class="docs-nav-link">Position Keeping</a>
+      <a href="#/docs/glue/api-reference/payment-order-initiation" class="docs-nav-link">Payment Order Initiation</a>
+      <a href="#/docs/glue/api-reference/document-directory" class="docs-nav-link">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Party Lifecycle Management</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Party Lifecycle Management</h1>
+      <p class="page-lead">The Party Lifecycle Management service domain orchestrates a customer party from initial onboarding to active status. It maintains lifecycle state and phase transitions, coordinates Identity Proofing through Jumio and AML / PEP screening through ComplyAdvantage, records customer status flags via Precedents, and references documents held in the Document Directory. It is the authoritative lifecycle orchestrator, not the customer master record.</p>
+      <div class="callout callout--info"><strong>Scope.</strong> This SD orchestrates lifecycle state and assessment coordination. Customer profile master data lives in Party Reference Data Directory; document artefacts live in Document Directory; identity verification execution belongs to Jumio; AML and PEP screening execution belong to ComplyAdvantage.</div>
+
+      <h2 class="h3" id="what-is-this-service-domain">What Is This Service Domain?</h2>
+      <p>In BIAN v14.0, the Party Lifecycle Management (PLM) Service Domain maintains and orchestrates the onboarding lifecycle of a customer party, tracking their progression through onboarding phases and managing identity, qualification, and status updates associated with a specific Party Instance.</p>
+      <p>Role: PLM acts as the authoritative lifecycle orchestration layer for a given partylifecyclemanagementId (Party Instance Reference). It initiates, updates, and tracks the end-to-end party lifecycle, from initial customer offer acceptance through identity verification, qualification assessment, and final party creation.</p>
+      <p>Classification: This is a Party Lifecycle Orchestration Domain, not a data store, not a verification engine, not a screening platform. It strictly orchestrates lifecycle state transitions and assessment coordination.</p>
+      <h2 class="h3" id="key-distinction">Key Distinction</h2>
+      <table class="docs-table">
+        <thead><tr><th>PLM SD Manages</th><th>PLM SD Does NOT Manage</th></tr></thead>
+        <tbody>
+          <tr><td>Onboarding lifecycle state and phase transitions</td><td>Product catalog or product selection</td></tr>
+          <tr><td>Application ID linkage and Work Product reference</td><td>Savings account creation or agreement setup</td></tr>
+          <tr><td>Document Directory reference recording (IDs only)</td><td>Identity verification execution, delegates to Jumio via BQ</td></tr>
+          <tr><td>Identity Proofing BQ orchestration and result storage</td><td>PEP/AML screening execution, delegates to ComplyAdvantage via BQ</td></tr>
+          <tr><td>AML/PEP Qualification BQ and full CA response persistence</td><td>Document artifact storage, delegates to Document Directory SD</td></tr>
+          <tr><td>Customer status flags via Precedents BQ</td><td>Customer profile master data, held in PRDD</td></tr>
+          <tr><td>Onboarding lifecycle closure (OnboardingComplete)</td><td>Direct ledger or financial postings</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="behaviour-qualifier-structure">Behaviour Qualifier Structure</h2>
+      <p>Four Behaviour Qualifiers are implemented in the current scope:</p>
+      <table class="docs-table">
+        <thead><tr><th>Behavior Qualifier</th><th>Cardinality</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>IdentityProofing</td><td>1..*</td><td>Orchestrates Jumio IDV workflow asynchronously; stores Account API and Fetch Result responses for audit</td></tr>
+          <tr><td>Qualification</td><td>1..*</td><td>Triggers ComplyAdvantage AML/PEP screening; persists full CA workflow response including risk score and step details</td></tr>
+          <tr><td>Precedents</td><td>1..*</td><td>Records each customer status flag (ResidentialStatus, SeniorCitizen, IDVStatus, AMLStatus, PEPStatus) as a separate independently addressable BQ instance</td></tr>
+          <tr><td>Documentation</td><td>1..*</td><td>Records Document Directory reference IDs against the lifecycle instance; document artifacts remain in Document Directory SD</td></tr>
+        </tbody>
+      </table>
+      <p>All four BQs have 1..* cardinality, multiple instances can exist under the same lifecycle Control Record. Each instance is independently addressable via its BIAN-standard path parameter (identityproofingid, qualificationid, precedentsid, documentationid).</p>
+      <h2 class="h3" id="level-of-detail-to-capture">Level of Detail to Capture</h2>
+      <p>PLM is a lifecycle orchestration domain, data captured is orchestration-state-focused, not operational. Captured data must be:</p>
+      <table class="docs-table">
+        <thead><tr><th>Data Element</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Party name and type</td><td>Identify the onboarding party (populated at Update once confirmed from PRDD)</td></tr>
+          <tr><td>Party legal structure</td><td>Identify the legal nature of the party (hardcoded: Individual)</td></tr>
+          <tr><td>Lifecycle phase name and status</td><td>Track onboarding progression through phases (array, supports parallel phase tracking)</td></tr>
+          <tr><td>Relationship lifecycle status and timestamp</td><td>Track lifecycle state changes with event timestamps</td></tr>
+          <tr><td>Work product reference (Application ID)</td><td>Correlate all onboarding lifecycle events to the Customer Offer SD Application ID</td></tr>
+          <tr><td>Document directory references</td><td>Maintain Document Directory IDs for all submitted documents</td></tr>
+          <tr><td>Party flags</td><td>Capture ResidentialStatus, SeniorCitizen, IDVStatus, AMLStatus, PEPStatus</td></tr>
+          <tr><td>CA workflow instruction details</td><td>Persist workflow_instance_identifier, step-level results, and full CA response for audit in Qualification BQ</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="onboarding-lifecycle-flow">Onboarding Lifecycle Flow</h2>
+      <p>PLM is invoked at each lifecycle milestone throughout the customer onboarding journey:</p>
+      <table class="docs-table">
+        <thead><tr><th>Lifecycle Event</th><th>Endpoint Invoked</th><th>Key Action</th></tr></thead>
+        <tbody>
+          <tr><td>Application Initiation</td><td>POST .../Initiate</td><td>Create CR; set lifecycle phase to IdentityVerification; status In Progress</td></tr>
+          <tr><td>Application ID Linkage</td><td>PUT .../Update</td><td>Stamp Customer Offer Application ID against PLM CR via WorkProductIdentifoication</td></tr>
+          <tr><td>Document Reference Recording</td><td>PUT .../Documentation/{id}/Update</td><td>Record Document Directory reference IDs; one call per document</td></tr>
+          <tr><td>Identity Proofing Initiation</td><td>POST .../IdentityProofing/Initiate</td><td>Trigger Jumio IDV async workflow; return BQ ID; store Account API response</td></tr>
+          <tr><td>Identity Proofing Result Polling</td><td>GET .../IdentityProofing/{id}/Retrieve</td><td>Poll PLM DB for Jumio Fetch Result; no Jumio API call triggered</td></tr>
+          <tr><td>AML/PEP Screening Initiation</td><td>POST .../Qualification/Initiate</td><td>Trigger ComplyAdvantage with full customer profile JSON; persist full CA response</td></tr>
+          <tr><td>Qualification Update (if needed)</td><td>PUT .../Qualification/{id}/Update</td><td>Amend assessment record on manual review decision or result correction</td></tr>
+          <tr><td>Post-Assessment Status Update</td><td>PUT .../Update</td><td>Advance lifecycle phase; set party name (now confirmed from PRDD)</td></tr>
+          <tr><td>Customer Status Flag Recording</td><td>POST .../Precedents/Initiate (x5)</td><td>Register each flag as a separate Precedent BQ instance (5 flags total)</td></tr>
+          <tr><td>Onboarding Completion</td><td>PUT .../Update</td><td>Set phase to OnboardingComplete and status to Completed; close lifecycle loop</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="application-initiation">Application Initiation</h2>
+      <p>When a customer submits an onboarding application, POST /PartyLifecycleManagement/Initiate is called to establish the onboarding session anchor. Initial lifecycle phase is set to IdentityVerification; status is In Progress. The Application ID is generated by Customer Offer SD, not by PLM.</p>
+      <h2 class="h3" id="application-id-linkage">Application ID Linkage</h2>
+      <p>Once Customer Offer SD generates the Application ID, it pushes the ID into PLM via PUT .../Update. WorkProductIdentifoication.IdentifierValue carries this ID forward across all lifecycle events, linking PLM and Customer Offer SD to the same anchor reference.</p>
+      <h2 class="h3" id="document-reference-recording">Document Reference Recording</h2>
+      <p>PLM calls Document Directory SD to create a document entry for each submitted document. The returned Document Directory reference ID is then recorded in the Documentation BQ via PUT .../Documentation/{documentationid}/Update. Document artifacts remain in Document Directory SD, PLM holds only the reference IDs.</p>
+      <h2 class="h3" id="post-assessment-lifecycle-status-update">Post-Assessment Lifecycle Status Update</h2>
+      <p>Once IDV and AML assessments are both complete, PUT .../Update is called to advance the lifecycle phase and set the party name (now confirmed from PRDD). This update must occur before Precedent flag recording.</p>
+      <h2 class="h3" id="onboarding-completion">Onboarding Completion</h2>
+      <p>Once all downstream SDs (PRDD, Customer Offer, Savings Account, Customer Agreement, CPSD) are successfully created and their procedures closed, PUT .../Update is called a final time to set the lifecycle phase to OnboardingComplete and status reason to Completed.</p>
+      <h2 class="h3" id="identity-proofing-bq-jumio-integration">Identity Proofing BQ, Jumio Integration</h2>
+      <h2 class="h3" id="initiate-flow">Initiate Flow</h2>
+      <p>POST /PartyLifecycleManagement/{id}/IdentityProofing/Initiate triggers the Jumio IDV workflow. The channel passes user consent and Document Directory IDs. The adapter returns the Identity Proofing BQ ID immediately and then asynchronously orchestrates the complete 10-step Jumio sequence.</p>
+      <p>Mandatory Task JSON attributes: userConsent.userIp, userConsent.userLocation.country, userConsent.userLocation.state, userConsent.consent.obtained (must be exactly &#x27;yes&#x27;), userConsent.consent.obtainedAt. Any missing or invalid value causes immediate rejection.</p>
+      <h2 class="h3" id="retrieve-flow">Retrieve Flow</h2>
+      <p>The channel polls GET .../IdentityProofing/{identityproofingid}/Retrieve until a terminal result is returned. The Retrieve endpoint reads entirely from the PLM database, no Jumio API calls are triggered. The channel reads IdentityProofingTaskResult.AssessmentResult to determine the verification outcome for screen display.</p>
+      <p>No Update endpoint exists for Identity Proofing. The adapter writes the Jumio Fetch Result response back into the same BQ record internally during asynchronous processing.</p>
+      <h2 class="h3" id="jumio-risk-score-decision-logic">Jumio Risk Score Decision Logic</h2>
+      <table class="docs-table">
+        <thead><tr><th>Risk Score</th><th>decision.type</th><th>AssessmentResult</th><th>Channel Display</th></tr></thead>
+        <tbody>
+          <tr><td>0 - 30</td><td>PASSED</td><td>PASSED</td><td>Verification successful</td></tr>
+          <tr><td>31 - 70</td><td>WARNING</td><td>WARNING</td><td>Manual Review Required: please wait</td></tr>
+          <tr><td>71 - 100</td><td>REJECTED</td><td>REJECTED</td><td>Verification Rejected</td></tr>
+          <tr><td>-1</td><td>NOT_EXECUTED</td><td>NOT_EXECUTED</td><td>Verification could not be executed</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="payload-enhancements-identity-proofing-bq">Payload Enhancements, Identity Proofing BQ</h2>
+      <ul>
+        <li>SpecialistAgencyServiceRequestResult modeled as array (1..*): InstructionDescription[0] = Jumio Account API JSON; InstructionDescription[1] = Jumio Fetch Result JSON. Both retained for audit.</li>
+        <li>DocumentDirectoryEntryInstanceReference modeled as array (1..*): front and back image document references stored separately.</li>
+        <li>IdentityProofingReference.IdentifierValue (BQ ID) used as customerInternalReference in Jumio Account API, unique traceability between PLM record and Jumio session.</li>
+        <li>Workflow definition key 2, face/selfie not required; only front and back ID document images needed.</li>
+      </ul>
+      <h2 class="h3" id="qualification-bq-amlpep-screening">Qualification BQ, AML/PEP Screening</h2>
+      <h2 class="h3" id="initiate-flow-2">Initiate Flow</h2>
+      <p>POST .../Qualification/Initiate triggers the ComplyAdvantage screening workflow. The full customer profile (name, DOB, nationality, address, IDs, contact, profession, source of wealth) is serialized as a JSON string and passed inside QualificationTaskRecord.Task. The complete CA workflow response is persisted: workflow_instance_identifier in InstructionIdentification, overall status in InstructionStatus, step-level JSON in InstructionResult and InstructionDescription.</p>
+      <h2 class="h3" id="update-flow">Update Flow</h2>
+      <p>PUT .../Qualification/{qualificationid}/Update is used post-initiation when a manual compliance review decision is made for a REVIEW_REQUIRED outcome, or when a correction to the screening result is needed.</p>
+      <h2 class="h3" id="amlpep-decision-logic">AML/PEP Decision Logic</h2>
+      <p>InstructionResult and AssessmentResult are derived from two CA step output fields:</p>
+      <ul>
+        <li>step_details.initial-risk-scoring.step_output.overall_level</li>
+        <li>step_details.customer-screening.step_output.screening_result</li>
+      </ul>
+      <table class="docs-table">
+        <thead><tr><th>overall_level</th><th>screening_result</th><th>InstructionResult</th><th>AssessmentResult</th><th>Adjustment</th></tr></thead>
+        <tbody>
+          <tr><td>LOW-RISK</td><td>NO_PROFILES</td><td>APPROVED</td><td>Pass</td><td>null</td></tr>
+          <tr><td>LOW-RISK</td><td>PROFILES_FOUND</td><td>REVIEW_REQUIRED</td><td>on hold</td><td>Manual review</td></tr>
+          <tr><td>MEDIUM-RISK</td><td>NO_PROFILES</td><td>REVIEW_REQUIRED</td><td>on hold</td><td>Manual review</td></tr>
+          <tr><td>MEDIUM-RISK</td><td>PROFILES_FOUND</td><td>REVIEW_REQUIRED</td><td>on hold</td><td>Manual review</td></tr>
+          <tr><td>HIGH-RISK</td><td>NO_PROFILES</td><td>REJECTED</td><td>failed</td><td>null</td></tr>
+          <tr><td>HIGH-RISK</td><td>PROFILES_FOUND</td><td>REJECTED</td><td>failed</td><td>nul</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="precedents-bq-customer-status-flags">Precedents BQ, Customer Status Flags</h2>
+      <p>POST .../Precedents/Initiate is called once per status flag. Each flag is a separate, independently addressable Precedent BQ instance. Five flags are recorded during onboarding:</p>
+      <table class="docs-table">
+        <thead><tr><th>PrecedentType</th><th>PrecedentValue (example)</th></tr></thead>
+        <tbody>
+          <tr><td>ResidentialStatus</td><td>Resident / NonResident / NRI / OCI / PIO / RNOR / ForeignNational</td></tr>
+          <tr><td>SeniorCitizen</td><td>Yes / No</td></tr>
+          <tr><td>IDVStatus</td><td>APPROVED / WARNING / REJECTED / NOT_EXECUTED</td></tr>
+          <tr><td>AMLStatus</td><td>clear / on hold / failed</td></tr>
+          <tr><td>PEPStatus</td><td>NO_PROFILES / PROFILES_FOUND (true → PoliticallyExposedPerson, false → NotPEP)</td></tr>
+        </tbody>
+      </table>
+      <p>PrecedentType values are not hardcoded. The orchestration layer reads the PrecedentType and maps it to the corresponding value. PEPStatus is boolean: true → PoliticallyExposedPerson; false → NotPEP.</p>
+      <h2 class="h3" id="implementation-notes-on-bian-140">Implementation notes on BIAN 14.0</h2>
+      <table class="docs-table">
+        <thead><tr><th>Enhancement</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Application ID as Work Product Identifier</td><td>WorkProductIdentifoication.IdentifierValue carries Application ID across all lifecycle events for traceability</td></tr>
+          <tr><td>PartyName → NameInformation schema</td><td>Custom NameInformation object replaces standard BIAN Name schema to store all name variations; consistent with PRDD SD changes</td></tr>
+          <tr><td>Precedent BQ → array (1..*)</td><td>Each customer status flag registered as a separate, independently addressable BQ instance; new Initiate endpoint introduced</td></tr>
+          <tr><td>Documentation BQ → array (1..*)</td><td>Multiple document references per lifecycle CR; DocumentInstanceReference object also modeled as array</td></tr>
+          <tr><td>QualificationTaskRecord.Task as JSON string</td><td>Full customer profile serialized as JSON string inside standard BIAN Task field, no schema extension required</td></tr>
+          <tr><td>Qualification BQ → array (1..*)</td><td>Multiple qualification assessments (initial + periodic) under same CR; new Initiate and Update endpoints introduced</td></tr>
+          <tr><td>PartyRelationshipLifecyclePhase → array</td><td>Captures multiple lifecycle phase records per party relationship for parallel phase tracking. YAML updated.</td></tr>
+          <tr><td>SpecialistAgencyServiceRequestResult → array (IDV)</td><td>Multiple instruction payloads stored under one Identity Proofing BQ: Account API JSON (index 0) + Fetch Result JSON (index 1)</td></tr>
+          <tr><td>Instruction object mapped in Qualification</td><td>SpecialistAgencyRegulatorServiceRequestResult carries full CA workflow, workflow_instance_identifier in identification, status in instruction status, step-level JSON in result and description</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="new-endpoints-introduced">New Endpoints Introduced</h2>
+      <table class="docs-table">
+        <thead><tr><th>New Endpoint</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>POST .../IdentityProofing/Initiate</td><td>New endpoint to trigger Jumio IDV workflow and generate Identity Proofing BQ ID</td></tr>
+          <tr><td>POST .../Qualification/Initiate</td><td>Standard BIAN does not prescribe Initiate for Qualification BQ, introduced to pass full customer profile and persist CA workflow response</td></tr>
+          <tr><td>PUT .../Qualification/{qualificationid}/Update</td><td>Standard BIAN does not prescribe Update for Qualification BQ, introduced to support post-screening amendments</td></tr>
+          <tr><td>POST .../Precedents/Initiate</td><td>Standard BIAN does not prescribe Initiate for Precedent BQ, introduced to register each status flag as a separate BQ instance</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="boundary-integrity-rules">Boundary Integrity Rules</h2>
+      <table class="docs-table">
+        <thead><tr><th>Boundary Rule</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td>PLM scope maintained</td><td>PLM orchestrates lifecycle state only, it does not execute verification or hold customer profile data</td></tr>
+          <tr><td>PRDD ownership respected</td><td>Customer profile data remains in Party Reference Data Directory SD; PLM references party by name only once confirmed</td></tr>
+          <tr><td>Document storage separation</td><td>Document artifacts remain in Document Directory SD; PLM holds only the Document Directory reference IDs</td></tr>
+          <tr><td>IDV externalization</td><td>Jumio performs identity verification; PLM stores only the result and audit trail via Identity Proofing BQ</td></tr>
+          <tr><td>AML externalization</td><td>ComplyAdvantage performs AML/PEP screening; PLM stores only the result and full CA response via Qualification BQ</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="implementation-priority">Implementation Priority</h2>
+      <table class="docs-table">
+        <thead><tr><th>Endpoint</th><th>Status</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>POST /PartyLifecycleManagement/Initiate</td><td>Done</td><td>Initiate Party Lifecycle CR</td></tr>
+          <tr><td>PUT /PartyLifecycleManagement/{id}/Update</td><td>Done</td><td>Update lifecycle status and phase</td></tr>
+          <tr><td>PUT /…/{id}/Documentation/{documentationid}/Update</td><td>Done</td><td>Record document references</td></tr>
+          <tr><td>POST /…/{id}/IdentityProofing/Initiate</td><td>Done</td><td>Initiate identity verification via Jumio</td></tr>
+          <tr><td>GET /…/{id}/IdentityProofing/{identityproofingid}/Retrieve</td><td>Done</td><td>Poll IDV result from PLM DB</td></tr>
+          <tr><td>POST /…/{id}/Qualification/Initiate</td><td>Done</td><td>Initiate AML/PEP screening with full CA mapping</td></tr>
+          <tr><td>PUT /…/{id}/Qualification/{qualificationid}/Update</td><td>Done</td><td>Update qualification assessment record</td></tr>
+          <tr><td>GET /…/{id}/Qualification/{qualificationid}/Retrieve</td><td>Done</td><td>Retrieve qualification assessment record</td></tr>
+          <tr><td>POST /…/{id}/Precedents/Initiate</td><td>Done</td><td>Register customer status flags</td></tr>
+          <tr><td>PUT /…/{id}/Precedents/{precedentsid}/Update</td><td>Done</td><td>Update existing precedent flag record</td></tr>
+          <tr><td>GET /…/{id}/Precedents/{precedentsid}/Retrieve</td><td>Done</td><td>Retrieve precedent flag records</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="related-service-domains-systems">Related Service Domains &amp; Systems</h2>
+      <table class="docs-table">
+        <thead><tr><th>Related SD / System</th><th>Relationship</th></tr></thead>
+        <tbody>
+          <tr><td>Customer Offer SD</td><td>Generates Application ID and pushes it into PLM via UpCR Update to formally link the onboarding application to the lifecycle instance.</td></tr>
+          <tr><td>Party Reference Data Directory SD</td><td>Authoritative customer profile. PLM references party name only once confirmed. Customer profile remains in PRDD.</td></tr>
+          <tr><td>Document Directory SD</td><td>Stores document artifacts. PLM calls Document Directory SD to create entries and records returned reference IDs via Documentation BQ.</td></tr>
+          <tr><td>Jumio (IDV Vendor)</td><td>Performs identity verification. PLM adapter orchestrates complete Jumio API sequence asynchronously after IdentityProofing/Initiate is called.</td></tr>
+          <tr><td>ComplyAdvantage (AML Vendor)</td><td>Performs AML/PEP screening. Full customer profile passed as JSON string via Qualification BQ; full CA response persisted for audit.</td></tr>
+          <tr><td>Savings Account SD / Customer Agreement SD / CPSD SD</td><td>Downstream SDs created after lifecycle assessments complete. Once all are successfully created, PLM lifecycle is formally closed.</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <p>CR : Party Relationship Administrate Plan</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field Path</th><th>Sample Data</th><th>Remarks</th></tr></thead>
+        <tbody>
+          <tr><td>First Name</td><td>PartyReference.PartyName.FirstName</td><td>Rahul</td><td>Given name or personal name of the party/customer.</td></tr>
+          <tr><td>Middle Name</td><td>PartyReference.PartyName.MiddleName</td><td>Vijay</td><td>Middle name of the party/customer, if applicable.</td></tr>
+          <tr><td>Last Name</td><td>PartyReference.PartyName.FamilyName</td><td>Verma</td><td>Family name, surname, or last name of the party/customer.</td></tr>
+          <tr><td>PartyType</td><td>PartyReference.PartyType</td><td>Person</td><td>Classification/type of party such as Individual, Organisation, Corporate, or Joint Account Holder.</td></tr>
+          <tr><td>PartyLegalStructureType</td><td>PartyReference.PartyLegalStructureType</td><td>Individual</td><td>Legal structure/category of the party such as Sole Proprietorship, Partnership, LLP, or Corporation.</td></tr>
+          <tr><td>WorkProductIdentifoication</td><td>PartyLifecycleMaintenanceWorkProducts.WorkProductIdentifoication.IdentifierValue</td><td>APP-2026-00456</td><td>Unique identifier assigned to a work product, document, or process output.</td></tr>
+          <tr><td>PartyRelationshipLifecycleStatus</td><td>PartyRelationshipLifecycleStatus.StatusReason</td><td>In Progress / Completed</td><td>Current lifecycle status of the relationship between involved parties</td></tr>
+          <tr><td>StatusDateTime</td><td>PartyRelationshipLifecycleStatus.StatusDateTime.DateTimeContent</td><td>2026-03-05T10:40:00Z</td><td>Date and time at which the current status became effective or was recorded.</td></tr>
+          <tr><td>DateTimeType</td><td>PartyRelationshipLifecycleStatus.StatusDateTime.DateTimeType</td><td>InitiatedDate</td><td>Specifies the type or purpose of the recorded date and time.</td></tr>
+          <tr><td>PhaseName</td><td>PartyRelationshipLifecyclePhase.PhaseName.Name</td><td>Current phase e.g. IdentityVerification</td><td>Name of the current phase or stage within a lifecycle or business process.</td></tr>
+        </tbody>
+      </table>
+      <p>BQ : Documentation</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field Path</th><th>Sample Data</th><th>Remarks</th></tr></thead>
+        <tbody>
+          <tr><td>DocumentDirectoryEntryIdentification</td><td>DocumentDirectoryEntryInstanceReference.DocumentDirectoryEntryIdentification</td><td>DDXXXXXXXXXX</td><td>Unique identifier assigned to a document entry stored within the document directory repository.</td></tr>
+          <tr><td>DirectoryEntryDateType</td><td>DocumentDirectoryEntryInstanceReference.DirectoryEntryDateType</td><td>OpenDate (enum)</td><td>Specifies the purpose or category of the directory entry date such as creation date, update date, or approval date.</td></tr>
+          <tr><td>DirectoryEntryDate</td><td>DocumentDirectoryEntryInstanceReference.DirectoryEntryDate.DateContent</td><td>2026-03-05</td><td>Date and time associated with the document directory entry event or activity.</td></tr>
+        </tbody>
+      </table>
+      <p>BQ : Qualification</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>Sample Data</th><th>BIAN Field Path</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>QualificationType</td><td>AMLAssessment (enum)</td><td>QualificationType</td><td>Based on current qualification type</td></tr>
+          <tr><td>ServiceName</td><td>ComplyAdvantage</td><td>SpecialistAgencyServiceReference.ServiceName.Name</td><td>Name of screening vendor</td></tr>
+          <tr><td>ServiceType</td><td>InformationService (enum)</td><td>SpecialistAgencyServiceReference.ServiceType</td><td>Hardcoded</td></tr>
+          <tr><td>Task</td><td>Serialized customer JSON string</td><td>QualificationTaskRecord.Task</td><td>Full customer profile (name, DOB, nationality, address, IDs, contact, profession, source of wealth) serialized as JSON string</td></tr>
+          <tr><td>DateTimeContent</td><td>2026-03-06T13:40:00Z</td><td>InstructionDate.DateTimeContent</td><td>Timestamp when CA workflow was received</td></tr>
+          <tr><td>InstructionDateType</td><td>ExecutionDate (enum)</td><td>InstructionDate.InstructionDateType</td><td>Hardcoded</td></tr>
+          <tr><td>InstructionStatusType</td><td>Completed / Failed / Pendingprocessing</td><td>InstructionStatus.InstructionStatusType</td><td>Derived from CA response status, not hardcoded</td></tr>
+          <tr><td>InstructionStatus</td><td>CA status value (e.g. COMPLETED)</td><td>InstructionStatus.InstructionStatus.StatusReason</td><td>Mirror of CA top-level status field</td></tr>
+          <tr><td>IdentifierValue</td><td>workflow_instance_identifier (CA UUID)</td><td>InstructionIdentification.IdentifierValue</td><td>Links BIAN record to CA workflow for traceability</td></tr>
+          <tr><td>InstructionIdentificationType</td><td>InstructionNumber (enum)</td><td>InstructionIdentificationType</td><td>Hardcoded</td></tr>
+          <tr><td>InstructionType</td><td>InformationRequest (enum)</td><td>InstructionType</td><td>Hardcoded</td></tr>
+          <tr><td>InstructionResult</td><td>CA risk + screening output</td><td>InstructionResult</td><td>From initial-risk-scoring and customer-screening step outputs</td></tr>
+          <tr><td>InstructionDescription</td><td>Full CA workflow response JSON</td><td>InstructionDescription</td><td>Complete CA raw payload stored for audit</td></tr>
+          <tr><td>InstructionPurpose</td><td>AMLScreening</td><td>InstructionPurpose</td><td>Based on qualification type</td></tr>
+          <tr><td>QualificationTaskResult.AssessmentType</td><td>AMLAssessment (enum)</td><td>QualificationTaskResult.AssessmentType</td><td>Based on qualification type</td></tr>
+          <tr><td>AssessmentSchedule.ScheduleType</td><td>Onboarding</td><td>AssessmentSchedule.ScheduleType</td><td>Hardcoded for onboarding; PeriodicReview for re-screening</td></tr>
+          <tr><td>AssessmentDescription</td><td>Qualification derived from ComplyAdvantage AML screening</td><td>AssessmentDescription</td><td>Hardcoded</td></tr>
+          <tr><td>AssessmentResult</td><td>clear / failed / on hold</td><td>AssessmentResult</td><td>Derived from InstructionResult, approved→clear, rejected→failed, else→on hold</td></tr>
+          <tr><td>AssessmentRequiredAdjustment</td><td>Borderline result, allowed to proceed after review</td><td>AssessmentRequiredAdjustment</td><td>Conditional, only when InstructionResult = Manual Review</td></tr>
+          <tr><td>AssessmentExpiryDate.DateContent</td><td>2027-03-05</td><td>AssessmentExpiryDate.DateContent</td><td>Set by internal team for periodic review</td></tr>
+          <tr><td>AssessmentStatus.StatusReason</td><td>completed / failed / in-progress</td><td>AssessmentStatus.StatusReason</td><td>Translated from CA status, not hardcoded</td></tr>
+          <tr><td>AssessmentIdentification.IdentifierValue</td><td>workflow_instance_identifier</td><td>AssessmentIdentification.IdentifierValue</td><td>Vendor transaction ID</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Party Lifecycle Management</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#what-is-this-service-domain" class="toc-link">What Is This Service Domain?</a>
+      <a href="#key-distinction" class="toc-link">Key Distinction</a>
+      <a href="#behaviour-qualifier-structure" class="toc-link">Behaviour Qualifier Structure</a>
+      <a href="#level-of-detail-to-capture" class="toc-link">Level of Detail to Capture</a>
+      <a href="#onboarding-lifecycle-flow" class="toc-link">Onboarding Lifecycle Flow</a>
+      <a href="#application-initiation" class="toc-link">Application Initiation</a>
+      <a href="#application-id-linkage" class="toc-link">Application ID Linkage</a>
+      <a href="#document-reference-recording" class="toc-link">Document Reference Recording</a>
+      <a href="#post-assessment-lifecycle-status-update" class="toc-link">Post-Assessment Lifecycle Status Update</a>
+      <a href="#onboarding-completion" class="toc-link">Onboarding Completion</a>
+      <a href="#identity-proofing-bq-jumio-integration" class="toc-link">Identity Proofing BQ, Jumio Integration</a>
+      <a href="#initiate-flow" class="toc-link">Initiate Flow</a>
+      <a href="#retrieve-flow" class="toc-link">Retrieve Flow</a>
+      <a href="#jumio-risk-score-decision-logic" class="toc-link">Jumio Risk Score Decision Logic</a>
+      <a href="#payload-enhancements-identity-proofing-bq" class="toc-link">Payload Enhancements, Identity Proofing BQ</a>
+      <a href="#qualification-bq-amlpep-screening" class="toc-link">Qualification BQ, AML/PEP Screening</a>
+      <a href="#initiate-flow-2" class="toc-link">Initiate Flow</a>
+      <a href="#update-flow" class="toc-link">Update Flow</a>
+      <a href="#amlpep-decision-logic" class="toc-link">AML/PEP Decision Logic</a>
+      <a href="#precedents-bq-customer-status-flags" class="toc-link">Precedents BQ, Customer Status Flags</a>
+      <a href="#implementation-notes-on-bian-140" class="toc-link">Implementation notes on BIAN 14.0</a>
+      <a href="#new-endpoints-introduced" class="toc-link">New Endpoints Introduced</a>
+      <a href="#boundary-integrity-rules" class="toc-link">Boundary Integrity Rules</a>
+      <a href="#implementation-priority" class="toc-link">Implementation Priority</a>
+      <a href="#related-service-domains-systems" class="toc-link">Related Service Domains &amp; Systems</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>

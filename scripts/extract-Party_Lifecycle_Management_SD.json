@@ -1,0 +1,1016 @@
+{
+  "file": "Party+Lifecycle+Management+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Party Lifecycle Management SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN v14.0, the Party Lifecycle Management (PLM) Service Domain maintains and orchestrates the onboarding lifecycle of a customer party, tracking their progression through onboarding phases and managing identity, qualification, and status updates associated with a specific Party Instance."
+    },
+    {
+      "type": "p",
+      "text": "Role: PLM acts as the authoritative lifecycle orchestration layer for a given partylifecyclemanagementId (Party Instance Reference). It initiates, updates, and tracks the end-to-end party lifecycle — from initial customer offer acceptance through identity verification, qualification assessment, and final party creation."
+    },
+    {
+      "type": "p",
+      "text": "Classification: This is a Party Lifecycle Orchestration Domain — not a data store, not a verification engine, not a screening platform. It strictly orchestrates lifecycle state transitions and assessment coordination."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "PLM SD Manages",
+          "PLM SD Does NOT Manage"
+        ],
+        [
+          "Onboarding lifecycle state and phase transitions",
+          "Product catalog or product selection"
+        ],
+        [
+          "Application ID linkage and Work Product reference",
+          "Savings account creation or agreement setup"
+        ],
+        [
+          "Document Directory reference recording (IDs only)",
+          "Identity verification execution — delegates to Jumio via BQ"
+        ],
+        [
+          "Identity Proofing BQ orchestration and result storage",
+          "PEP/AML screening execution — delegates to ComplyAdvantage via BQ"
+        ],
+        [
+          "AML/PEP Qualification BQ and full CA response persistence",
+          "Document artifact storage — delegates to Document Directory SD"
+        ],
+        [
+          "Customer status flags via Precedents BQ",
+          "Customer profile master data — held in PRDD"
+        ],
+        [
+          "Onboarding lifecycle closure (OnboardingComplete)",
+          "Direct ledger or financial postings"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. Behaviour Qualifier Structure"
+    },
+    {
+      "type": "p",
+      "text": "Four Behaviour Qualifiers are implemented in the current scope:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Behavior Qualifier",
+          "Cardinality",
+          "Purpose"
+        ],
+        [
+          "IdentityProofing",
+          "1..*",
+          "Orchestrates Jumio IDV workflow asynchronously; stores Account API and Fetch Result responses for audit"
+        ],
+        [
+          "Qualification",
+          "1..*",
+          "Triggers ComplyAdvantage AML/PEP screening; persists full CA workflow response including risk score and step details"
+        ],
+        [
+          "Precedents",
+          "1..*",
+          "Records each customer status flag (ResidentialStatus, SeniorCitizen, IDVStatus, AMLStatus, PEPStatus) as a separate independently addressable BQ instance"
+        ],
+        [
+          "Documentation",
+          "1..*",
+          "Records Document Directory reference IDs against the lifecycle instance; document artifacts remain in Document Directory SD"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "All four BQs have 1..* cardinality — multiple instances can exist under the same lifecycle Control Record. Each instance is independently addressable via its BIAN-standard path parameter (identityproofingid, qualificationid, precedentsid, documentationid)."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. Level of Detail to Capture"
+    },
+    {
+      "type": "p",
+      "text": "PLM is a lifecycle orchestration domain — data captured is orchestration-state-focused, not operational. Captured data must be:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Data Element",
+          "Purpose"
+        ],
+        [
+          "Party name and type",
+          "Identify the onboarding party (populated at Update once confirmed from PRDD)"
+        ],
+        [
+          "Party legal structure",
+          "Identify the legal nature of the party (hardcoded: Individual)"
+        ],
+        [
+          "Lifecycle phase name and status",
+          "Track onboarding progression through phases (array — supports parallel phase tracking)"
+        ],
+        [
+          "Relationship lifecycle status and timestamp",
+          "Track lifecycle state changes with event timestamps"
+        ],
+        [
+          "Work product reference (Application ID)",
+          "Correlate all onboarding lifecycle events to the Customer Offer SD Application ID"
+        ],
+        [
+          "Document directory references",
+          "Maintain Document Directory IDs for all submitted documents"
+        ],
+        [
+          "Party flags",
+          "Capture ResidentialStatus, SeniorCitizen, IDVStatus, AMLStatus, PEPStatus"
+        ],
+        [
+          "CA workflow instruction details",
+          "Persist workflow_instance_identifier, step-level results, and full CA response for audit in Qualification BQ"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Onboarding Lifecycle Flow"
+    },
+    {
+      "type": "p",
+      "text": "PLM is invoked at each lifecycle milestone throughout the customer onboarding journey:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Lifecycle Event",
+          "Endpoint Invoked",
+          "Key Action"
+        ],
+        [
+          "Application Initiation",
+          "POST .../Initiate",
+          "Create CR; set lifecycle phase to IdentityVerification; status In Progress"
+        ],
+        [
+          "Application ID Linkage",
+          "PUT .../Update",
+          "Stamp Customer Offer Application ID against PLM CR via WorkProductIdentifoication"
+        ],
+        [
+          "Document Reference Recording",
+          "PUT .../Documentation/{id}/Update",
+          "Record Document Directory reference IDs; one call per document"
+        ],
+        [
+          "Identity Proofing Initiation",
+          "POST .../IdentityProofing/Initiate",
+          "Trigger Jumio IDV async workflow; return BQ ID; store Account API response"
+        ],
+        [
+          "Identity Proofing Result Polling",
+          "GET .../IdentityProofing/{id}/Retrieve",
+          "Poll PLM DB for Jumio Fetch Result; no Jumio API call triggered"
+        ],
+        [
+          "AML/PEP Screening Initiation",
+          "POST .../Qualification/Initiate",
+          "Trigger ComplyAdvantage with full customer profile JSON; persist full CA response"
+        ],
+        [
+          "Qualification Update (if needed)",
+          "PUT .../Qualification/{id}/Update",
+          "Amend assessment record on manual review decision or result correction"
+        ],
+        [
+          "Post-Assessment Status Update",
+          "PUT .../Update",
+          "Advance lifecycle phase; set party name (now confirmed from PRDD)"
+        ],
+        [
+          "Customer Status Flag Recording",
+          "POST .../Precedents/Initiate (x5)",
+          "Register each flag as a separate Precedent BQ instance (5 flags total)"
+        ],
+        [
+          "Onboarding Completion",
+          "PUT .../Update",
+          "Set phase to OnboardingComplete and status to Completed; close lifecycle loop"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.1 Application Initiation"
+    },
+    {
+      "type": "p",
+      "text": "When a customer submits an onboarding application, POST /PartyLifecycleManagement/Initiate is called to establish the onboarding session anchor. Initial lifecycle phase is set to IdentityVerification; status is In Progress. The Application ID is generated by Customer Offer SD — not by PLM."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.2 Application ID Linkage"
+    },
+    {
+      "type": "p",
+      "text": "Once Customer Offer SD generates the Application ID, it pushes the ID into PLM via PUT .../Update. WorkProductIdentifoication.IdentifierValue carries this ID forward across all lifecycle events, linking PLM and Customer Offer SD to the same anchor reference."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.3 Document Reference Recording"
+    },
+    {
+      "type": "p",
+      "text": "PLM calls Document Directory SD to create a document entry for each submitted document. The returned Document Directory reference ID is then recorded in the Documentation BQ via PUT .../Documentation/{documentationid}/Update. Document artifacts remain in Document Directory SD — PLM holds only the reference IDs."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.4 Post-Assessment Lifecycle Status Update"
+    },
+    {
+      "type": "p",
+      "text": "Once IDV and AML assessments are both complete, PUT .../Update is called to advance the lifecycle phase and set the party name (now confirmed from PRDD). This update must occur before Precedent flag recording."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "4.5 Onboarding Completion"
+    },
+    {
+      "type": "p",
+      "text": "Once all downstream SDs (PRDD, Customer Offer, Savings Account, Customer Agreement, CPSD) are successfully created and their procedures closed, PUT .../Update is called a final time to set the lifecycle phase to OnboardingComplete and status reason to Completed."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Identity Proofing BQ — Jumio Integration"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.1 Initiate Flow"
+    },
+    {
+      "type": "p",
+      "text": "POST /PartyLifecycleManagement/{id}/IdentityProofing/Initiate triggers the Jumio IDV workflow. The channel passes user consent and Document Directory IDs. The adapter returns the Identity Proofing BQ ID immediately and then asynchronously orchestrates the complete 10-step Jumio sequence."
+    },
+    {
+      "type": "p",
+      "text": "Mandatory Task JSON attributes: userConsent.userIp, userConsent.userLocation.country, userConsent.userLocation.state, userConsent.consent.obtained (must be exactly 'yes'), userConsent.consent.obtainedAt. Any missing or invalid value causes immediate rejection."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.2 Retrieve Flow"
+    },
+    {
+      "type": "p",
+      "text": "The channel polls GET .../IdentityProofing/{identityproofingid}/Retrieve until a terminal result is returned. The Retrieve endpoint reads entirely from the PLM database — no Jumio API calls are triggered. The channel reads IdentityProofingTaskResult.AssessmentResult to determine the verification outcome for screen display."
+    },
+    {
+      "type": "p",
+      "text": "No Update endpoint exists for Identity Proofing. The adapter writes the Jumio Fetch Result response back into the same BQ record internally during asynchronous processing."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.3 Jumio Risk Score Decision Logic"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Risk Score",
+          "decision.type",
+          "AssessmentResult",
+          "Channel Display"
+        ],
+        [
+          "0 – 30",
+          "PASSED",
+          "PASSED",
+          "Verification successful"
+        ],
+        [
+          "31 – 70",
+          "WARNING",
+          "WARNING",
+          "Manual Review Required: please wait"
+        ],
+        [
+          "71 – 100",
+          "REJECTED",
+          "REJECTED",
+          "Verification Rejected"
+        ],
+        [
+          "-1",
+          "NOT_EXECUTED",
+          "NOT_EXECUTED",
+          "Verification could not be executed"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "5.4 Payload Enhancements — Identity Proofing BQ"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "SpecialistAgencyServiceRequestResult modeled as array (1..*): InstructionDescription[0] = Jumio Account API JSON; InstructionDescription[1] = Jumio Fetch Result JSON. Both retained for audit."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "DocumentDirectoryEntryInstanceReference modeled as array (1..*): front and back image document references stored separately."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "IdentityProofingReference.IdentifierValue (BQ ID) used as customerInternalReference in Jumio Account API — unique traceability between PLM record and Jumio session."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Workflow definition key 2 — face/selfie not required; only front and back ID document images needed."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Qualification BQ — AML/PEP Screening"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.1 Initiate Flow"
+    },
+    {
+      "type": "p",
+      "text": "POST .../Qualification/Initiate triggers the ComplyAdvantage screening workflow. The full customer profile (name, DOB, nationality, address, IDs, contact, profession, source of wealth) is serialized as a JSON string and passed inside QualificationTaskRecord.Task. The complete CA workflow response is persisted: workflow_instance_identifier in InstructionIdentification, overall status in InstructionStatus, step-level JSON in InstructionResult and InstructionDescription."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.2 Update Flow"
+    },
+    {
+      "type": "p",
+      "text": "PUT .../Qualification/{qualificationid}/Update is used post-initiation when a manual compliance review decision is made for a REVIEW_REQUIRED outcome, or when a correction to the screening result is needed."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.3 AML/PEP Decision Logic"
+    },
+    {
+      "type": "p",
+      "text": "InstructionResult and AssessmentResult are derived from two CA step output fields:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "step_details.initial-risk-scoring.step_output.overall_level"
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "step_details.customer-screening.step_output.screening_result"
+      ]
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "overall_level",
+          "screening_result",
+          "InstructionResult",
+          "AssessmentResult",
+          "Adjustment"
+        ],
+        [
+          "LOW-RISK",
+          "NO_PROFILES",
+          "APPROVED",
+          "Pass",
+          "null"
+        ],
+        [
+          "LOW-RISK",
+          "PROFILES_FOUND",
+          "REVIEW_REQUIRED",
+          "on hold",
+          "Manual review"
+        ],
+        [
+          "MEDIUM-RISK",
+          "NO_PROFILES",
+          "REVIEW_REQUIRED",
+          "on hold",
+          "Manual review"
+        ],
+        [
+          "MEDIUM-RISK",
+          "PROFILES_FOUND",
+          "REVIEW_REQUIRED",
+          "on hold",
+          "Manual review"
+        ],
+        [
+          "HIGH-RISK",
+          "NO_PROFILES",
+          "REJECTED",
+          "failed",
+          "null"
+        ],
+        [
+          "HIGH-RISK",
+          "PROFILES_FOUND",
+          "REJECTED",
+          "failed",
+          "nul"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Precedents BQ — Customer Status Flags"
+    },
+    {
+      "type": "p",
+      "text": "POST .../Precedents/Initiate is called once per status flag. Each flag is a separate, independently addressable Precedent BQ instance. Five flags are recorded during onboarding:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "PrecedentType",
+          "PrecedentValue (example)"
+        ],
+        [
+          "ResidentialStatus",
+          "Resident / NonResident / NRI / OCI / PIO / RNOR / ForeignNational"
+        ],
+        [
+          "SeniorCitizen",
+          "Yes / No"
+        ],
+        [
+          "IDVStatus",
+          "APPROVED / WARNING / REJECTED / NOT_EXECUTED"
+        ],
+        [
+          "AMLStatus",
+          "clear / on hold / failed"
+        ],
+        [
+          "PEPStatus",
+          "NO_PROFILES / PROFILES_FOUND (true → PoliticallyExposedPerson, false → NotPEP)"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "PrecedentType values are not hardcoded. The orchestration layer reads the PrecedentType and maps it to the corresponding value. PEPStatus is boolean: true → PoliticallyExposedPerson; false → NotPEP."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. Proposed Changes to BIAN Specification"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Enhancement",
+          "Description"
+        ],
+        [
+          "Application ID as Work Product Identifier",
+          "WorkProductIdentifoication.IdentifierValue carries Application ID across all lifecycle events for traceability"
+        ],
+        [
+          "PartyName → NameInformation schema",
+          "Custom NameInformation object replaces standard BIAN Name schema to store all name variations; consistent with PRDD SD changes"
+        ],
+        [
+          "Precedent BQ → array (1..*)",
+          "Each customer status flag registered as a separate, independently addressable BQ instance; new Initiate endpoint introduced"
+        ],
+        [
+          "Documentation BQ → array (1..*)",
+          "Multiple document references per lifecycle CR; DocumentInstanceReference object also modeled as array"
+        ],
+        [
+          "QualificationTaskRecord.Task as JSON string",
+          "Full customer profile serialized as JSON string inside standard BIAN Task field — no schema extension required"
+        ],
+        [
+          "Qualification BQ → array (1..*)",
+          "Multiple qualification assessments (initial + periodic) under same CR; new Initiate and Update endpoints introduced"
+        ],
+        [
+          "PartyRelationshipLifecyclePhase → array",
+          "Captures multiple lifecycle phase records per party relationship for parallel phase tracking. YAML updated."
+        ],
+        [
+          "SpecialistAgencyServiceRequestResult → array (IDV)",
+          "Multiple instruction payloads stored under one Identity Proofing BQ: Account API JSON (index 0) + Fetch Result JSON (index 1)"
+        ],
+        [
+          "Instruction object mapped in Qualification",
+          "SpecialistAgencyRegulatorServiceRequestResult carries full CA workflow — workflow_instance_identifier in identification, status in instruction status, step-level JSON in result and description"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "8.1 New Endpoints Introduced"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "New Endpoint",
+          "Rationale"
+        ],
+        [
+          "POST .../IdentityProofing/Initiate",
+          "New endpoint to trigger Jumio IDV workflow and generate Identity Proofing BQ ID"
+        ],
+        [
+          "POST .../Qualification/Initiate",
+          "Standard BIAN does not prescribe Initiate for Qualification BQ — introduced to pass full customer profile and persist CA workflow response"
+        ],
+        [
+          "PUT .../Qualification/{qualificationid}/Update",
+          "Standard BIAN does not prescribe Update for Qualification BQ — introduced to support post-screening amendments"
+        ],
+        [
+          "POST .../Precedents/Initiate",
+          "Standard BIAN does not prescribe Initiate for Precedent BQ — introduced to register each status flag as a separate BQ instance"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "8.2 Boundary Integrity Rules"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Boundary Rule",
+          "Explanation"
+        ],
+        [
+          "PLM scope maintained",
+          "PLM orchestrates lifecycle state only — it does not execute verification or hold customer profile data"
+        ],
+        [
+          "PRDD ownership respected",
+          "Customer profile data remains in Party Reference Data Directory SD; PLM references party by name only once confirmed"
+        ],
+        [
+          "Document storage separation",
+          "Document artifacts remain in Document Directory SD; PLM holds only the Document Directory reference IDs"
+        ],
+        [
+          "IDV externalization",
+          "Jumio performs identity verification; PLM stores only the result and audit trail via Identity Proofing BQ"
+        ],
+        [
+          "AML externalization",
+          "ComplyAdvantage performs AML/PEP screening; PLM stores only the result and full CA response via Qualification BQ"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "9. Implementation Priority"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Endpoint",
+          "Status",
+          "Description"
+        ],
+        [
+          "POST /PartyLifecycleManagement/Initiate",
+          "Done",
+          "Initiate Party Lifecycle CR"
+        ],
+        [
+          "PUT /PartyLifecycleManagement/{id}/Update",
+          "Done",
+          "Update lifecycle status and phase"
+        ],
+        [
+          "PUT /…/{id}/Documentation/{documentationid}/Update",
+          "Done",
+          "Record document references"
+        ],
+        [
+          "POST /…/{id}/IdentityProofing/Initiate",
+          "Done",
+          "Initiate identity verification via Jumio"
+        ],
+        [
+          "GET /…/{id}/IdentityProofing/{identityproofingid}/Retrieve",
+          "Done",
+          "Poll IDV result from PLM DB"
+        ],
+        [
+          "POST /…/{id}/Qualification/Initiate",
+          "Done",
+          "Initiate AML/PEP screening with full CA mapping"
+        ],
+        [
+          "PUT /…/{id}/Qualification/{qualificationid}/Update",
+          "Done",
+          "Update qualification assessment record"
+        ],
+        [
+          "GET /…/{id}/Qualification/{qualificationid}/Retrieve",
+          "Done",
+          "Retrieve qualification assessment record"
+        ],
+        [
+          "POST /…/{id}/Precedents/Initiate",
+          "Done",
+          "Register customer status flags"
+        ],
+        [
+          "PUT /…/{id}/Precedents/{precedentsid}/Update",
+          "Done",
+          "Update existing precedent flag record"
+        ],
+        [
+          "GET /…/{id}/Precedents/{precedentsid}/Retrieve",
+          "Done",
+          "Retrieve precedent flag records"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "10. Related Service Domains & Systems"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Related SD / System",
+          "Relationship"
+        ],
+        [
+          "Customer Offer SD",
+          "Generates Application ID and pushes it into PLM via UpCR Update to formally link the onboarding application to the lifecycle instance."
+        ],
+        [
+          "Party Reference Data Directory SD",
+          "Authoritative customer profile. PLM references party name only once confirmed. Customer profile remains in PRDD."
+        ],
+        [
+          "Document Directory SD",
+          "Stores document artifacts. PLM calls Document Directory SD to create entries and records returned reference IDs via Documentation BQ."
+        ],
+        [
+          "Jumio (IDV Vendor)",
+          "Performs identity verification. PLM adapter orchestrates complete Jumio API sequence asynchronously after IdentityProofing/Initiate is called."
+        ],
+        [
+          "ComplyAdvantage (AML Vendor)",
+          "Performs AML/PEP screening. Full customer profile passed as JSON string via Qualification BQ; full CA response persisted for audit."
+        ],
+        [
+          "Savings Account SD / Customer Agreement SD / CPSD SD",
+          "Downstream SDs created after lifecycle assessments complete. Once all are successfully created, PLM lifecycle is formally closed."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "11. BIAN Field Mapping"
+    },
+    {
+      "type": "p",
+      "text": "CR : Party Relationship Administrate Plan"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field Path",
+          "Sample Data",
+          "Remarks"
+        ],
+        [
+          "First Name",
+          "PartyReference.PartyName.FirstName",
+          "Rahul",
+          "Given name or personal name of the party/customer."
+        ],
+        [
+          "Middle Name",
+          "PartyReference.PartyName.MiddleName",
+          "Vijay",
+          "Middle name of the party/customer, if applicable."
+        ],
+        [
+          "Last Name",
+          "PartyReference.PartyName.FamilyName",
+          "Verma",
+          "Family name, surname, or last name of the party/customer."
+        ],
+        [
+          "PartyType",
+          "PartyReference.PartyType",
+          "Person",
+          "Classification/type of party such as Individual, Organisation, Corporate, or Joint Account Holder."
+        ],
+        [
+          "PartyLegalStructureType",
+          "PartyReference.PartyLegalStructureType",
+          "Individual",
+          "Legal structure/category of the party such as Sole Proprietorship, Partnership, LLP, or Corporation."
+        ],
+        [
+          "WorkProductIdentifoication",
+          "PartyLifecycleMaintenanceWorkProducts.WorkProductIdentifoication.IdentifierValue",
+          "APP-2026-00456",
+          "Unique identifier assigned to a work product, document, or process output."
+        ],
+        [
+          "PartyRelationshipLifecycleStatus",
+          "PartyRelationshipLifecycleStatus.StatusReason",
+          "In Progress / Completed",
+          "Current lifecycle status of the relationship between involved parties"
+        ],
+        [
+          "StatusDateTime",
+          "PartyRelationshipLifecycleStatus.StatusDateTime.DateTimeContent",
+          "2026-03-05T10:40:00Z",
+          "Date and time at which the current status became effective or was recorded."
+        ],
+        [
+          "DateTimeType",
+          "PartyRelationshipLifecycleStatus.StatusDateTime.DateTimeType",
+          "InitiatedDate",
+          "Specifies the type or purpose of the recorded date and time."
+        ],
+        [
+          "PhaseName",
+          "PartyRelationshipLifecyclePhase.PhaseName.Name",
+          "Current phase e.g. IdentityVerification",
+          "Name of the current phase or stage within a lifecycle or business process."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BQ : Documentation"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field Path",
+          "Sample Data",
+          "Remarks"
+        ],
+        [
+          "DocumentDirectoryEntryIdentification",
+          "DocumentDirectoryEntryInstanceReference.DocumentDirectoryEntryIdentification",
+          "DDXXXXXXXXXX",
+          "Unique identifier assigned to a document entry stored within the document directory repository."
+        ],
+        [
+          "DirectoryEntryDateType",
+          "DocumentDirectoryEntryInstanceReference.DirectoryEntryDateType",
+          "OpenDate (enum)",
+          "Specifies the purpose or category of the directory entry date such as creation date, update date, or approval date."
+        ],
+        [
+          "DirectoryEntryDate",
+          "DocumentDirectoryEntryInstanceReference.DirectoryEntryDate.DateContent",
+          "2026-03-05",
+          "Date and time associated with the document directory entry event or activity."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BQ : Qualification"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "Sample Data",
+          "BIAN Field Path",
+          "Description"
+        ],
+        [
+          "QualificationType",
+          "AMLAssessment (enum)",
+          "QualificationType",
+          "Based on current qualification type"
+        ],
+        [
+          "ServiceName",
+          "ComplyAdvantage",
+          "SpecialistAgencyServiceReference.ServiceName.Name",
+          "Name of screening vendor"
+        ],
+        [
+          "ServiceType",
+          "InformationService (enum)",
+          "SpecialistAgencyServiceReference.ServiceType",
+          "Hardcoded"
+        ],
+        [
+          "Task",
+          "Serialized customer JSON string",
+          "QualificationTaskRecord.Task",
+          "Full customer profile (name, DOB, nationality, address, IDs, contact, profession, source of wealth) serialized as JSON string"
+        ],
+        [
+          "DateTimeContent",
+          "2026-03-06T13:40:00Z",
+          "InstructionDate.DateTimeContent",
+          "Timestamp when CA workflow was received"
+        ],
+        [
+          "InstructionDateType",
+          "ExecutionDate (enum)",
+          "InstructionDate.InstructionDateType",
+          "Hardcoded"
+        ],
+        [
+          "InstructionStatusType",
+          "Completed / Failed / Pendingprocessing",
+          "InstructionStatus.InstructionStatusType",
+          "Derived from CA response status — not hardcoded"
+        ],
+        [
+          "InstructionStatus",
+          "CA status value (e.g. COMPLETED)",
+          "InstructionStatus.InstructionStatus.StatusReason",
+          "Mirror of CA top-level status field"
+        ],
+        [
+          "IdentifierValue",
+          "workflow_instance_identifier (CA UUID)",
+          "InstructionIdentification.IdentifierValue",
+          "Links BIAN record to CA workflow for traceability"
+        ],
+        [
+          "InstructionIdentificationType",
+          "InstructionNumber (enum)",
+          "InstructionIdentificationType",
+          "Hardcoded"
+        ],
+        [
+          "InstructionType",
+          "InformationRequest (enum)",
+          "InstructionType",
+          "Hardcoded"
+        ],
+        [
+          "InstructionResult",
+          "CA risk + screening output",
+          "InstructionResult",
+          "From initial-risk-scoring and customer-screening step outputs"
+        ],
+        [
+          "InstructionDescription",
+          "Full CA workflow response JSON",
+          "InstructionDescription",
+          "Complete CA raw payload stored for audit"
+        ],
+        [
+          "InstructionPurpose",
+          "AMLScreening",
+          "InstructionPurpose",
+          "Based on qualification type"
+        ],
+        [
+          "QualificationTaskResult.AssessmentType",
+          "AMLAssessment (enum)",
+          "QualificationTaskResult.AssessmentType",
+          "Based on qualification type"
+        ],
+        [
+          "AssessmentSchedule.ScheduleType",
+          "Onboarding",
+          "AssessmentSchedule.ScheduleType",
+          "Hardcoded for onboarding; PeriodicReview for re-screening"
+        ],
+        [
+          "AssessmentDescription",
+          "Qualification derived from ComplyAdvantage AML screening",
+          "AssessmentDescription",
+          "Hardcoded"
+        ],
+        [
+          "AssessmentResult",
+          "clear / failed / on hold",
+          "AssessmentResult",
+          "Derived from InstructionResult — approved→clear, rejected→failed, else→on hold"
+        ],
+        [
+          "AssessmentRequiredAdjustment",
+          "Borderline result — allowed to proceed after review",
+          "AssessmentRequiredAdjustment",
+          "Conditional — only when InstructionResult = Manual Review"
+        ],
+        [
+          "AssessmentExpiryDate.DateContent",
+          "2027-03-05",
+          "AssessmentExpiryDate.DateContent",
+          "Set by internal team for periodic review"
+        ],
+        [
+          "AssessmentStatus.StatusReason",
+          "completed / failed / in-progress",
+          "AssessmentStatus.StatusReason",
+          "Translated from CA status — not hardcoded"
+        ],
+        [
+          "AssessmentIdentification.IdentifierValue",
+          "workflow_instance_identifier",
+          "AssessmentIdentification.IdentifierValue",
+          "Vendor transaction ID"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Revised YAML-"
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter- Party Lifecycle Management Adapter - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}
