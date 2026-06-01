@@ -1,0 +1,522 @@
+{
+  "file": "Term+Deposit+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Term Deposit SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN v14.0, the Term Deposit Service Domain maintains and exposes the operational state, balances, restrictions, entitlements, and lifecycle attributes associated with a specific AccountInstanceReference."
+    },
+    {
+      "type": "p",
+      "text": "BIAN defines this SD as responsible for managing and exposing the live operational representation of a term deposit account instance. It follows the same implementation pattern as the Savings Account and Current Account SDs, with additional term-deposit–specific fields."
+    },
+    {
+      "type": "p",
+      "text": "Classification: This is an Operational Account Instance domain — not a directory or contract domain."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Term Deposit SD Manages",
+          "Term Deposit SD Does NOT Manage"
+        ],
+        [
+          "Runtime account state and status",
+          "Customer profile data — Party Directory SD"
+        ],
+        [
+          "Account balances (available, incoming, outgoing, accrued interest)",
+          "Product agreement configuration — Sales Product Agreement SD"
+        ],
+        [
+          "Entitlements (product & account level parameters)",
+          "Customer holdings registry — CPSD SD"
+        ],
+        [
+          "Restrictions (templates & account instances)",
+          "Other CR/BQ endpoints (future phases)"
+        ],
+        [
+          "Lifecycle timestamps (open, effective, creating)",
+          ""
+        ],
+        [
+          "TD-specific fields: amount, duration, maturity date, open date",
+          ""
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Invoke the Term Deposit SD whenever real-time term deposit account state must be retrieved or reflected in any consuming system or channel."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Trigger Scenario",
+          "Action",
+          "Data Source"
+        ],
+        [
+          "Customer views term deposit on digital banking dashboard",
+          "Retrieve account state: balances, currency, status, parameters",
+          "GET /v2/accounts + GET /v1/balances/live"
+        ],
+        [
+          "User checks current deposit balance",
+          "Retrieve real-time balance from TM",
+          "GET /v1/balances/live"
+        ],
+        [
+          "UI displays deposit rules (tenure, penalties, interest rate)",
+          "Retrieve entitlement definitions and settings",
+          "GET /v1/product-versions + GET /v1/parameter-values"
+        ],
+        [
+          "New term deposit account created",
+          "Initiate (PENDING) → Update (apply TD params) → Activate (OPEN)",
+          "POST + PUT /v2/accounts + batchCreate"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.1 During Account Dashboard View"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: Customer logs into digital banking."
+    },
+    {
+      "type": "p",
+      "text": "Action: Application retrieves account state through Term Deposit SD to display balances, currency, status, account details, and account parameters."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.2 During Balance Inquiry"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: User checks current deposit balance."
+    },
+    {
+      "type": "p",
+      "text": "Action: System retrieves real-time data from GET /v1/balances/live, mapped to accountbalances[] in the BIAN payload."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.3 During Product Rule Display"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: UI needs to display deposit rules such as tenure, penalty rates, and interest rates."
+    },
+    {
+      "type": "p",
+      "text": "Action: Values sourced from entitlementoptiondefinition[] (product-level) and entitlementoptionsetting[] (account-level)."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.4 Freeze and Unfreeze Account"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "The bank operator can freeze or unfreeze an account, restricting all transactions to and from it.",
+        "This operation triggers when the update API is called and the fields for restriction templates and instances are populated.",
+        "Only the bank operator can initiate this operation; customers cannot request a freeze or unfreeze.",
+        "Only transactions are restricted on frozen accounts; customers can still access their accounts and view documents.",
+        "No notification is sent to customers when their accounts are frozen or unfrozen."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. Level of Detail to Capture"
+    },
+    {
+      "type": "p",
+      "text": "Captured data must be:"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Instance-specific — all data must relate to the specific AccountInstanceReference."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Runtime accurate — balances and status sourced live from TM; no cached data."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Balance-aligned — balance types correctly mapped to TM posting phases including accrued interest."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Lifecycle-aware — OpenDate only populated when StatusReason = OPEN."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "Externally sourced — all operational data sourced from four TM upstream APIs."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Relationship Model"
+    },
+    {
+      "type": "p",
+      "text": "For each AccountInstanceReference (e.g. TD-ACC-556677), multiple records exist inside arrays:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Array",
+          "Contents"
+        ],
+        [
+          "accountbalances[]",
+          "AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance, AccruedInterestReceivable, AccruedInterestPayable"
+        ],
+        [
+          "accountdate[]",
+          "OpenDate (conditional), EffectiveDate, CreatingDate"
+        ],
+        [
+          "accountcurrency[]",
+          "Primary and alternate currency denominations"
+        ],
+        [
+          "entitlementoptiondefinition[]",
+          "Product parameters from TM product versions (product level)"
+        ],
+        [
+          "entitlementoptionsetting[]",
+          "Account-level parameter overrides applied at Update"
+        ],
+        [
+          "restrictionoptiondefinition[]",
+          "Restriction templates from product version"
+        ],
+        [
+          "restrictionoptionsetting[]",
+          "Account-level restriction instances"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Balance Type Mapping"
+    },
+    {
+      "type": "p",
+      "text": "Term Deposit accounts include standard balance phases plus accrued interest types unique to this SD:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "TM Balance Phase",
+          "BIAN BalanceType Enum"
+        ],
+        [
+          "posting_phase_committed",
+          "AvailableBalance"
+        ],
+        [
+          "posting_phase_pending_incoming",
+          "ExpectedIncomingBalance"
+        ],
+        [
+          "posting_phase_pending_outgoing",
+          "ExpectedOutgoingBalance"
+        ],
+        [
+          "ACCRUED_INTEREST_RECEIVABLE",
+          "AccruedInterestReceivable (extension enum)"
+        ],
+        [
+          "ACCRUED_INTEREST_PAYABLE",
+          "AccruedInterestPayable (extension enum)"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Debit/Credit Indicator Rule: amount > 0 => BalanceIndicator = Credit | amount < 0 => BalanceIndicator = Debit"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Account Date Type Mapping"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "BIAN DateType",
+          "Source Field",
+          "Condition"
+        ],
+        [
+          "OpenDate",
+          "source_opentimestamp",
+          "Only when StatusReason = OPEN"
+        ],
+        [
+          "EffectiveDate",
+          "activation_timestamp",
+          "Always populated"
+        ],
+        [
+          "CreatingDate",
+          "vault_createtimestamp",
+          "Always populated"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Parameter Placement Model"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Parameter Level",
+          "BIAN Destination Array"
+        ],
+        [
+          "Product level (LEVEL_PRODUCT)",
+          "entitlementoptiondefinition[]"
+        ],
+        [
+          "Account level (LEVEL_INSTANCE)",
+          "entitlementoptionsetting[]"
+        ],
+        [
+          "Restriction templates",
+          "restrictionoptiondefinition[]"
+        ],
+        [
+          "Restriction instances",
+          "restrictionoptionsetting[]"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "7.1 Term Deposit–Specific Parameters"
+    },
+    {
+      "type": "p",
+      "text": "The following TM parameters are applied at the account level (LEVEL_INSTANCE) and stored in entitlementoptionsetting[]:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Parameter ID",
+          "Data Type",
+          "Description"
+        ],
+        [
+          "term",
+          "decimal_value",
+          "Deposit term duration"
+        ],
+        [
+          "desired_maturity_date",
+          "datetimevalue",
+          "Target maturity date for the deposit"
+        ],
+        [
+          "fixed_interest_rate",
+          "decimal_value",
+          "Fixed interest rate applied to the deposit"
+        ],
+        [
+          "interest_application_day",
+          "decimal_value",
+          "Day of month on which interest is applied"
+        ],
+        [
+          "fee_free_withdrawal_percentage_limit",
+          "decimal_value",
+          "Maximum fee-free withdrawal as a percentage of deposit"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. Account Lifecycle Flow"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Step",
+          "Detail"
+        ],
+        [
+          "Step 1 — Initiate",
+          "POST /TermDeposit/Initiate → POST /v2/accounts with empty parameters and status ACCOUNT_STATUS_PENDING"
+        ],
+        [
+          "Step 2 — Return account_id",
+          "TM returns account_id; orchestration layer triggers Update"
+        ],
+        [
+          "Step 3 — Apply Parameters",
+          "POST /v1/parameter-values:batchCreate with TD-specific parameters from EntitlementOptionSetting[]"
+        ],
+        [
+          "Step 4 — Activate Account",
+          "PUT /v2/accounts/{account.id} → status transitions ACCOUNT_STATUS_PENDING → ACCOUNT_STATUS_OPEN"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "8.1 Status Lifecycle"
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ACCOUNT_STATUS_PENDING — account created in CBS; TD parameters not yet applied."
+      ]
+    },
+    {
+      "type": "list",
+      "kind": "ul",
+      "items": [
+        "ACCOUNT_STATUS_OPEN — account activated; TD parameters applied; fully operational."
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "9. BIAN Field Mapping"
+    },
+    {
+      "type": "p",
+      "text": "These fields are unique to the Term Deposit SD and are not present in Savings or Current Account implementations:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field Path",
+          "Sample Data",
+          "Description"
+        ],
+        [
+          "TermDepositAmount",
+          "TermDepositAmount.AmountValue",
+          "10000.00",
+          "Monetary amount deposited under the term deposit account/product."
+        ],
+        [
+          "Currencycode",
+          "TermDepositAmount.Currencycode",
+          "USD",
+          "Standard currency code representing the denomination used for the deposit amount."
+        ],
+        [
+          "AmountType",
+          "TermDepositAmount.AmountType",
+          "Principle Amount",
+          "Classification/type of amount such as principal, maturity, or interest amount."
+        ],
+        [
+          "StartDate",
+          "TermDepositDuration.StartDate.DateTimeContent",
+          "2026-01-01T00:00:00Z",
+          "Date on which the term deposit becomes effective or starts."
+        ],
+        [
+          "EndDate",
+          "TermDepositDuration.EndDate.DateTimeContent",
+          "2026-01-01T00:00:00Z",
+          "Date on which the term deposit tenure ends or expires."
+        ],
+        [
+          "TermDepositMaturityDate",
+          "TermDepositMaturityDate.DateTimeContent",
+          "2026-01-01T00:00:00Z",
+          "Scheduled maturity date on which the term deposit completes its tenure and becomes payable."
+        ],
+        [
+          "TermDepositOpenDate",
+          "TermDepositOpenDate.DateTimeContent",
+          "2026-01-01T00:00:00Z",
+          "Date on which the term deposit account was originally opened."
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Note: TermDepositDuration.EndDate is sourced from /v1/derived-parameter-values (deposit_period_end_date). This is the only field in the TD SD that requires the derived-parameter-values API."
+    },
+    {
+      "type": "p",
+      "text": "Revised YAML (version 14.0):"
+    },
+    {
+      "type": "p",
+      "text": "Link to Adapter: Term Deposit Adapter - Product/Engineering - USTFinX Confluence"
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    }
+  ]
+}

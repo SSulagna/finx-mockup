@@ -1,0 +1,216 @@
+  <!-- DOCS: API reference (Term Deposit) -->
+  <section class="view" data-route="/docs/glue/api-reference/term-deposit" data-tier="external" data-layout="docs" data-section="glue" data-title="Term Deposit · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Party Reference Data Directory reference">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Savings Account reference">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link is-active">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product & Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Position Keeping reference">Position Keeping</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Payment Order Initiation reference">Payment Order Initiation</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Document Directory reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Term Deposit</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Term Deposit</h1>
+      <p class="page-lead">In BIAN v14.0, the Term Deposit Service Domain maintains and exposes the operational state, balances, restrictions, entitlements, and lifecycle attributes associated with a specific AccountInstanceReference.</p>
+      <h2 class="h3" id="what-is-this-service-domain">What Is This Service Domain?</h2>
+      <p>BIAN defines this SD as responsible for managing and exposing the live operational representation of a term deposit account instance. It follows the same implementation pattern as the Savings Account and Current Account SDs, with additional term-deposit-specific fields.</p>
+      <p>Classification: This is an Operational Account Instance domain, not a directory or contract domain.</p>
+      <h2 class="h3" id="key-distinction">Key Distinction</h2>
+      <table class="docs-table">
+        <thead><tr><th>Term Deposit SD Manages</th><th>Term Deposit SD Does NOT Manage</th></tr></thead>
+        <tbody>
+          <tr><td>Runtime account state and status</td><td>Customer profile data, Party Directory SD</td></tr>
+          <tr><td>Account balances (available, incoming, outgoing, accrued interest)</td><td>Product agreement configuration, Sales Product Agreement SD</td></tr>
+          <tr><td>Entitlements (product &amp; account level parameters)</td><td>Customer holdings registry, CPSD SD</td></tr>
+          <tr><td>Restrictions (templates &amp; account instances)</td><td>Other CR/BQ endpoints (future phases)</td></tr>
+          <tr><td>Lifecycle timestamps (open, effective, creating)</td><td></td></tr>
+          <tr><td>TD-specific fields: amount, duration, maturity date, open date</td><td></td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="when-to-use-this-service-domain">When to Use This Service Domain</h2>
+      <p>Invoke the Term Deposit SD whenever real-time term deposit account state must be retrieved or reflected in any consuming system or channel.</p>
+      <table class="docs-table">
+        <thead><tr><th>Trigger Scenario</th><th>Action</th><th>Data Source</th></tr></thead>
+        <tbody>
+          <tr><td>Customer views term deposit on digital banking dashboard</td><td>Retrieve account state: balances, currency, status, parameters</td><td>GET /v2/accounts + GET /v1/balances/live</td></tr>
+          <tr><td>User checks current deposit balance</td><td>Retrieve real-time balance from TM</td><td>GET /v1/balances/live</td></tr>
+          <tr><td>UI displays deposit rules (tenure, penalties, interest rate)</td><td>Retrieve entitlement definitions and settings</td><td>GET /v1/product-versions + GET /v1/parameter-values</td></tr>
+          <tr><td>New term deposit account created</td><td>Initiate (PENDING) → Update (apply TD params) → Activate (OPEN)</td><td>POST + PUT /v2/accounts + batchCreate</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="during-account-dashboard-view">During Account Dashboard View</h2>
+      <p>Scenario: Customer logs into digital banking.</p>
+      <p>Action: Application retrieves account state through Term Deposit SD to display balances, currency, status, account details, and account parameters.</p>
+      <h2 class="h3" id="during-balance-inquiry">During Balance Inquiry</h2>
+      <p>Scenario: User checks current deposit balance.</p>
+      <p>Action: System retrieves real-time data from GET /v1/balances/live, mapped to accountbalances[] in the BIAN payload.</p>
+      <h2 class="h3" id="during-product-rule-display">During Product Rule Display</h2>
+      <p>Scenario: UI needs to display deposit rules such as tenure, penalty rates, and interest rates.</p>
+      <p>Action: Values sourced from entitlementoptiondefinition[] (product-level) and entitlementoptionsetting[] (account-level).</p>
+      <h2 class="h3" id="freeze-and-unfreeze-account">Freeze and Unfreeze Account</h2>
+      <ul>
+        <li>The bank operator can freeze or unfreeze an account, restricting all transactions to and from it.</li>
+        <li>This operation triggers when the update API is called and the fields for restriction templates and instances are populated.</li>
+        <li>Only the bank operator can initiate this operation; customers cannot request a freeze or unfreeze.</li>
+        <li>Only transactions are restricted on frozen accounts; customers can still access their accounts and view documents.</li>
+        <li>No notification is sent to customers when their accounts are frozen or unfrozen.</li>
+      </ul>
+      <h2 class="h3" id="level-of-detail-to-capture">Level of Detail to Capture</h2>
+      <p>Captured data must be:</p>
+      <ul>
+        <li>Instance-specific, all data must relate to the specific AccountInstanceReference.</li>
+        <li>Runtime accurate, balances and status sourced live from TM; no cached data.</li>
+        <li>Balance-aligned, balance types correctly mapped to TM posting phases including accrued interest.</li>
+        <li>Lifecycle-aware, OpenDate only populated when StatusReason = OPEN.</li>
+        <li>Externally sourced, all operational data sourced from four TM upstream APIs.</li>
+      </ul>
+      <h2 class="h3" id="relationship-model">Relationship Model</h2>
+      <p>For each AccountInstanceReference (e.g. TD-ACC-556677), multiple records exist inside arrays:</p>
+      <table class="docs-table">
+        <thead><tr><th>Array</th><th>Contents</th></tr></thead>
+        <tbody>
+          <tr><td>accountbalances[]</td><td>AvailableBalance, ExpectedIncomingBalance, ExpectedOutgoingBalance, AccruedInterestReceivable, AccruedInterestPayable</td></tr>
+          <tr><td>accountdate[]</td><td>OpenDate (conditional), EffectiveDate, CreatingDate</td></tr>
+          <tr><td>accountcurrency[]</td><td>Primary and alternate currency denominations</td></tr>
+          <tr><td>entitlementoptiondefinition[]</td><td>Product parameters from TM product versions (product level)</td></tr>
+          <tr><td>entitlementoptionsetting[]</td><td>Account-level parameter overrides applied at Update</td></tr>
+          <tr><td>restrictionoptiondefinition[]</td><td>Restriction templates from product version</td></tr>
+          <tr><td>restrictionoptionsetting[]</td><td>Account-level restriction instances</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="balance-type-mapping">Balance Type Mapping</h2>
+      <p>Term Deposit accounts include standard balance phases plus accrued interest types unique to this SD:</p>
+      <table class="docs-table">
+        <thead><tr><th>TM Balance Phase</th><th>BIAN BalanceType Enum</th></tr></thead>
+        <tbody>
+          <tr><td>posting_phase_committed</td><td>AvailableBalance</td></tr>
+          <tr><td>posting_phase_pending_incoming</td><td>ExpectedIncomingBalance</td></tr>
+          <tr><td>posting_phase_pending_outgoing</td><td>ExpectedOutgoingBalance</td></tr>
+          <tr><td>ACCRUED_INTEREST_RECEIVABLE</td><td>AccruedInterestReceivable (extension enum)</td></tr>
+          <tr><td>ACCRUED_INTEREST_PAYABLE</td><td>AccruedInterestPayable (extension enum)</td></tr>
+        </tbody>
+      </table>
+      <p>Debit/Credit Indicator Rule: amount &gt; 0 =&gt; BalanceIndicator = Credit | amount &lt; 0 =&gt; BalanceIndicator = Debit</p>
+      <h2 class="h3" id="account-date-type-mapping">Account Date Type Mapping</h2>
+      <table class="docs-table">
+        <thead><tr><th>BIAN DateType</th><th>Source Field</th><th>Condition</th></tr></thead>
+        <tbody>
+          <tr><td>OpenDate</td><td>source_opentimestamp</td><td>Only when StatusReason = OPEN</td></tr>
+          <tr><td>EffectiveDate</td><td>activation_timestamp</td><td>Always populated</td></tr>
+          <tr><td>CreatingDate</td><td>vault_createtimestamp</td><td>Always populated</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="parameter-placement-model">Parameter Placement Model</h2>
+      <table class="docs-table">
+        <thead><tr><th>Parameter Level</th><th>BIAN Destination Array</th></tr></thead>
+        <tbody>
+          <tr><td>Product level (LEVEL_PRODUCT)</td><td>entitlementoptiondefinition[]</td></tr>
+          <tr><td>Account level (LEVEL_INSTANCE)</td><td>entitlementoptionsetting[]</td></tr>
+          <tr><td>Restriction templates</td><td>restrictionoptiondefinition[]</td></tr>
+          <tr><td>Restriction instances</td><td>restrictionoptionsetting[]</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="term-deposit-specific-parameters">Term Deposit-Specific Parameters</h2>
+      <p>The following TM parameters are applied at the account level (LEVEL_INSTANCE) and stored in entitlementoptionsetting[]:</p>
+      <table class="docs-table">
+        <thead><tr><th>Parameter ID</th><th>Data Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>term</td><td>decimal_value</td><td>Deposit term duration</td></tr>
+          <tr><td>desired_maturity_date</td><td>datetimevalue</td><td>Target maturity date for the deposit</td></tr>
+          <tr><td>fixed_interest_rate</td><td>decimal_value</td><td>Fixed interest rate applied to the deposit</td></tr>
+          <tr><td>interest_application_day</td><td>decimal_value</td><td>Day of month on which interest is applied</td></tr>
+          <tr><td>fee_free_withdrawal_percentage_limit</td><td>decimal_value</td><td>Maximum fee-free withdrawal as a percentage of deposit</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="account-lifecycle-flow">Account Lifecycle Flow</h2>
+      <table class="docs-table">
+        <thead><tr><th>Step</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Step 1, Initiate</td><td>POST /TermDeposit/Initiate → POST /v2/accounts with empty parameters and status ACCOUNT_STATUS_PENDING</td></tr>
+          <tr><td>Step 2, Return account_id</td><td>TM returns account_id; orchestration layer triggers Update</td></tr>
+          <tr><td>Step 3, Apply Parameters</td><td>POST /v1/parameter-values:batchCreate with TD-specific parameters from EntitlementOptionSetting[]</td></tr>
+          <tr><td>Step 4, Activate Account</td><td>PUT /v2/accounts/{account.id} → status transitions ACCOUNT_STATUS_PENDING → ACCOUNT_STATUS_OPEN</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="status-lifecycle">Status Lifecycle</h2>
+      <ul>
+        <li>ACCOUNT_STATUS_PENDING, account created in CBS; TD parameters not yet applied.</li>
+        <li>ACCOUNT_STATUS_OPEN, account activated; TD parameters applied; fully operational.</li>
+      </ul>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <p>These fields are unique to the Term Deposit SD and are not present in Savings or Current Account implementations:</p>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field Path</th><th>Sample Data</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>TermDepositAmount</td><td>TermDepositAmount.AmountValue</td><td>10000.00</td><td>Monetary amount deposited under the term deposit account/product.</td></tr>
+          <tr><td>Currencycode</td><td>TermDepositAmount.Currencycode</td><td>USD</td><td>Standard currency code representing the denomination used for the deposit amount.</td></tr>
+          <tr><td>AmountType</td><td>TermDepositAmount.AmountType</td><td>Principle Amount</td><td>Classification/type of amount such as principal, maturity, or interest amount.</td></tr>
+          <tr><td>StartDate</td><td>TermDepositDuration.StartDate.DateTimeContent</td><td>2026-01-01T00:00:00Z</td><td>Date on which the term deposit becomes effective or starts.</td></tr>
+          <tr><td>EndDate</td><td>TermDepositDuration.EndDate.DateTimeContent</td><td>2026-01-01T00:00:00Z</td><td>Date on which the term deposit tenure ends or expires.</td></tr>
+          <tr><td>TermDepositMaturityDate</td><td>TermDepositMaturityDate.DateTimeContent</td><td>2026-01-01T00:00:00Z</td><td>Scheduled maturity date on which the term deposit completes its tenure and becomes payable.</td></tr>
+          <tr><td>TermDepositOpenDate</td><td>TermDepositOpenDate.DateTimeContent</td><td>2026-01-01T00:00:00Z</td><td>Date on which the term deposit account was originally opened.</td></tr>
+        </tbody>
+      </table>
+      <p>Note: TermDepositDuration.EndDate is sourced from /v1/derived-parameter-values (deposit_period_end_date). This is the only field in the TD SD that requires the derived-parameter-values API.</p>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Term Deposit</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#what-is-this-service-domain" class="toc-link">What Is This Service Domain?</a>
+      <a href="#key-distinction" class="toc-link">Key Distinction</a>
+      <a href="#when-to-use-this-service-domain" class="toc-link">When to Use This Service Domain</a>
+      <a href="#during-account-dashboard-view" class="toc-link">During Account Dashboard View</a>
+      <a href="#during-balance-inquiry" class="toc-link">During Balance Inquiry</a>
+      <a href="#during-product-rule-display" class="toc-link">During Product Rule Display</a>
+      <a href="#freeze-and-unfreeze-account" class="toc-link">Freeze and Unfreeze Account</a>
+      <a href="#level-of-detail-to-capture" class="toc-link">Level of Detail to Capture</a>
+      <a href="#relationship-model" class="toc-link">Relationship Model</a>
+      <a href="#balance-type-mapping" class="toc-link">Balance Type Mapping</a>
+      <a href="#account-date-type-mapping" class="toc-link">Account Date Type Mapping</a>
+      <a href="#parameter-placement-model" class="toc-link">Parameter Placement Model</a>
+      <a href="#term-deposit-specific-parameters" class="toc-link">Term Deposit-Specific Parameters</a>
+      <a href="#account-lifecycle-flow" class="toc-link">Account Lifecycle Flow</a>
+      <a href="#status-lifecycle" class="toc-link">Status Lifecycle</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>
