@@ -37,6 +37,8 @@ Two tiers only.
 Sorted by Priority (P0 → P2), then by Target tier (External → Internal). Every row is complete; rows referencing a `Split` action point back to the parent row number in Notes.
 
 > **Note on API reference placement.** API reference renders under `#/docs/glue/api-reference/*` at External tier, behind the documentation gate. Supersedes the earlier `#/internal/glue/api/` placement.
+>
+> **Note on the API Explorer family.** A parallel route family `#/docs/glue/api-explorer/*` was added on 1 Jun 2026. It renders the live OpenAPI 3.0.1 specs fetched once from `https://gatewayqa.ustfinx.com` (sibling repo `finx-glue-swagger-ui`), baked into the repo at `assets/openapi/*.json`, and rendered with **Redoc** (the renderer used by GitHub, Docker, Lyft, and most published banking API references; read-first three-column layout, in contrast to Swagger UI's try-it-out interactive console that belongs in a sandbox). One explorer per service domain, linked from the matching prose SD page via a CTA injected by `main.js`. Term Deposit (row 17b) has no live service in the sibling repo, so it carries a `Planned` CTA instead of a working link. The hub lives at `#/docs/glue/api-explorer`.
 
 | # | Source repo | Source path | Current title | Target file in finx-mockup | Target tier | Action | Priority | Notes |
 |---|---|---|---|---|---|---|---|---|

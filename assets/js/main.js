@@ -453,6 +453,245 @@
       if (!unlocked) label.textContent = 'Public view';
       else label.textContent = 'Signed in: ' + (TIER_LABELS[currentTier] || 'External');
     }
+    updateAssistantScope();
+  }
+
+  // ---------- Floating answer assistant ----------
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function tokenize(value) {
+    var cleaned = String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ');
+    var raw = cleaned.split(/\s+/);
+    var stop = {
+      a: true, an: true, and: true, are: true, as: true, at: true, be: true,
+      by: true, for: true, from: true, how: true, in: true, into: true,
+      is: true, it: true, of: true, on: true, or: true, that: true, the: true,
+      this: true, to: true, what: true, when: true, where: true, which: true,
+      with: true, you: true, your: true
+    };
+    var out = [];
+    for (var i = 0; i < raw.length; i++) {
+      if (raw[i].length > 2 && !stop[raw[i]]) out.push(raw[i]);
+    }
+    return out;
+  }
+
+  function compactText(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function routeLabel(view) {
+    var h = view.querySelector('h1, .docs-title, .page-title, .hero-title');
+    var title = h ? compactText(h.textContent) : '';
+    if (!title) title = (view.getAttribute('data-title') || 'UST FinX').split('·')[0].trim();
+    return title || 'UST FinX';
+  }
+
+  function readableClone(view) {
+    var clone = view.cloneNode(true);
+    var remove = clone.querySelectorAll('script, style, nav, footer, aside, .docs-sidebar, .docs-toc, .docs-aside, .search-overlay, .modal-overlay, .finx-assistant, .state-indicator, .tier-banner, .planning-meta');
+    for (var i = 0; i < remove.length; i++) remove[i].parentNode.removeChild(remove[i]);
+    return clone;
+  }
+
+  function splitSentences(text) {
+    var normalized = compactText(text);
+    if (!normalized) return [];
+    var parts = normalized.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+    var out = [];
+    for (var i = 0; i < parts.length; i++) {
+      var item = compactText(parts[i]);
+      if (item.length >= 45) out.push(item);
+    }
+    return out;
+  }
+
+  function buildAssistantIndex() {
+    var unlocked = isUnlocked();
+    var entries = [];
+    $$('.view[data-route]').forEach(function (view) {
+      var route = view.getAttribute('data-route') || '';
+      if (!route || route === '*') return;
+      var gated = view.getAttribute('data-gated') === 'true' || isGatedRoute(route);
+      var internal = viewTier(view) === 'internal';
+      if ((gated || internal) && !unlocked) return;
+
+      var clone = readableClone(view);
+      var label = routeLabel(view);
+      var title = view.getAttribute('data-title') || label;
+      var text = compactText(clone.textContent);
+      var sentences = splitSentences(text);
+      if (!sentences.length && text) sentences = [text.slice(0, 280)];
+      entries.push({
+        route: route,
+        label: label,
+        title: title,
+        text: text,
+        sentences: sentences,
+        tokens: tokenize(label + ' ' + title + ' ' + text),
+        gated: gated,
+        internal: internal
+      });
+    });
+    return entries;
+  }
+
+  function scoreEntry(entry, queryTokens) {
+    var score = 0;
+    if (!queryTokens.length) return 0;
+    var text = ' ' + entry.tokens.join(' ') + ' ';
+    var title = (entry.label + ' ' + entry.title).toLowerCase();
+    for (var i = 0; i < queryTokens.length; i++) {
+      var token = queryTokens[i];
+      if (title.indexOf(token) >= 0) score += 6;
+      var idx = text.indexOf(' ' + token + ' ');
+      while (idx >= 0) {
+        score += 1;
+        idx = text.indexOf(' ' + token + ' ', idx + token.length + 2);
+      }
+    }
+    if (entry.internal) score += 1;
+    return score;
+  }
+
+  function bestSentences(entry, queryTokens) {
+    var ranked = entry.sentences.map(function (sentence) {
+      var lower = sentence.toLowerCase();
+      var score = 0;
+      for (var i = 0; i < queryTokens.length; i++) {
+        if (lower.indexOf(queryTokens[i]) >= 0) score += 1;
+      }
+      return { sentence: sentence, score: score };
+    }).sort(function (a, b) { return b.score - a.score; });
+    var picked = [];
+    for (var j = 0; j < ranked.length && picked.length < 2; j++) {
+      if (ranked[j].score > 0 || picked.length === 0) picked.push(ranked[j].sentence);
+    }
+    return picked;
+  }
+
+  function answerAssistant(query) {
+    var tokens = tokenize(query);
+    var index = buildAssistantIndex();
+    var locked = !isUnlocked();
+    var authTerms = /\b(internal|staff|sales|enablement|playbook|confidential|architecture references|product requirements)\b/i;
+
+    if (!tokens.length) {
+      return 'Ask a specific question, for example: <strong>How does FinX Glue support coexistence?</strong>';
+    }
+
+    var ranked = index.map(function (entry) {
+      return { entry: entry, score: scoreEntry(entry, tokens) };
+    }).filter(function (item) {
+      return item.score > 0;
+    }).sort(function (a, b) {
+      return b.score - a.score;
+    }).slice(0, 4);
+
+    if (!ranked.length) {
+      if (locked && authTerms.test(query)) {
+        return 'I cannot use gated UST content while you are signed out. Sign in with the UST staff option, then ask again so the local index can include internal pages and protected documentation.';
+      }
+      return 'I could not find a strong match in the accessible portal content. Try a FinX term such as Glue, Glass, BIAN, coexistence, modernization, KYC, or API reference.';
+    }
+
+    var scopeNote = locked
+      ? 'Answering from public pages available in the current session.'
+      : 'Answering from pages available after sign-in, including gated portal content.';
+    var html = '<p><strong>' + scopeNote + '</strong></p><ol>';
+    for (var i = 0; i < ranked.length; i++) {
+      var item = ranked[i].entry;
+      var snippets = bestSentences(item, tokens);
+      html += '<li><a href="#' + escapeHtml(item.route) + '">' + escapeHtml(item.label) + '</a>: ' +
+        escapeHtml(snippets.join(' ')).slice(0, 360) + '</li>';
+    }
+    html += '</ol>';
+    if (locked && authTerms.test(query)) {
+      html += '<p>Some internal answers may be hidden until UST staff sign-in is complete.</p>';
+    }
+    return html;
+  }
+
+  function addAssistantMessage(kind, html) {
+    var log = $('#finx-assistant-messages');
+    if (!log) return;
+    var msg = document.createElement('div');
+    msg.className = 'finx-assistant-msg finx-assistant-msg--' + kind;
+    msg.innerHTML = html;
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function updateAssistantScope() {
+    var scope = $('#finx-assistant-scope');
+    if (!scope) return;
+    var unlocked = isUnlocked();
+    scope.classList.toggle('is-internal', unlocked);
+    scope.textContent = unlocked
+      ? 'Signed in scope: public pages, protected documentation, and UST internal content'
+      : 'Public scope: gated content is excluded until UST staff sign-in';
+  }
+
+  function openAssistant() {
+    var panel = $('#finx-assistant-panel');
+    var toggle = $('#finx-assistant-toggle');
+    var input = $('#finx-assistant-input');
+    if (!panel) return;
+    panel.removeAttribute('hidden');
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    updateAssistantScope();
+    if (input) setTimeout(function () { input.focus(); }, 30);
+  }
+
+  function closeAssistant() {
+    var panel = $('#finx-assistant-panel');
+    var toggle = $('#finx-assistant-toggle');
+    if (!panel) return;
+    panel.setAttribute('hidden', '');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function bindAssistant() {
+    var toggle = $('#finx-assistant-toggle');
+    var close = $('.finx-assistant-close');
+    var form = $('#finx-assistant-form');
+    var input = $('#finx-assistant-input');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        var panel = $('#finx-assistant-panel');
+        if (panel && panel.hasAttribute('hidden')) openAssistant();
+        else closeAssistant();
+      });
+    }
+    if (close) close.addEventListener('click', closeAssistant);
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var query = compactText(input ? input.value : '');
+        if (!query) return;
+        addAssistantMessage('user', escapeHtml(query));
+        addAssistantMessage('bot', answerAssistant(query));
+        if (input) input.value = '';
+      });
+    }
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest && e.target.closest('[data-action="open-finx-chat"]');
+      if (trigger) {
+        e.preventDefault();
+        openAssistant();
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAssistant();
+    });
+    updateAssistantScope();
   }
 
   // ---------- Tab switcher (homepage Products section) ----------
@@ -586,6 +825,7 @@
 
     // Tabs
     bindTabs();
+    bindAssistant();
 
     // Theme: restore saved preference
     try {
@@ -626,4 +866,119 @@
   });
 
   window.addEventListener('hashchange', handleHashChange);
+})();
+
+// ---------------------------------------------------------------------------
+// API Explorer: render Redoc lazily for routes under /docs/glue/api-explorer,
+// and inject a CTA onto each matching API Reference SD page.
+// ---------------------------------------------------------------------------
+(function () {
+  var REDOC_SRC = 'https://cdn.jsdelivr.net/npm/redoc@2.4.0/bundles/redoc.standalone.js';
+  var EXPLORER_SLUG_BY_REF_ROUTE = {
+    '/docs/glue/api-reference': 'api-reference',
+    '/docs/glue/api-reference/current-account': 'current-account',
+    '/docs/glue/api-reference/party-reference-data': 'party-reference-data',
+    '/docs/glue/api-reference/savings-account': 'savings-account',
+    '/docs/glue/api-reference/position-keeping': 'position-keeping',
+    '/docs/glue/api-reference/payment-order-initiation': 'payment-order-initiation',
+    '/docs/glue/api-reference/document-directory': 'document-directory',
+    '/docs/glue/api-reference/product-directory': 'product-directory',
+    '/docs/glue/api-reference/customer-product-service-directory': 'customer-product-service-directory',
+    '/docs/glue/api-reference/customer-offer': 'customer-offer',
+    '/docs/glue/api-reference/customer-agreement': 'customer-agreement'
+  };
+
+  var redocPromise = null;
+  var rendered = {};
+
+  function loadRedoc() {
+    if (window.Redoc) return Promise.resolve();
+    if (redocPromise) return redocPromise;
+    redocPromise = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = REDOC_SRC;
+      s.async = true;
+      s.onload = function () { resolve(); };
+      s.onerror = function () {
+        redocPromise = null;
+        reject(new Error('Could not load Redoc from CDN.'));
+      };
+      document.head.appendChild(s);
+    });
+    return redocPromise;
+  }
+
+  function renderForRoute(route) {
+    if (!route || route.indexOf('/docs/glue/api-explorer/') !== 0) return;
+    var view = document.querySelector('.view[data-route="' + route + '"]');
+    if (!view) return;
+    var host = view.querySelector('.redoc-host');
+    if (!host || rendered[route]) return;
+    var spec = host.getAttribute('data-spec');
+    if (!spec) return;
+
+    loadRedoc().then(function () {
+      try {
+        host.innerHTML = '';
+        window.Redoc.init(spec, {
+          theme: {
+            colors: { primary: { main: '#00D4D4' } },
+            typography: {
+              fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+              headings: { fontFamily: 'Inter, system-ui, sans-serif', fontWeight: '600' },
+              code: { fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }
+            },
+            sidebar: { backgroundColor: '#f3f4f6', textColor: '#062229', activeTextColor: '#00D4D4' },
+            rightPanel: { backgroundColor: '#062229', textColor: '#E8F4F6' }
+          },
+          scrollYOffset: 0,
+          hideDownloadButton: true,
+          expandResponses: '200,201',
+          jsonSampleExpandLevel: 2,
+          nativeScrollbars: false
+        }, host);
+        rendered[route] = true;
+      } catch (e) {
+        host.innerHTML = '<div class="loading-spec">Failed to render spec: ' + (e && e.message ? e.message : e) + '</div>';
+      }
+    }).catch(function (e) {
+      host.innerHTML = '<div class="loading-spec">' + e.message + '</div>';
+    });
+  }
+
+  function injectExplorerCtas() {
+    var views = document.querySelectorAll('.view[data-route^="/docs/glue/api-reference"]');
+    for (var i = 0; i < views.length; i++) {
+      var view = views[i];
+      if (view.querySelector('.api-explorer-cta')) continue;
+      var lead = view.querySelector('.page-lead');
+      if (!lead) continue;
+      var route = view.getAttribute('data-route');
+      var slug = EXPLORER_SLUG_BY_REF_ROUTE[route];
+      var cta;
+      if (slug) {
+        cta = document.createElement('a');
+        cta.className = 'api-explorer-cta';
+        cta.href = '#/docs/glue/api-explorer/' + slug;
+        cta.innerHTML = 'Open interactive API explorer <span aria-hidden="true">→</span>';
+      } else if (route === '/docs/glue/api-reference/term-deposit') {
+        cta = document.createElement('span');
+        cta.className = 'api-explorer-cta is-planned';
+        cta.setAttribute('title', 'Planned: OpenAPI spec for Term Deposit service is not yet published');
+        cta.textContent = 'Interactive API explorer · planned';
+      } else {
+        continue;
+      }
+      lead.parentNode.insertBefore(cta, lead.nextSibling);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectExplorerCtas);
+  } else {
+    injectExplorerCtas();
+  }
+  document.addEventListener('view:enter', function (ev) {
+    renderForRoute(ev.detail && ev.detail.route);
+  });
 })();

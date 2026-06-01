@@ -834,6 +834,27 @@
     /* --- Brighten primary buttons on hover --- */
     .btn-primary { transition: background var(--transition), transform 120ms ease, box-shadow var(--transition); }
     .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 212, 212, 0.18); }
+
+    /* --- API Explorer (Redoc) layout. Full-width, white canvas. --- */
+    .view[data-layout="explorer"] { display: none; }
+    .view[data-layout="explorer"].is-active { display: block; max-width: none; padding: 0; margin: 0; }
+    .explorer-header { background: var(--bg-mid); border-bottom: 1px solid var(--border); padding: 20px 32px; }
+    .explorer-header .breadcrumb { margin: 0 0 8px 0; font-size: 13px; }
+    .explorer-header h1 { margin: 0; font-size: 22px; color: var(--text-primary); font-weight: 600; }
+    .explorer-header .lead { margin: 6px 0 0 0; color: var(--text-secondary); font-size: 14px; }
+    .explorer-header .lead a { color: var(--cyan); text-decoration: none; }
+    .explorer-header .lead a:hover { text-decoration: underline; }
+    .redoc-host { background: #fafbfc; min-height: 800px; }
+    .redoc-host .loading-spec { padding: 80px 40px; text-align: center; color: #6b7280; font-size: 15px; }
+    .redoc-host redoc { display: block; }
+    /* Force Redoc's own three-column rendering onto a light theme that reads well on the dark portal. */
+    .redoc-host .menu-content { background: #f3f4f6 !important; }
+
+    /* CTA injected by main.js onto each SD page that has a spec. */
+    .api-explorer-cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: rgba(0, 212, 212, 0.12); color: var(--cyan); border: 1px solid rgba(0, 212, 212, 0.35); border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; margin: 4px 0 24px 0; transition: background var(--transition), color var(--transition); }
+    .api-explorer-cta:hover { background: var(--cyan); color: var(--bg-deep); }
+    .api-explorer-cta.is-planned { background: transparent; color: var(--text-muted); border-color: var(--border); cursor: help; }
+    .api-explorer-cta.is-planned:hover { background: transparent; color: var(--text-muted); }
   </style>
 </head>
 <body>
@@ -7625,6 +7646,167 @@ Content-Type: application/json</code></pre>
     </div></div></aside>
   </section>
 
+  <!-- DOCS: API Explorer hub -->
+  <section class="view" data-route="/docs/glue/api-explorer" data-tier="external" data-layout="docs" data-section="glue" data-title="API Explorer · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+      <div class="docs-nav-group">API Explorer</div>
+      <a href="#/docs/glue/api-explorer" class="docs-nav-link is-active">All service domains</a>
+      <a href="#/docs/glue/api-explorer/api-reference" class="docs-nav-link">Party Lifecycle Management</a>
+      <a href="#/docs/glue/api-explorer/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <a href="#/docs/glue/api-explorer/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-explorer/savings-account" class="docs-nav-link">Savings Account</a>
+      <a href="#/docs/glue/api-explorer/product-directory" class="docs-nav-link">Product Directory</a>
+      <a href="#/docs/glue/api-explorer/customer-product-service-directory" class="docs-nav-link">Customer Product &amp; Service Directory</a>
+      <a href="#/docs/glue/api-explorer/customer-offer" class="docs-nav-link">Customer Offer</a>
+      <a href="#/docs/glue/api-explorer/customer-agreement" class="docs-nav-link">Customer Agreement</a>
+      <a href="#/docs/glue/api-explorer/position-keeping" class="docs-nav-link">Position Keeping</a>
+      <a href="#/docs/glue/api-explorer/payment-order-initiation" class="docs-nav-link">Payment Order Initiation</a>
+      <a href="#/docs/glue/api-explorer/document-directory" class="docs-nav-link">Document Directory</a>
+      <div class="docs-nav-group">Reference prose</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">← Back to service-domain reference</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><span>API Explorer</span></nav>
+      <span class="eyebrow">FinX Glue · OpenAPI 3.0.1 · BIAN 14.0</span>
+      <h1 class="page-title">Interactive API Explorer</h1>
+      <p class="page-lead">Eleven BIAN-aligned service domains, rendered live from the OpenAPI 3.0.1 specifications published by <code>gatewayqa.ustfinx.com</code>. Each explorer is paired with the prose service-domain page under <a href="#/docs/glue/api-reference">API Reference</a>: the prose explains intent and BIAN mapping; the explorer is the machine-readable contract.</p>
+      <div class="callout callout--info"><strong>What you see.</strong> Operations grouped by tag, request and response schemas with examples, downloadable JSON spec, and deep links to every operation. Authorize-and-call (Swagger UI's "Try it out") is intentionally not exposed here; runtime calls belong in the sandbox.</div>
+
+      <h2 class="h3" style="margin-top:40px;">Party &amp; Customer</h2>
+      <div class="grid-2">
+        <a href="#/docs/glue/api-explorer/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle Management →</h3><p class="card-text">End-to-end orchestration of party creation, from offer acceptance through identity verification to final activation.</p></a>
+        <a href="#/docs/glue/api-explorer/party-reference-data" class="card card--link"><h3 class="card-title">Party Reference Data Directory →</h3><p class="card-text">Party profiles, roles, and relationships.</p></a>
+      </div>
+
+      <h2 class="h3" style="margin-top:32px;">Accounts &amp; Deposits</h2>
+      <div class="grid-2">
+        <a href="#/docs/glue/api-explorer/current-account" class="card card--link"><h3 class="card-title">Current Account →</h3><p class="card-text">Operational state, balances, restrictions, and lifecycle of a current account instance.</p></a>
+        <a href="#/docs/glue/api-explorer/savings-account" class="card card--link"><h3 class="card-title">Savings Account →</h3><p class="card-text">Account lifecycle, balances, and transactions for savings products.</p></a>
+      </div>
+
+      <h2 class="h3" style="margin-top:32px;">Products &amp; Agreements</h2>
+      <div class="grid-2">
+        <a href="#/docs/glue/api-explorer/product-directory" class="card card--link"><h3 class="card-title">Product Directory →</h3><p class="card-text">Product catalogue: details, pricing, and availability.</p></a>
+        <a href="#/docs/glue/api-explorer/customer-product-service-directory" class="card card--link"><h3 class="card-title">Customer Product &amp; Service Directory →</h3><p class="card-text">The customer-side registry of held products and services.</p></a>
+        <a href="#/docs/glue/api-explorer/customer-offer" class="card card--link"><h3 class="card-title">Customer Offer →</h3><p class="card-text">Offer details, pricing, and availability per customer.</p></a>
+        <a href="#/docs/glue/api-explorer/customer-agreement" class="card card--link"><h3 class="card-title">Customer Agreement →</h3><p class="card-text">Agreement terms and conditions for active products.</p></a>
+      </div>
+
+      <h2 class="h3" style="margin-top:32px;">Operations</h2>
+      <div class="grid-2">
+        <a href="#/docs/glue/api-explorer/position-keeping" class="card card--link"><h3 class="card-title">Position Keeping →</h3><p class="card-text">Position details, valuation, and movement tracking.</p></a>
+        <a href="#/docs/glue/api-explorer/payment-order-initiation" class="card card--link"><h3 class="card-title">Payment Order Initiation →</h3><p class="card-text">Capture payer and payee, orchestrate the payment, support scheduled and repeating payments.</p></a>
+        <a href="#/docs/glue/api-explorer/document-directory" class="card card--link"><h3 class="card-title">Document Directory →</h3><p class="card-text">Document storage, retrieval, and classification.</p></a>
+      </div>
+
+      <h2 class="h3" style="margin-top:32px;">Why Redoc</h2>
+      <p>These pages are rendered with <a href="https://redocly.com/redoc" target="_blank" rel="noopener">Redoc</a>, the OpenAPI renderer used by GitHub, Docker, Lyft, Discourse, and most published banking API references. Redoc is read-first: a three-column layout that mirrors the published-spec convention BIAN consumers expect. Where the sibling developer console uses Swagger UI for interactive calls against a Keycloak-gated backend, this portal uses Redoc to present the contract as documentation.</p>
+    </main>
+  </section>
+
+  <!-- API Explorer per-spec views. Redoc is loaded on demand by main.js when one of these routes is entered. -->
+  <section class="view" data-route="/docs/glue/api-explorer/api-reference" data-tier="external" data-layout="explorer" data-section="glue" data-title="Party Lifecycle Management · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Party Lifecycle Management</span></nav>
+      <h1>Party Lifecycle Management · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference">← Back to service-domain reference</a> · <a href="assets/openapi/api-reference.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/api-reference.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/current-account" data-tier="external" data-layout="explorer" data-section="glue" data-title="Current Account · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Current Account</span></nav>
+      <h1>Current Account · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/current-account">← Back to service-domain reference</a> · <a href="assets/openapi/current-account.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/current-account.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/party-reference-data" data-tier="external" data-layout="explorer" data-section="glue" data-title="Party Reference Data · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Party Reference Data</span></nav>
+      <h1>Party Reference Data Directory · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/party-reference-data">← Back to service-domain reference</a> · <a href="assets/openapi/party-reference-data.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/party-reference-data.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/savings-account" data-tier="external" data-layout="explorer" data-section="glue" data-title="Savings Account · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Savings Account</span></nav>
+      <h1>Savings Account · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/savings-account">← Back to service-domain reference</a> · <a href="assets/openapi/savings-account.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/savings-account.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/product-directory" data-tier="external" data-layout="explorer" data-section="glue" data-title="Product Directory · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Product Directory</span></nav>
+      <h1>Product Directory · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/product-directory">← Back to service-domain reference</a> · <a href="assets/openapi/product-directory.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/product-directory.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/customer-product-service-directory" data-tier="external" data-layout="explorer" data-section="glue" data-title="Customer Product &amp; Service Directory · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Customer Product &amp; Service Directory</span></nav>
+      <h1>Customer Product &amp; Service Directory · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/customer-product-service-directory">← Back to service-domain reference</a> · <a href="assets/openapi/customer-product-service-directory.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/customer-product-service-directory.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/customer-offer" data-tier="external" data-layout="explorer" data-section="glue" data-title="Customer Offer · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Customer Offer</span></nav>
+      <h1>Customer Offer · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/customer-offer">← Back to service-domain reference</a> · <a href="assets/openapi/customer-offer.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/customer-offer.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/customer-agreement" data-tier="external" data-layout="explorer" data-section="glue" data-title="Customer Agreement · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Customer Agreement</span></nav>
+      <h1>Customer Agreement · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/customer-agreement">← Back to service-domain reference</a> · <a href="assets/openapi/customer-agreement.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/customer-agreement.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/position-keeping" data-tier="external" data-layout="explorer" data-section="glue" data-title="Position Keeping · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Position Keeping</span></nav>
+      <h1>Position Keeping · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/position-keeping">← Back to service-domain reference</a> · <a href="assets/openapi/position-keeping.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/position-keeping.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/payment-order-initiation" data-tier="external" data-layout="explorer" data-section="glue" data-title="Payment Order Initiation · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Payment Order Initiation</span></nav>
+      <h1>Payment Order Initiation · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/payment-order-initiation">← Back to service-domain reference</a> · <a href="assets/openapi/payment-order-initiation.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/payment-order-initiation.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
+  <section class="view" data-route="/docs/glue/api-explorer/document-directory" data-tier="external" data-layout="explorer" data-section="glue" data-title="Document Directory · API Explorer · UST FinX">
+    <div class="explorer-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-explorer">API Explorer</a><span class="sep">/</span><span>Document Directory</span></nav>
+      <h1>Document Directory · API Explorer</h1>
+      <p class="lead"><a href="#/docs/glue/api-reference/document-directory">← Back to service-domain reference</a> · <a href="assets/openapi/document-directory.json" target="_blank" rel="noopener">Download spec (JSON)</a></p>
+    </div>
+    <div class="redoc-host" data-spec="assets/openapi/document-directory.json"><div class="loading-spec">Loading interactive API reference…</div></div>
+  </section>
+
   <!-- DOCS: Glass Operations Guide landing -->
   <section class="view" data-route="/docs/glass" data-tier="external" data-layout="docs" data-section="glass" data-title="Glass Operations Guide · UST FinX">
     <aside class="docs-sidebar"><div class="docs-nav">
@@ -8517,6 +8699,34 @@ Content-Type: application/json</code></pre>
   <div class="state-indicator" id="state-indicator">
     <span class="dot"></span>
     <span class="state-label">Public view</span>
+  </div>
+
+  <!-- Floating answer assistant -->
+  <div class="finx-assistant" id="finx-assistant" aria-live="polite">
+    <button class="finx-assistant-toggle" id="finx-assistant-toggle" type="button" aria-label="Open FinX answer assistant" aria-expanded="false" aria-controls="finx-assistant-panel">
+      <span class="finx-assistant-toggle-icon" aria-hidden="true">?</span>
+      <span class="finx-assistant-toggle-label">Ask FinX</span>
+    </button>
+    <section class="finx-assistant-panel" id="finx-assistant-panel" aria-label="FinX answer assistant" hidden>
+      <header class="finx-assistant-header">
+        <div>
+          <div class="finx-assistant-kicker">Local index</div>
+          <h2>Ask FinX</h2>
+        </div>
+        <button class="finx-assistant-close" type="button" aria-label="Close FinX answer assistant">&times;</button>
+      </header>
+      <div class="finx-assistant-scope" id="finx-assistant-scope">Public content only</div>
+      <div class="finx-assistant-messages" id="finx-assistant-messages" role="log" aria-live="polite">
+        <div class="finx-assistant-msg finx-assistant-msg--bot">
+          Ask about FinX Glue, FinX Glass, modernization paths, use cases, APIs, or internal enablement. I answer from the pages this portal can access in your current sign-in state.
+        </div>
+      </div>
+      <form class="finx-assistant-form" id="finx-assistant-form">
+        <label class="visually-hidden" for="finx-assistant-input">Ask a question</label>
+        <input id="finx-assistant-input" type="search" autocomplete="off" placeholder="Search or ask a question">
+        <button type="submit">Ask</button>
+      </form>
+    </section>
   </div>
 
   <!-- Search modal (decorative, Cmd/Ctrl+K) -->
