@@ -356,6 +356,99 @@
     }
   }
 
+  // ---------- Comment feedback ----------
+  function commentModalEl() { return $('#comment-modal'); }
+
+  function activePageLabel() {
+    var view = $('.view.is-active');
+    if (!view) return 'FinX documentation';
+    var h = view.querySelector('h1, .docs-title, .page-title, .hero-title');
+    return compactCommentText(h ? h.textContent : (view.getAttribute('data-title') || 'FinX documentation').split('·')[0]);
+  }
+
+  function compactCommentText(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function openCommentModal(sectionLabel) {
+    var modal = commentModalEl();
+    if (!modal) return;
+    var pageInput = $('#comment-page');
+    var sectionInput = $('#comment-section');
+    var reviewerInput = $('#comment-reviewer');
+    var feedbackInput = $('#comment-feedback');
+    if (pageInput) pageInput.value = activePageLabel();
+    if (sectionInput) sectionInput.value = sectionLabel || 'Page';
+    if (feedbackInput) feedbackInput.value = '';
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    if (reviewerInput) setTimeout(function () { reviewerInput.focus(); }, 40);
+  }
+
+  function closeCommentModal() {
+    var modal = commentModalEl();
+    if (!modal) return;
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function sendCommentFeedback() {
+    var pageInput = $('#comment-page');
+    var sectionInput = $('#comment-section');
+    var reviewerInput = $('#comment-reviewer');
+    var feedbackInput = $('#comment-feedback');
+    var page = compactCommentText(pageInput && pageInput.value) || 'FinX documentation';
+    var section = compactCommentText(sectionInput && sectionInput.value) || 'Page';
+    var reviewer = compactCommentText(reviewerInput && reviewerInput.value);
+    var feedback = compactCommentText(feedbackInput && feedbackInput.value);
+    var body = [
+      'Page: ' + page,
+      'Section: ' + section,
+      'Reviewer: ' + reviewer,
+      '',
+      'Feedback:',
+      feedback,
+      '',
+      '',
+      'Sent from the FinX documentation portal prototype.'
+    ].join('\n');
+    var subject = 'FinX documentation feedback: ' + section;
+    window.location.href = 'mailto:309676@ust.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    closeCommentModal();
+  }
+
+  function bindCommentFeedback() {
+    document.addEventListener('click', function (e) {
+      if (currentMode !== 'comment') return;
+      var target = e.target.closest && e.target.closest('.view.is-active h2, .view.is-active h3, .view.is-active .card-title');
+      if (!target) return;
+      e.preventDefault();
+      e.stopPropagation();
+      openCommentModal(compactCommentText(target.textContent));
+    }, true);
+
+    var modal = commentModalEl();
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeCommentModal();
+      });
+      var close = $('.comment-modal-close', modal);
+      if (close) close.addEventListener('click', closeCommentModal);
+      var cancel = $('[data-action="comment-close"]', modal);
+      if (cancel) cancel.addEventListener('click', closeCommentModal);
+      var form = $('#comment-form');
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          sendCommentFeedback();
+        });
+      }
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('active')) closeCommentModal();
+    });
+  }
+
   // ---------- Sign-in modal ----------
   function modalEl() { return $('#signin-modal'); }
 
@@ -914,6 +1007,7 @@
     // Tabs
     bindTabs();
     bindAssistant();
+    bindCommentFeedback();
 
     // Theme: restore saved preference
     try {

@@ -8918,16 +8918,10 @@ GET /v1/customer-agreement/list?limit=50&amp;cursor=eyJpZCI6ImFncl8wMUhaUTh...</
 
   <!-- Floating answer assistant -->
   <div class="finx-assistant" id="finx-assistant" aria-live="polite">
-    <div class="finx-assistant-launcher">
-      <button class="finx-assistant-search" type="button" data-action="open-search" aria-label="Search the FinX portal">
-        <span class="finx-assistant-search-icon" aria-hidden="true">⌕</span>
-        <span class="finx-assistant-search-label">Search the portal</span>
-      </button>
-      <button class="finx-assistant-toggle" id="finx-assistant-toggle" type="button" aria-label="Open FinX answer assistant" aria-expanded="false" aria-controls="finx-assistant-panel">
-        <span class="finx-assistant-toggle-icon" aria-hidden="true">?</span>
-        <span class="finx-assistant-toggle-label">Ask</span>
-      </button>
-    </div>
+    <button class="finx-assistant-toggle" id="finx-assistant-toggle" type="button" aria-label="Open FinX answer assistant" aria-expanded="false" aria-controls="finx-assistant-panel">
+      <span class="finx-assistant-toggle-icon" aria-hidden="true">?</span>
+      <span class="finx-assistant-toggle-label">Ask FinX</span>
+    </button>
     <section class="finx-assistant-panel" id="finx-assistant-panel" aria-label="FinX answer assistant" hidden>
       <header class="finx-assistant-header">
         <div>
@@ -8951,6 +8945,32 @@ GET /v1/customer-agreement/list?limit=50&amp;cursor=eyJpZCI6ImFncl8wMUhaUTh...</
         <button type="submit">Ask</button>
       </form>
     </section>
+  </div>
+
+  <!-- Comment feedback modal -->
+  <div id="comment-modal" class="comment-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="comment-modal-title" aria-hidden="true">
+    <div class="comment-modal">
+      <button class="comment-modal-close" type="button" aria-label="Close feedback form">&times;</button>
+      <div class="comment-modal-header">
+        <div class="comment-modal-kicker">Comment mode</div>
+        <h2 id="comment-modal-title">Send feedback</h2>
+        <p>Capture review notes for the current page and section.</p>
+      </div>
+      <form id="comment-form" class="comment-form">
+        <label for="comment-page">Page</label>
+        <input id="comment-page" name="page" type="text" readonly>
+        <label for="comment-section">Section</label>
+        <input id="comment-section" name="section" type="text" readonly>
+        <label for="comment-reviewer">Reviewer</label>
+        <input id="comment-reviewer" name="reviewer" type="text" placeholder="Your name">
+        <label for="comment-feedback">Feedback</label>
+        <textarea id="comment-feedback" name="feedback" rows="5" placeholder="What should change?"></textarea>
+        <div class="comment-form-actions">
+          <button type="button" class="comment-secondary" data-action="comment-close">Cancel</button>
+          <button type="submit" class="comment-primary">Open email draft</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Search modal (Cmd/Ctrl+K) -->
@@ -9049,11 +9069,172 @@ GET /v1/customer-agreement/list?limit=50&amp;cursor=eyJpZCI6ImFncl8wMUhaUTh...</
     (function () {
       var overlay = document.getElementById('search-overlay');
       var input   = document.getElementById('search-modal-input');
+      var emptyState = document.getElementById('search-empty-state');
+      var liveState = document.getElementById('search-live-state');
+      var liveResults = document.getElementById('search-live-results');
+      var liveSummary = document.getElementById('search-live-summary');
+      var searchIndex = null;
+      var activeResult = 0;
+
+      function isUnlockedForSearch() {
+        try { return sessionStorage.getItem('finx-internal-unlocked') === '1'; } catch (_) { return false; }
+      }
+
+      function compactSearchText(value) {
+        return String(value || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function searchTokens(value) {
+        var raw = compactSearchText(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').split(/\s+/);
+        var stop = { a: true, an: true, and: true, are: true, for: true, from: true, in: true, is: true, of: true, on: true, or: true, the: true, to: true, with: true };
+        var out = [];
+        for (var i = 0; i < raw.length; i++) {
+          if (raw[i].length > 1 && !stop[raw[i]]) out.push(raw[i]);
+        }
+        return out;
+      }
+
+      function routeSection(route) {
+        if (route.indexOf('/docs/glue') === 0) return 'GLUE';
+        if (route.indexOf('/docs/glass') === 0) return 'GLASS';
+        if (route.indexOf('/modernization') === 0) return 'PATH';
+        if (route.indexOf('/platform') === 0) return 'PLATFORM';
+        if (route.indexOf('/internal') === 0) return 'INTERNAL';
+        if (route.indexOf('/resources') === 0) return 'RESOURCE';
+        if (route.indexOf('/use-cases') === 0) return 'CASE';
+        if (route.indexOf('/architecture') === 0) return 'ARCH';
+        return 'FINX';
+      }
+
+      function routeTitle(view) {
+        var h = view.querySelector('h1, .docs-title, .page-title, .hero-title');
+        return compactSearchText(h ? h.textContent : (view.getAttribute('data-title') || 'UST FinX').split('·')[0]);
+      }
+
+      function makeSearchIndex() {
+        var entries = [];
+        document.querySelectorAll('.view[data-route]').forEach(function (view) {
+          var route = view.getAttribute('data-route') || '';
+          if (!route || route === '*') return;
+          var isInternal = view.getAttribute('data-tier') === 'internal' || route.indexOf('/internal') === 0;
+          var isGated = isInternal || route.indexOf('/docs/') === 0 || route === '/docs';
+          var title = routeTitle(view);
+          var headings = Array.prototype.slice.call(view.querySelectorAll('h1, h2, h3'));
+          var bodyNodes = Array.prototype.slice.call(view.querySelectorAll('p, li, td'));
+          var titleText = title + ' ' + headings.map(function (node) { return compactSearchText(node.textContent); }).join(' ');
+          var bodyText = bodyNodes.map(function (node) { return compactSearchText(node.textContent); }).join(' ');
+          var headingAnchor = headings.filter(function (node) { return node.id; })[0];
+          entries.push({
+            route: route,
+            anchor: headingAnchor ? headingAnchor.id : '',
+            section: routeSection(route),
+            title: title,
+            titleText: titleText,
+            bodyText: bodyText,
+            haystack: (titleText + ' ' + bodyText).toLowerCase(),
+            internal: isInternal,
+            gated: isGated
+          });
+        });
+        return entries;
+      }
+
+      function searchIndexEntries(query) {
+        if (!searchIndex) searchIndex = makeSearchIndex();
+        var tokens = searchTokens(query);
+        if (!tokens.length) return [];
+        var unlocked = isUnlockedForSearch();
+        return searchIndex.filter(function (entry) {
+          if (entry.gated && !unlocked) return false;
+          for (var i = 0; i < tokens.length; i++) {
+            if (entry.haystack.indexOf(tokens[i]) < 0) return false;
+          }
+          return true;
+        }).map(function (entry) {
+          var score = 0;
+          var titleLower = entry.titleText.toLowerCase();
+          for (var i = 0; i < tokens.length; i++) {
+            if (titleLower.indexOf(tokens[i]) >= 0) score += 12;
+            score += (entry.haystack.split(tokens[i]).length - 1);
+          }
+          var phrase = compactSearchText(query).toLowerCase();
+          if (phrase && titleLower.indexOf(phrase) >= 0) score += 24;
+          if (phrase && entry.haystack.indexOf(phrase) >= 0) score += 10;
+          return { entry: entry, score: score };
+        }).sort(function (a, b) { return b.score - a.score; }).slice(0, 12);
+      }
+
+      function escapeSearchHtml(value) {
+        return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      function resultSnippet(entry, query) {
+        var body = entry.bodyText || entry.titleText;
+        var tokens = searchTokens(query);
+        var lower = body.toLowerCase();
+        var pos = 0;
+        for (var i = 0; i < tokens.length; i++) {
+          var found = lower.indexOf(tokens[i]);
+          if (found >= 0) { pos = Math.max(0, found - 50); break; }
+        }
+        return compactSearchText(body.slice(pos, pos + 170));
+      }
+
+      function setActiveResult(index) {
+        var links = liveResults ? liveResults.querySelectorAll('a[data-search-route]') : [];
+        if (!links.length) return;
+        activeResult = Math.max(0, Math.min(index, links.length - 1));
+        for (var i = 0; i < links.length; i++) links[i].classList.toggle('is-active', i === activeResult);
+      }
+
+      function renderSearch(query) {
+        if (!liveResults || !liveState || !emptyState) return;
+        var q = compactSearchText(query);
+        if (!q) {
+          emptyState.hidden = false;
+          liveState.hidden = true;
+          liveResults.innerHTML = '';
+          return;
+        }
+        var results = searchIndexEntries(q);
+        emptyState.hidden = true;
+        liveState.hidden = false;
+        liveSummary.textContent = results.length ? (results.length + ' results for "' + q + '"') : ('No results for "' + q + '"');
+        if (!results.length) {
+          liveResults.innerHTML = '<li><a href="javascript:void(0)"><span class="pre">NONE</span><span class="search-result-main"><span class="search-result-title">Try Glue, Glass, BIAN, KYC, API reference, or modernization.</span></span></a></li>';
+          return;
+        }
+        liveResults.innerHTML = results.map(function (item) {
+          var entry = item.entry;
+          var href = '#' + entry.route;
+          return '<li><a href="' + escapeSearchHtml(href) + '" data-search-route="' + escapeSearchHtml(entry.route) + '" data-scroll-to="' + escapeSearchHtml(entry.anchor) + '">' +
+            '<span class="pre">' + escapeSearchHtml(entry.section) + '</span>' +
+            '<span class="search-result-main"><span class="search-result-title">' + escapeSearchHtml(entry.title) + '</span>' +
+            '<span class="search-result-snippet">' + escapeSearchHtml(resultSnippet(entry, q)) + '</span>' +
+            '<span class="search-result-route">#' + escapeSearchHtml(entry.route) + '</span></span></a></li>';
+        }).join('');
+        setActiveResult(0);
+      }
+
+      function scrollToSearchTarget() {
+        var targetId = '';
+        try {
+          targetId = sessionStorage.getItem('finx-search-scroll-to') || '';
+          sessionStorage.removeItem('finx-search-scroll-to');
+        } catch (_) {}
+        if (!targetId) return;
+        setTimeout(function () {
+          var active = document.querySelector('.view.is-active');
+          var target = active && active.querySelector('#' + CSS.escape(targetId));
+          if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+      }
 
       function openSearch() {
         if (!overlay) return;
         overlay.classList.add('active');
         overlay.setAttribute('aria-hidden', 'false');
+        renderSearch(input ? input.value : '');
         if (input) setTimeout(function () { input.focus(); input.select(); }, 30);
       }
       function closeSearch() {
@@ -9074,6 +9255,20 @@ GET /v1/customer-agreement/list?limit=50&amp;cursor=eyJpZCI6ImFncl8wMUhaUTh...</
         if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
           closeSearch();
         }
+        if (overlay && overlay.classList.contains('active') && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+          var links = liveResults ? liveResults.querySelectorAll('a[data-search-route]') : [];
+          if (links.length) {
+            e.preventDefault();
+            setActiveResult(activeResult + (e.key === 'ArrowDown' ? 1 : -1));
+          }
+        }
+        if (overlay && overlay.classList.contains('active') && e.key === 'Enter') {
+          var activeLink = liveResults && liveResults.querySelector('a.is-active[data-search-route]');
+          if (activeLink) {
+            e.preventDefault();
+            activeLink.click();
+          }
+        }
       });
       // Click outside closes
       if (overlay) {
@@ -9083,9 +9278,18 @@ GET /v1/customer-agreement/list?limit=50&amp;cursor=eyJpZCI6ImFncl8wMUhaUTh...</
         // Closing when a result is clicked
         overlay.addEventListener('click', function (e) {
           var a = e.target.closest && e.target.closest('a');
-          if (a) closeSearch();
+          if (a) {
+            var scrollTo = a.getAttribute('data-scroll-to') || '';
+            if (scrollTo) {
+              try { sessionStorage.setItem('finx-search-scroll-to', scrollTo); } catch (_) {}
+              setTimeout(scrollToSearchTarget, 120);
+            }
+            closeSearch();
+          }
         });
       }
+      if (input) input.addEventListener('input', function () { renderSearch(input.value); });
+      document.addEventListener('view:enter', scrollToSearchTarget);
       // Top-nav fake search input opens modal on focus
       var navSearch = document.getElementById('nav-search');
       if (navSearch) {
