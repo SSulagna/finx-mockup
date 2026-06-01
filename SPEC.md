@@ -27,13 +27,24 @@ The spec is opinionated. Where it specifies a value (color, font size, spacing),
 
 ### 1.1 What we are building
 
-A multi-page static site that serves as a high-fidelity mockup of the proposed UST FinX documentation portal. The mockup demonstrates the look, feel, navigation, and content structure of three connected surfaces:
+A multi-page static site that serves as a high-fidelity mockup of the proposed UST FinX documentation portal. The mockup demonstrates the look, feel, navigation, and content structure of two connected surfaces:
 
-1. **Public marketing site** — for bank evaluators, prospects, partners
-2. **Public documentation portals** — for developers (Glue) and bank operators (Glass)
-3. **Internal hub** — gated by simple password, for UST staff only
+1. **Public marketing site**, for bank evaluators, prospects, partners. No sign-in.
+2. **Gated documentation portal**, behind a single sign-in. Inside the gate, two tiers exist:
+   - **External**, visible to any signed-in user (bank partners + UST staff). Covers the Glue developer hub, Glass operations guide, partner integration, API reference, and onboarding content.
+   - **Internal**, visible to UST staff only. Covers the Internal Hub and any item flagged as internal.
 
 The mockup is for stakeholder review, not production deployment. It does not need a backend, real authentication, or a real search index. It does need to feel like a real product when you click through.
+
+### Trust model and gate rule
+
+One gate. Any route whose hash path starts with `/docs/` or `/internal/` is gated by the v1 mockup's single `sessionStorage` password (`finx2026`, key `finx-internal-unlocked`). All other routes are public.
+
+The External/Internal split is simulated in v1 through the **View-as toggle** in the meta bar. After sign-in, the default view is External; switching to Internal reveals the Internal Hub and any item flagged with `data-tier="internal"`.
+
+### v2 production gating (not built in v1)
+
+Production will replace the single password with real dual SSO: a bank-partner identity provider for External users, and UST SSO for Internal users. Route-level guards will redirect unauthenticated users to the appropriate login. The View-as toggle disappears in v2; tier visibility is driven by the authenticated identity. This is documented here for v2 planning and is intentionally not implemented in the mockup.
 
 ### 1.2 Goals
 
