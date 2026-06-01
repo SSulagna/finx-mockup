@@ -3198,7 +3198,7 @@
         <dd><p>The FinX-CIF application and database that serves as the customer master data store. The <code>finx-glue-cif-adapter-service</code> integrates with FinX-CIF for customer creation, customer search, and customer updates. It also maintains Document Directory data, Customer Agreement data, and Customer Product Services data in the FinX-CIF database as different collections. CIF is the adapter target for Party Reference Data Directory, Customer Product &amp; Service Directory, Customer Agreement, and Document Directory service domains. ADR decisions (ADR-FINX-CIF-001 through ADR-FINX-CIF-006) govern how the BIAN BOM maps to CIF data models.</p><p class="glossary-src">Source: FinX Glue Services and Adapter details; ADR, FinX CIF.</p></dd>
 
         <dt id="term-complyadvantage">ComplyAdvantage (CA) / Mesh</dt>
-        <dd><p>The KYC and AML screening provider integrated via <code>finx-amln-fraud-detection-adapter</code>. Supports individual, corporate, and beneficiary entity screening through the ComplyAdvantage Mesh API. Uses a create-and-screen synchronous workflow with webhook callbacks (CASE_CREATED, CASE_STATE_UPDATED, WORKFLOW_COMPLETED). Screens against OFAC, sanctions lists, PEPs, and adverse media. Transaction screening is handled separately by <code>finx-complyadvantage-transaction</code>. Webhook subscription is performed manually by contacting CA support.</p><p class="glossary-src">Source: FinX Microservices Details; FBSA-20.</p></dd>
+        <dd><p>The KYC and AML screening provider integrated through a FinX adapter into the ComplyAdvantage Mesh API. Supports individual, corporate, and beneficiary entity screening. Uses a create-and-screen synchronous workflow with webhook callbacks (CASE_CREATED, CASE_STATE_UPDATED, WORKFLOW_COMPLETED). Screens against OFAC, sanctions lists, PEPs, and adverse media. Transaction screening is handled by a separate service. Webhook subscription is performed manually by contacting ComplyAdvantage support.</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
 
         <dt id="term-conductor-oss">Conductor OSS</dt>
         <dd><p>The orchestration backbone of FinX Glue, enhanced to support BPMN-compliant workflow definitions (JSON or YAML). Orchestrates microservices, APIs, events, human tasks, and UI steps. Supports process states such as wait, resume, parallelization, branching, timers, retries, and escalations. Note: per TRD §5.4, orchestration is currently hand-coded in microservices. Conductor-driven runtime is the target state.</p><p class="glossary-src">Source: Process &amp; Orchestration; FinX Glue Testing Requirements for QA and Test Team.</p></dd>
@@ -3216,7 +3216,7 @@
         <dd><p>Development environment for feature development, integration work, and early-stage testing. Frequent CI/CD deployments. Some Kafka consumers and transforms run only in Dev. Infrastructure may be scaled down.</p><p class="glossary-src">Source: FinX Environments.</p></dd>
 
         <dt id="term-docusign">DocuSign</dt>
-        <dd><p>E-signature and document management provider integrated via <code>finx-celta-docusign-security</code>. Capabilities: S3 document upload with signed URLs, MSD document CRUD, DocuSign template sending, envelope status tracking, and webhook callbacks via AWS Lambda (<code>celta-docusign-s3-demo</code>). Database: <code>finx_docusign_db</code> (Liquibase). Note: this is a platform capability but is not currently wired into the retail savings onboarding Jira scope (FBSA).</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
+        <dd><p>E-signature and document management provider integrated through a FinX adapter. Capabilities: S3 document upload with signed URLs, MSD document CRUD, DocuSign template sending, envelope status tracking, and webhook callbacks via AWS Lambda. Envelope and document metadata are persisted in a dedicated Liquibase-managed database. Note: this is a platform capability that is not wired into the retail savings onboarding scope of the v1 release.</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
       </dl>
 
       <h2 class="h3" id="letter-e">E</h2>
@@ -3267,7 +3267,7 @@
       <h2 class="h3" id="letter-j">J</h2>
       <dl class="glossary-list">
         <dt id="term-jumio">Jumio</dt>
-        <dd><p>Third-party IDV (Identity Document Verification) provider for document authenticity and liveness checks. Integrated for ID verification during onboarding (Passport, Aadhaar, Driving License). Outcome: Verified, Manual review, or Fail with reason. Note: flagged as High risk in the project plan. The manual review flow for IDV failures is not in first-release scope.</p><p class="glossary-src">Source: Project Plan, Onboarding and Portal Program; FBSA-14.</p></dd>
+        <dd><p>Third-party IDV (Identity Document Verification) provider for document authenticity and liveness checks. Integrated for ID verification during onboarding (Passport, Aadhaar, Driving License). Outcome: Verified, Manual review, or Fail with reason. Note: flagged as High risk in the project plan. The manual review flow for IDV failures is not in first-release scope.</p><p class="glossary-src">Source: Project Plan, Onboarding and Portal Program.</p></dd>
       </dl>
 
       <h2 class="h3" id="letter-k">K</h2>
@@ -3282,16 +3282,16 @@
       <h2 class="h3" id="letter-m">M</h2>
       <dl class="glossary-list">
         <dt id="term-maker-checker">Maker / Checker</dt>
-        <dd><p>User roles in the entitlement service for transaction approval workflows. The Maker initiates transactions (part of a Maker Group with specific limits). The Checker approves transactions (part of an Approval or Checker Group with upper and lower authorization limits). Dual-approval (four-eyes) is supported. Managed via <code>finx-celta-entitlement-service</code>.</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
+        <dd><p>User roles in the entitlement service for transaction approval workflows. The Maker initiates transactions (part of a Maker Group with specific limits). The Checker approves transactions (part of an Approval or Checker Group with upper and lower authorization limits). Dual-approval (four-eyes) is supported. Managed by the FinX entitlement service.</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
 
         <dt id="term-mfe">MFE (Micro Front-End)</dt>
-        <dd><p>A self-contained UI module deployed as an independent component through Modyo CMS or CI/CD. In FinX Glass, each capability is surfaced as an MFE (also called SPA). MFEs are IIFE bundles injected into the same page DOM (not iframes), sharing window, same origin, and same cookies. Built with Vue 3 + TypeScript + Vite. Examples: <code>finx-fe-cop-retail-onboarding</code>, <code>finx-fe-bop-service-request-fulfillment</code>.</p><p class="glossary-src">Source: Introduction to FinX Glass; ADR, Glass Session Lifecycle Management (PCI-DSS 8.2.8).</p></dd>
+        <dd><p>A self-contained UI module deployed as an independent component through Modyo CMS or CI/CD. In FinX Glass, each capability is surfaced as an MFE (also called SPA). MFEs are IIFE bundles injected into the same page DOM (not iframes), sharing window, same origin, and same cookies. Built with Vue 3 + TypeScript + Vite. Examples: a retail onboarding MFE for customer-operations users, and a service-request fulfilment MFE for back-office users.</p><p class="glossary-src">Source: Introduction to FinX Glass; ADR, Glass Session Lifecycle Management (PCI-DSS 8.2.8).</p></dd>
 
         <dt id="term-modyo">Modyo</dt>
         <dd><p>The composable front-end platform used by FinX Glass for micro front-end hosting and orchestration. Supports deployment of React or Vue SPAs as independent components. Provides CMS, build and deploy pipeline, and module federation capabilities.</p><p class="glossary-src">Source: Introduction to FinX Glass.</p></dd>
 
         <dt id="term-msd">MSD (Master Service Data)</dt>
-        <dd><p>The internal master data store used by FinX onboarding services. The <code>finx-customer-onboarding-service-papi</code> provides APIs for customer onboarding purposes into MSD, including corporate entity creation, individual creation, case management, and appForm status tracking. MSD is referenced as a dependency in the FinX-Celta Services List for onboarding, qualify-prospect, and shareholder services.</p><p class="glossary-src">Source: FinX Microservices Details; FinX-Celta Services List.</p></dd>
+        <dd><p>The internal master data store used by FinX onboarding services. A dedicated customer-onboarding service exposes APIs for creating corporate entities, creating individuals, managing onboarding cases, and tracking appForm status against MSD. MSD is a dependency for onboarding, qualify-prospect, and shareholder service flows.</p><p class="glossary-src">Source: FinX Microservices Details.</p></dd>
       </dl>
 
       <h2 class="h3" id="letter-n">N</h2>
@@ -3351,7 +3351,7 @@
       <h2 class="h3" id="letter-t">T</h2>
       <dl class="glossary-list">
         <dt id="term-thought-machine">Thought Machine (TM) / Vault Core</dt>
-        <dd><p>The core banking system integrated via <code>finx-glue-tm-account-adapter-service</code>. Used for customer creation (<code>finx-celta-tm-party-service</code>), account lifecycle management (<code>finx-celta-tm-account-service</code> with V1, V2, and VP variants), postings and balances (<code>finx-celta-tm-postings-service</code>), and Vault Payments (<code>finx-celta-tm-vaultpayment-service</code>). TM endpoints are in us-east-1 (N. Virginia). FinX is in ap-south-1 (Mumbai) with VPC peering.</p><p class="glossary-src">Source: FinX Microservices Details; FinX Installation Manual; FinX Glue Services and Adapter details.</p></dd>
+        <dd><p>The core banking system integrated via <code>finx-glue-tm-account-adapter-service</code>. Used for customer creation, account lifecycle management (with V1, V2, and Vault Payments variants), postings and balances, and Vault Payments orchestration. TM endpoints are in us-east-1 (N. Virginia). FinX is in ap-south-1 (Mumbai) with VPC peering.</p><p class="glossary-src">Source: FinX Microservices Details; FinX Installation Manual; FinX Glue Services and Adapter details.</p></dd>
       </dl>
 
       <h2 class="h3" id="letter-v">V</h2>
