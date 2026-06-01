@@ -1,0 +1,644 @@
+{
+  "file": "Payment+Order+Initiation+SD.doc",
+  "events": [
+    {
+      "type": "h",
+      "level": 1,
+      "text": "Payment Order Initiation SD"
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "1. What Is This Service Domain?"
+    },
+    {
+      "type": "p",
+      "text": "In BIAN v14.0, the Payment Order Initiation Service Domain manages the capture, registration, and initiation of customer payment orders across all banking channels."
+    },
+    {
+      "type": "p",
+      "text": "Role: It acts as the primary entry-point Processing Domain that receives a payment instruction from a channel or orchestration layer, enriches it with system-controlled attributes, and creates a traceable instance record of that payment order."
+    },
+    {
+      "type": "p",
+      "text": "Classification: This is a Transaction / Processing Domain — not a Catalog or Directory Domain. It processes and registers payment instructions; it does not manage product definitions, account state, or party profiles."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.1 Key Distinction"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Payment Order Initiation SD Manages",
+          "Payment Order Initiation SD Does NOT Manage"
+        ],
+        [
+          "Capture and registration of payment instructions",
+          "Fund clearing or settlement"
+        ],
+        [
+          "Creation of Payment Order Instance Records",
+          "Account balance management (Savings / Current Account SDs)"
+        ],
+        [
+          "Unique Payment Order Reference generation",
+          "Party or account master data management"
+        ],
+        [
+          "Payment instruction enrichment with system-controlled attributes",
+          "Payment routing logic (Payments Engine domain)"
+        ],
+        [
+          "Traceability via Instance Reference and Transaction ID",
+          "Transaction history or ledger records (Position Keeping SD)"
+        ],
+        [
+          "Payment status reporting (Initiated) at registration",
+          "Behavior Qualifier sub-records — none at Initiation step"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "1.2 Payment Order Types"
+    },
+    {
+      "type": "p",
+      "text": "A payment order processed by this SD may represent:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Payment Order Type",
+          "Description"
+        ],
+        [
+          "Customer-to-customer fund transfer",
+          "Retail / Consumer transfer between two customer accounts"
+        ],
+        [
+          "Bill payment",
+          "Customer payment towards a bill or obligation"
+        ],
+        [
+          "ACH Credit Transfer",
+          "Standard batch-settled credit transfer via ACH network"
+        ],
+        [
+          "Teller-initiated payment",
+          "Bank operator processes payment on behalf of walk-in customer"
+        ],
+        [
+          "Internet / Mobile Banking payment",
+          "Customer-initiated transfer via digital channel"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "2. When to Use This Service Domain"
+    },
+    {
+      "type": "p",
+      "text": "Invoke this SD whenever a channel or system submits a new payment instruction for registration and downstream processing:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Trigger Event",
+          "When to Call POST /PaymentOrderInitiation/Initiate"
+        ],
+        [
+          "Customer initiates transfer via mobile / internet banking",
+          "Channel collects payer, payee, amount, currency, datetime and submits to Initiate endpoint"
+        ],
+        [
+          "Bank teller initiates payment on behalf of customer",
+          "Bank system submits customer payment details; channel enriches payload and calls Initiate"
+        ],
+        [
+          "Bank funds customer account from internal account",
+          "Internal account used as payer; customer account used as payee; Initiate called by orchestration layer"
+        ],
+        [
+          "Self transfer between customer's own accounts",
+          "Customer's two own accounts used as payer and payee; same Initiate endpoint used"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.1 Use Case A — Customer-Initiated Fund Transfer (Mobile Banking)"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A retail customer initiates a transfer via the mobile banking app."
+    },
+    {
+      "type": "p",
+      "text": "Action: The mobile app collects payer, payee, amount, currency, and payment datetime. The channel enriches the payload with pre-configured fields (DateTimeType = CreatingDate; PaymentMechanism = Book Transfer) and calls POST /PaymentOrderInitiation/Initiate."
+    },
+    {
+      "type": "p",
+      "text": "Response: Unique Payment Instance Reference (e.g., POI-2026-00041823) and Payment Instance Status = Initiated."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "2.2 Use Case B — Bank Operator-Initiated Payment"
+    },
+    {
+      "type": "p",
+      "text": "Scenario: A bank operator processes a payment instruction on behalf of a walk-in customer."
+    },
+    {
+      "type": "p",
+      "text": "Action: The bank system submits the customer's payment details. The channel enriches the payload with pre-configured fields and calls the BIAN Initiate endpoint. The payment is registered and a unique Instance Reference is returned."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "3. Implementation Scope"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Use Case",
+          "Description",
+          "Scope Status"
+        ],
+        [
+          "Use Case 1 — Intrabank Transfer",
+          "Transfer between two different customers at the same bank",
+          "Out of scope — planned for future implementation"
+        ],
+        [
+          "Use Case 2 — Self Transfer",
+          "Customer transfers between their own accounts",
+          "Current scope — implemented in demo flow"
+        ],
+        [
+          "Use Case 3 — Internal Account Funding",
+          "Bank funds customer account from bank's internal account",
+          "Current scope — implemented in demo flow"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "4. Level of Detail to Capture"
+    },
+    {
+      "type": "p",
+      "text": "Data captured must meet the following quality requirements:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Data Quality Requirement",
+          "Explanation"
+        ],
+        [
+          "Payment instruction–specific",
+          "All fields relate to a single, specific payment instruction event"
+        ],
+        [
+          "Instruction-level",
+          "Not account-level or party-level data — captures the transfer instruction only"
+        ],
+        [
+          "Traceable by unique Instance Reference",
+          "Every payment order receives a unique Payment Order Reference (e.g., POI-2026-00041823)"
+        ],
+        [
+          "Minimal at initiation",
+          "Only the fields required to register and post the instruction are captured; no BQ sub-records at this stage"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "5. Control Record Structure"
+    },
+    {
+      "type": "p",
+      "text": "All payment order fields are captured within the CR payload. There are no BQ sub-records at the Initiation step. The CR groups fields into the following logical areas:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "CR Field Group",
+          "Fields Captured"
+        ],
+        [
+          "Payer Reference",
+          "PayerReference.PayerIdentifier (name), PayerBankReference.PayerBankIdentifier (bank name)"
+        ],
+        [
+          "Payer Account",
+          "FinancialTransactionFromAccount — AccountIdentification (account number, account type enum)"
+        ],
+        [
+          "Payee Reference",
+          "PayeeReference.PayeeIdentifier (name), PayeeBankReference.PayeeBankIdentifier (bank name)"
+        ],
+        [
+          "Payee Account",
+          "FinancialTransactionTargetAccount — AccountIdentification (account number, account type enum)"
+        ],
+        [
+          "Payment Transaction",
+          "Amount (AmountValue), Currency (Currencycode), DateTime (DateTimeContent, DateTimeType = CreatingDate), Mechanism (Book Transfer)"
+        ],
+        [
+          "Payment Purpose",
+          "PaymentPurpose — customer-provided remittance information / remarks (alphanumeric)"
+        ],
+        [
+          "Payment Identification (Response)",
+          "PaymentTransactionIdentification[0] = TransactionID (CBS UUID); PaymentTransactionIdentification[1] = PaymentOrderID (adapter-generated)"
+        ],
+        [
+          "Payment Status (Response)",
+          "PaymentTransactionStatus.StatusReason = Initiated (demo flow only)"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Response ID rule: PaymentTransactionIdentification[0] = TransactionID (CBS UUID); PaymentTransactionIdentification[1] = PaymentOrderID (adapter-generated, same as Client Batch ID submitted to CBS)."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "6. Payment Workflow — Current Scope"
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.1 Use Case 2 — Self Transfer (Customer's Own Accounts)"
+    },
+    {
+      "type": "p",
+      "text": "The customer transfers funds between two accounts they own. The payer account and payee account both belong to the same customer. The adapter generates a unique Payment Order ID, submits a Book Transfer posting instruction to CBS, and returns the Payment Order Reference and Transaction ID."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.2 Use Case 3 — Funding from Bank's Internal Account"
+    },
+    {
+      "type": "p",
+      "text": "The bank funds a customer account from an internal bank account. The payer is the bank's internal account; the payee is the customer account. The same Initiate endpoint and field mapping apply."
+    },
+    {
+      "type": "h",
+      "level": 2,
+      "text": "6.3 Use Case 1 — Intrabank Transfer (Out of Scope)"
+    },
+    {
+      "type": "p",
+      "text": "Transfer between two different customers at the same bank. This use case is planned for future implementation and is not part of the current demo scope."
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "7. Related Service Domains & Systems"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Related SD / System",
+          "Relationship"
+        ],
+        [
+          "Position Keeping SD",
+          "Transaction ID (CBS UUID) returned by Payment Order Initiation is reflected as Transaction ID in Position Keeping SD transaction logs."
+        ],
+        [
+          "Savings Account SD / Current Account SD",
+          "Account numbers referenced as payer and payee. Balance management is handled by respective account SDs — Payment Order Initiation does not manage account state."
+        ],
+        [
+          "Party Reference Data Directory SD",
+          "Payer and payee names are optional reference fields. Authoritative party data remains in PRDD."
+        ],
+        [
+          "Core Banking System (CBS / Thought Machine)",
+          "Receives the posting instruction from the adapter. Returns Posting Instruction Batch UUID (Transaction ID). CBS performs the actual account posting."
+        ],
+        [
+          "Payments Engine (Future)",
+          "Not integrated in current demo scope. Will be the downstream routing engine for ACH, RTP, FedNow, SWIFT, and SEPA mechanisms in future phases."
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "8. Future Payment Mechanism Extensions"
+    },
+    {
+      "type": "p",
+      "text": "The following payment mechanisms are planned for future phases once Payments Engine integration is available:"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Payment Mechanism",
+          "Market",
+          "Settlement",
+          "Use Case"
+        ],
+        [
+          "ACH Credit Transfer (current)",
+          "US",
+          "Batch; T+1",
+          "Standard consumer & business transfers"
+        ],
+        [
+          "RTP (Real-Time Payments)",
+          "US",
+          "Instant; 24×7",
+          "Instant P2P, B2B, payroll disbursement"
+        ],
+        [
+          "FedNow",
+          "US",
+          "Instant; 24×7",
+          "Instant retail & SME payments"
+        ],
+        [
+          "Fedwire Funds",
+          "US",
+          "RTGS; same-day",
+          "High-value institutional transfers"
+        ],
+        [
+          "CHIPS",
+          "US",
+          "Multilateral netting + RTGS",
+          "Large-value interbank payments"
+        ],
+        [
+          "SEPA Credit Transfer (SCT)",
+          "EU",
+          "Batch; T+1",
+          "Standard Euro-zone fund transfers"
+        ],
+        [
+          "SEPA Instant Credit Transfer (SCT Inst)",
+          "EU",
+          "Instant; ≤10s",
+          "Instant Euro transfers up to €100,000"
+        ],
+        [
+          "SEPA Direct Debit Core",
+          "EU",
+          "Batch; T+1",
+          "Consumer mandate-based recurring debits"
+        ],
+        [
+          "SEPA Direct Debit B2B",
+          "EU",
+          "Batch; T+1",
+          "Business mandate-based debits"
+        ],
+        [
+          "TARGET2 / T2 (ECB)",
+          "EU",
+          "RTGS; same-day",
+          "High-value Euro institutional transfers"
+        ],
+        [
+          "SWIFT",
+          "US & EU",
+          "Correspondent banking",
+          "Cross-border wires (ISO 20022 MX only)"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 1,
+      "text": "9. BIAN Field Mapping"
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "Payer Fields"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Value",
+          "Description"
+        ],
+        [
+          "Payer Name",
+          "PayerReference.PayerIdentifier",
+          "Trevor Roberts",
+          "Full Name of Payer"
+        ],
+        [
+          "Payer Bank",
+          "PayerBankReference.PayerBankIdentifier",
+          "Bank of America",
+          "Full Name of Payer Bank"
+        ],
+        [
+          "Payer Account Number",
+          "PaymentTransaction.FinancialTransactionFromAccount.AccountIdentification.AccountIdentification.IdentifierValue",
+          "XXXXXXXXXX",
+          "Human-readable account number format"
+        ],
+        [
+          "Payer Account Type",
+          "PaymentTransaction.FinancialTransactionFromAccount.AccountIdentification.AccountIdentificationType",
+          "AccountNumber",
+          "Same enum to be used"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "Payee Fields"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Value",
+          "Description"
+        ],
+        [
+          "Payee Name",
+          "PayeeReference.PayeeIdentifier",
+          "Stephen Hawking",
+          "Full Name of Payee"
+        ],
+        [
+          "Payee Bank",
+          "PayeeBankReference.PayeeBankIdentifier",
+          "Bank of America",
+          "Full Name of Payee Bank"
+        ],
+        [
+          "Payee Account Number",
+          "PaymentTransaction.FinancialTransactionTargetAccount.AccountIdentification.AccountIdentification.IdentifierValue",
+          "XXXXXXXXXX",
+          "Human-readable account number format"
+        ],
+        [
+          "Payee Account Type",
+          "PaymentTransaction.FinancialTransactionTargetAccount.AccountIdentification.AccountIdentificationType",
+          "AccountNumber",
+          "Same enum to be used"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "Payment Detail Fields"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Value",
+          "Description"
+        ],
+        [
+          "Amount",
+          "PaymentTransaction.FinancialTransactionAmount.AmountValue",
+          "1000.00",
+          "Two decimal places only"
+        ],
+        [
+          "Currency Code",
+          "PaymentTransaction.FinancialTransactionCurrency.Currencycode",
+          "USD",
+          "Only USD in demo flow"
+        ],
+        [
+          "Payment DateTime",
+          "PaymentTransaction.FinancialTransactionDateTime.DateTimeContent",
+          "2026-04-29T00:00:00.000Z",
+          "UTC format strictly (YYYY-MM-DDTHH:mm:ss.sssZ)"
+        ],
+        [
+          "Payment Date Type",
+          "PaymentTransaction.FinancialTransactionDateTime.DateTimeType",
+          "CreatingDate",
+          "Pre-configured by channel exclusively"
+        ],
+        [
+          "Payment Mechanism",
+          "PaymentTransaction.PaymentTransactionUsedMechanism",
+          "Book Transfer",
+          "Pre-configured by channel exclusively"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "Payment Note Field"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Value",
+          "Description"
+        ],
+        [
+          "Remittance Information",
+          "PaymentPurpose",
+          "Rent payment for April 2026",
+          "Alphanumeric; customer-provided purpose or remarks"
+        ]
+      ]
+    },
+    {
+      "type": "h",
+      "level": 3,
+      "text": "Response Payload"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Field Name",
+          "BIAN Field JSON Path",
+          "Sample Value",
+          "Description"
+        ],
+        [
+          "Payment Order Reference",
+          "PaymentTransaction.PaymentTransactionIdentification[1].PaymentIdentification.IdentifierValue",
+          "POIXXXXXXXXXX",
+          "Unique Payment Order ID assigned by adapter (same as Client Batch ID passed in request)"
+        ],
+        [
+          "Payment Order ID Ref Type",
+          "PaymentTransaction.PaymentTransactionIdentification[1].PaymentIdentificationType",
+          "PaymentOrderID",
+          "Unique enum identifying this as a Payment Order ID"
+        ],
+        [
+          "Transaction ID Reference",
+          "PaymentTransaction.PaymentTransactionIdentification[0].PaymentIdentification.IdentifierValue",
+          "TXNXXXXXXXXXX",
+          "Posting Instruction Batch ID (Core Banking System UUID); reflected as Transaction ID in Position Keeping SD"
+        ],
+        [
+          "Transaction ID Ref Type",
+          "PaymentTransaction.PaymentTransactionIdentification[0].PaymentIdentificationType",
+          "TransactionID",
+          "Unique enum identifying this as a Transaction ID"
+        ],
+        [
+          "Payment Status",
+          "PaymentTransaction.PaymentTransactionStatus.PaymentTransactionStatus.StatusReason",
+          "Initiated",
+          "Current status; only 'Initiated' shown in demo flow"
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "BIAN published yaml : BIAN Portal"
+    },
+    {
+      "type": "p",
+      "text": "TM Adapter Doc: Payment Order Initiation Adapter - Product/Engineering - USTFinX Confluence"
+    }
+  ]
+}

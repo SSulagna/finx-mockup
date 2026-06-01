@@ -1,0 +1,244 @@
+  <!-- DOCS: API reference (Payment Order Initiation) -->
+  <section class="view" data-route="/docs/glue/api-reference/payment-order-initiation" data-tier="external" data-layout="docs" data-section="glue" data-title="Payment Order Initiation · API Reference · UST FinX">
+    <aside class="docs-sidebar"><div class="docs-nav">
+      <div class="docs-nav-title">FinX Glue</div>
+      <a href="#/docs/glue" class="docs-nav-link">Overview</a>
+
+      <div class="docs-nav-group">Get started</div>
+      <a href="#/docs/glue/quickstart" class="docs-nav-link">Quickstart</a>
+      <a href="#/docs/glue/auth" class="docs-nav-link">Auth &amp; tenant headers</a>
+      <a href="#/docs/glue/environments" class="docs-nav-link">Environments</a>
+
+      <div class="docs-nav-group">Concepts</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on BIAN service domains in Glue">BIAN service domains</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Concept page on the canonical data model">Canonical model</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: How to extend the canonical model with namespaced fields">Extensibility model</a>
+
+      <div class="docs-nav-group">API Reference</div>
+      <div class="docs-nav-sub">Party &amp; Customer</div>
+      <a href="#/docs/glue/api-reference" class="docs-nav-link">Party Lifecycle</a>
+      <a href="#/docs/glue/api-reference/party-reference-data" class="docs-nav-link">Party Reference Data</a>
+      <div class="docs-nav-sub">Accounts &amp; Deposits</div>
+      <a href="#/docs/glue/api-reference/current-account" class="docs-nav-link">Current Account</a>
+      <a href="#/docs/glue/api-reference/savings-account" class="docs-nav-link">Savings Account</a>
+      <a href="#/docs/glue/api-reference/term-deposit" class="docs-nav-link">Term Deposit</a>
+      <div class="docs-nav-sub">Products &amp; Agreements</div>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Product Directory reference">Product Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Product & Service Directory reference">Customer Product &amp; Service Directory</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Offer reference">Customer Offer</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Customer Agreement reference">Customer Agreement</a>
+      <div class="docs-nav-sub">Operations</div>
+      <a href="#/docs/glue/api-reference/position-keeping" class="docs-nav-link">Position Keeping</a>
+      <a href="#/docs/glue/api-reference/payment-order-initiation" class="docs-nav-link is-active">Payment Order Initiation</a>
+      <a href="javascript:void(0)" class="docs-nav-link" title="Planned: Document Directory reference">Document Directory</a>
+
+      <div class="docs-nav-group">Journey Guides</div>
+      <a href="#/docs/glue/journey-onboarding" class="docs-nav-link">Customer onboarding &amp; KYC</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Account opening journey guide">Account opening</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Cross-border payment journey guide">Cross-border payment</a>
+
+      <div class="docs-nav-group">Operate</div>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Operational runbooks for production deployments">Runbooks</a>
+      <a href="#/docs/glue" class="docs-nav-link" title="Planned: Release notes and deprecation policy">Releases &amp; deprecations</a>
+    </div></aside>
+    <main class="docs-main">
+      <a href="#/docs/glue/api-reference" class="back-link">← Back to API Reference</a>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">Home</a><span class="sep">/</span><a href="#/docs/glue">Glue Developer Hub</a><span class="sep">/</span><a href="#/docs/glue/api-reference">API Reference</a><span class="sep">/</span><span>Payment Order Initiation</span></nav>
+      <span class="eyebrow">FinX Glue · API Reference · BIAN 14.0</span>
+      <h1 class="page-title">Payment Order Initiation</h1>
+      <p class="page-lead">The Payment Order Initiation service domain creates, tracks, and dispatches outbound payment instructions. It captures the originator, beneficiary, amount, value date, and rail selection, and emits the payment to the appropriate scheme adapter.</p>
+      <h2 class="h3" id="what-is-this-service-domain">What Is This Service Domain?</h2>
+      <p>In BIAN v14.0, the Payment Order Initiation Service Domain manages the capture, registration, and initiation of customer payment orders across all banking channels.</p>
+      <p>Role: It acts as the primary entry-point Processing Domain that receives a payment instruction from a channel or orchestration layer, enriches it with system-controlled attributes, and creates a traceable instance record of that payment order.</p>
+      <p>Classification: This is a Transaction / Processing Domain, not a Catalog or Directory Domain. It processes and registers payment instructions; it does not manage product definitions, account state, or party profiles.</p>
+      <h2 class="h3" id="key-distinction">Key Distinction</h2>
+      <table class="docs-table">
+        <thead><tr><th>Payment Order Initiation SD Manages</th><th>Payment Order Initiation SD Does NOT Manage</th></tr></thead>
+        <tbody>
+          <tr><td>Capture and registration of payment instructions</td><td>Fund clearing or settlement</td></tr>
+          <tr><td>Creation of Payment Order Instance Records</td><td>Account balance management (Savings / Current Account SDs)</td></tr>
+          <tr><td>Unique Payment Order Reference generation</td><td>Party or account master data management</td></tr>
+          <tr><td>Payment instruction enrichment with system-controlled attributes</td><td>Payment routing logic (Payments Engine domain)</td></tr>
+          <tr><td>Traceability via Instance Reference and Transaction ID</td><td>Transaction history or ledger records (Position Keeping SD)</td></tr>
+          <tr><td>Payment status reporting (Initiated) at registration</td><td>Behavior Qualifier sub-records, none at Initiation step</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="payment-order-types">Payment Order Types</h2>
+      <p>A payment order processed by this SD may represent:</p>
+      <table class="docs-table">
+        <thead><tr><th>Payment Order Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Customer-to-customer fund transfer</td><td>Retail / Consumer transfer between two customer accounts</td></tr>
+          <tr><td>Bill payment</td><td>Customer payment towards a bill or obligation</td></tr>
+          <tr><td>ACH Credit Transfer</td><td>Standard batch-settled credit transfer via ACH network</td></tr>
+          <tr><td>Teller-initiated payment</td><td>Bank operator processes payment on behalf of walk-in customer</td></tr>
+          <tr><td>Internet / Mobile Banking payment</td><td>Customer-initiated transfer via digital channel</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="when-to-use-this-service-domain">When to Use This Service Domain</h2>
+      <p>Invoke this SD whenever a channel or system submits a new payment instruction for registration and downstream processing:</p>
+      <table class="docs-table">
+        <thead><tr><th>Trigger Event</th><th>When to Call POST /PaymentOrderInitiation/Initiate</th></tr></thead>
+        <tbody>
+          <tr><td>Customer initiates transfer via mobile / internet banking</td><td>Channel collects payer, payee, amount, currency, datetime and submits to Initiate endpoint</td></tr>
+          <tr><td>Bank teller initiates payment on behalf of customer</td><td>Bank system submits customer payment details; channel enriches payload and calls Initiate</td></tr>
+          <tr><td>Bank funds customer account from internal account</td><td>Internal account used as payer; customer account used as payee; Initiate called by orchestration layer</td></tr>
+          <tr><td>Self transfer between customer&#x27;s own accounts</td><td>Customer&#x27;s two own accounts used as payer and payee; same Initiate endpoint used</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="use-case-a-customer-initiated-fund-transfer-mobi">Use Case A, Customer-Initiated Fund Transfer (Mobile Banking)</h2>
+      <p>Scenario: A retail customer initiates a transfer via the mobile banking app.</p>
+      <p>Action: The mobile app collects payer, payee, amount, currency, and payment datetime. The channel enriches the payload with pre-configured fields (DateTimeType = CreatingDate; PaymentMechanism = Book Transfer) and calls POST /PaymentOrderInitiation/Initiate.</p>
+      <p>Response: Unique Payment Instance Reference (e.g., POI-2026-00041823) and Payment Instance Status = Initiated.</p>
+      <h2 class="h3" id="use-case-b-bank-operator-initiated-payment">Use Case B, Bank Operator-Initiated Payment</h2>
+      <p>Scenario: A bank operator processes a payment instruction on behalf of a walk-in customer.</p>
+      <p>Action: The bank system submits the customer&#x27;s payment details. The channel enriches the payload with pre-configured fields and calls the BIAN Initiate endpoint. The payment is registered and a unique Instance Reference is returned.</p>
+      <h2 class="h3" id="implementation-scope">Implementation Scope</h2>
+      <table class="docs-table">
+        <thead><tr><th>Use Case</th><th>Description</th><th>Scope Status</th></tr></thead>
+        <tbody>
+          <tr><td>Use Case 1, Intrabank Transfer</td><td>Transfer between two different customers at the same bank</td><td>Out of scope, planned for future implementation</td></tr>
+          <tr><td>Use Case 2, Self Transfer</td><td>Customer transfers between their own accounts</td><td>Current scope, implemented in demo flow</td></tr>
+          <tr><td>Use Case 3, Internal Account Funding</td><td>Bank funds customer account from bank&#x27;s internal account</td><td>Current scope, implemented in demo flow</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="level-of-detail-to-capture">Level of Detail to Capture</h2>
+      <p>Data captured must meet the following quality requirements:</p>
+      <table class="docs-table">
+        <thead><tr><th>Data Quality Requirement</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td>Payment instruction-specific</td><td>All fields relate to a single, specific payment instruction event</td></tr>
+          <tr><td>Instruction-level</td><td>Not account-level or party-level data, captures the transfer instruction only</td></tr>
+          <tr><td>Traceable by unique Instance Reference</td><td>Every payment order receives a unique Payment Order Reference (e.g., POI-2026-00041823)</td></tr>
+          <tr><td>Minimal at initiation</td><td>Only the fields required to register and post the instruction are captured; no BQ sub-records at this stage</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="control-record-structure">Control Record Structure</h2>
+      <p>All payment order fields are captured within the CR payload. There are no BQ sub-records at the Initiation step. The CR groups fields into the following logical areas:</p>
+      <table class="docs-table">
+        <thead><tr><th>CR Field Group</th><th>Fields Captured</th></tr></thead>
+        <tbody>
+          <tr><td>Payer Reference</td><td>PayerReference.PayerIdentifier (name), PayerBankReference.PayerBankIdentifier (bank name)</td></tr>
+          <tr><td>Payer Account</td><td>FinancialTransactionFromAccount, AccountIdentification (account number, account type enum)</td></tr>
+          <tr><td>Payee Reference</td><td>PayeeReference.PayeeIdentifier (name), PayeeBankReference.PayeeBankIdentifier (bank name)</td></tr>
+          <tr><td>Payee Account</td><td>FinancialTransactionTargetAccount, AccountIdentification (account number, account type enum)</td></tr>
+          <tr><td>Payment Transaction</td><td>Amount (AmountValue), Currency (Currencycode), DateTime (DateTimeContent, DateTimeType = CreatingDate), Mechanism (Book Transfer)</td></tr>
+          <tr><td>Payment Purpose</td><td>PaymentPurpose, customer-provided remittance information / remarks (alphanumeric)</td></tr>
+          <tr><td>Payment Identification (Response)</td><td>PaymentTransactionIdentification[0] = TransactionID (CBS UUID); PaymentTransactionIdentification[1] = PaymentOrderID (adapter-generated)</td></tr>
+          <tr><td>Payment Status (Response)</td><td>PaymentTransactionStatus.StatusReason = Initiated (demo flow only)</td></tr>
+        </tbody>
+      </table>
+      <p>Response ID rule: PaymentTransactionIdentification[0] = TransactionID (CBS UUID); PaymentTransactionIdentification[1] = PaymentOrderID (adapter-generated, same as Client Batch ID submitted to CBS).</p>
+      <h2 class="h3" id="payment-workflow-current-scope">Payment Workflow, Current Scope</h2>
+      <h2 class="h3" id="use-case-2-self-transfer-customers-own-accounts">Use Case 2, Self Transfer (Customer&#x27;s Own Accounts)</h2>
+      <p>The customer transfers funds between two accounts they own. The payer account and payee account both belong to the same customer. The adapter generates a unique Payment Order ID, submits a Book Transfer posting instruction to CBS, and returns the Payment Order Reference and Transaction ID.</p>
+      <h2 class="h3" id="use-case-3-funding-from-banks-internal-account">Use Case 3, Funding from Bank&#x27;s Internal Account</h2>
+      <p>The bank funds a customer account from an internal bank account. The payer is the bank&#x27;s internal account; the payee is the customer account. The same Initiate endpoint and field mapping apply.</p>
+      <h2 class="h3" id="use-case-1-intrabank-transfer-out-of-scope">Use Case 1, Intrabank Transfer (Out of Scope)</h2>
+      <p>Transfer between two different customers at the same bank. This use case is planned for future implementation and is not part of the current demo scope.</p>
+      <h2 class="h3" id="related-service-domains-systems">Related Service Domains &amp; Systems</h2>
+      <table class="docs-table">
+        <thead><tr><th>Related SD / System</th><th>Relationship</th></tr></thead>
+        <tbody>
+          <tr><td>Position Keeping SD</td><td>Transaction ID (CBS UUID) returned by Payment Order Initiation is reflected as Transaction ID in Position Keeping SD transaction logs.</td></tr>
+          <tr><td>Savings Account SD / Current Account SD</td><td>Account numbers referenced as payer and payee. Balance management is handled by respective account SDs, Payment Order Initiation does not manage account state.</td></tr>
+          <tr><td>Party Reference Data Directory SD</td><td>Payer and payee names are optional reference fields. Authoritative party data remains in PRDD.</td></tr>
+          <tr><td>Core Banking System (CBS / Thought Machine)</td><td>Receives the posting instruction from the adapter. Returns Posting Instruction Batch UUID (Transaction ID). CBS performs the actual account posting.</td></tr>
+          <tr><td>Payments Engine (Future)</td><td>Not integrated in current demo scope. Will be the downstream routing engine for ACH, RTP, FedNow, SWIFT, and SEPA mechanisms in future phases.</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="future-payment-mechanism-extensions">Future Payment Mechanism Extensions</h2>
+      <p>The following payment mechanisms are planned for future phases once Payments Engine integration is available:</p>
+      <table class="docs-table">
+        <thead><tr><th>Payment Mechanism</th><th>Market</th><th>Settlement</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td>ACH Credit Transfer (current)</td><td>US</td><td>Batch; T+1</td><td>Standard consumer &amp; business transfers</td></tr>
+          <tr><td>RTP (Real-Time Payments)</td><td>US</td><td>Instant; 24×7</td><td>Instant P2P, B2B, payroll disbursement</td></tr>
+          <tr><td>FedNow</td><td>US</td><td>Instant; 24×7</td><td>Instant retail &amp; SME payments</td></tr>
+          <tr><td>Fedwire Funds</td><td>US</td><td>RTGS; same-day</td><td>High-value institutional transfers</td></tr>
+          <tr><td>CHIPS</td><td>US</td><td>Multilateral netting + RTGS</td><td>Large-value interbank payments</td></tr>
+          <tr><td>SEPA Credit Transfer (SCT)</td><td>EU</td><td>Batch; T+1</td><td>Standard Euro-zone fund transfers</td></tr>
+          <tr><td>SEPA Instant Credit Transfer (SCT Inst)</td><td>EU</td><td>Instant; ≤10s</td><td>Instant Euro transfers up to €100,000</td></tr>
+          <tr><td>SEPA Direct Debit Core</td><td>EU</td><td>Batch; T+1</td><td>Consumer mandate-based recurring debits</td></tr>
+          <tr><td>SEPA Direct Debit B2B</td><td>EU</td><td>Batch; T+1</td><td>Business mandate-based debits</td></tr>
+          <tr><td>TARGET2 / T2 (ECB)</td><td>EU</td><td>RTGS; same-day</td><td>High-value Euro institutional transfers</td></tr>
+          <tr><td>SWIFT</td><td>US &amp; EU</td><td>Correspondent banking</td><td>Cross-border wires (ISO 20022 MX only)</td></tr>
+        </tbody>
+      </table>
+      <h2 class="h3" id="bian-field-mapping">BIAN Field Mapping</h2>
+      <h3 id="payer-fields" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Payer Fields</h3>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Payer Name</td><td>PayerReference.PayerIdentifier</td><td>Trevor Roberts</td><td>Full Name of Payer</td></tr>
+          <tr><td>Payer Bank</td><td>PayerBankReference.PayerBankIdentifier</td><td>Bank of America</td><td>Full Name of Payer Bank</td></tr>
+          <tr><td>Payer Account Number</td><td>PaymentTransaction.FinancialTransactionFromAccount.AccountIdentification.AccountIdentification.IdentifierValue</td><td>XXXXXXXXXX</td><td>Human-readable account number format</td></tr>
+          <tr><td>Payer Account Type</td><td>PaymentTransaction.FinancialTransactionFromAccount.AccountIdentification.AccountIdentificationType</td><td>AccountNumber</td><td>Same enum to be used</td></tr>
+        </tbody>
+      </table>
+      <h3 id="payee-fields" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Payee Fields</h3>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Payee Name</td><td>PayeeReference.PayeeIdentifier</td><td>Stephen Hawking</td><td>Full Name of Payee</td></tr>
+          <tr><td>Payee Bank</td><td>PayeeBankReference.PayeeBankIdentifier</td><td>Bank of America</td><td>Full Name of Payee Bank</td></tr>
+          <tr><td>Payee Account Number</td><td>PaymentTransaction.FinancialTransactionTargetAccount.AccountIdentification.AccountIdentification.IdentifierValue</td><td>XXXXXXXXXX</td><td>Human-readable account number format</td></tr>
+          <tr><td>Payee Account Type</td><td>PaymentTransaction.FinancialTransactionTargetAccount.AccountIdentification.AccountIdentificationType</td><td>AccountNumber</td><td>Same enum to be used</td></tr>
+        </tbody>
+      </table>
+      <h3 id="payment-detail-fields" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Payment Detail Fields</h3>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Amount</td><td>PaymentTransaction.FinancialTransactionAmount.AmountValue</td><td>1000.00</td><td>Two decimal places only</td></tr>
+          <tr><td>Currency Code</td><td>PaymentTransaction.FinancialTransactionCurrency.Currencycode</td><td>USD</td><td>Only USD in demo flow</td></tr>
+          <tr><td>Payment DateTime</td><td>PaymentTransaction.FinancialTransactionDateTime.DateTimeContent</td><td>2026-04-29T00:00:00.000Z</td><td>UTC format strictly (YYYY-MM-DDTHH:mm:ss.sssZ)</td></tr>
+          <tr><td>Payment Date Type</td><td>PaymentTransaction.FinancialTransactionDateTime.DateTimeType</td><td>CreatingDate</td><td>Pre-configured by channel exclusively</td></tr>
+          <tr><td>Payment Mechanism</td><td>PaymentTransaction.PaymentTransactionUsedMechanism</td><td>Book Transfer</td><td>Pre-configured by channel exclusively</td></tr>
+        </tbody>
+      </table>
+      <h3 id="payment-note-field" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Payment Note Field</h3>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Remittance Information</td><td>PaymentPurpose</td><td>Rent payment for April 2026</td><td>Alphanumeric; customer-provided purpose or remarks</td></tr>
+        </tbody>
+      </table>
+      <h3 id="response-payload" style="font-size:16px;color:var(--text-primary);margin-top:20px;">Response Payload</h3>
+      <table class="docs-table">
+        <thead><tr><th>Field Name</th><th>BIAN Field JSON Path</th><th>Sample Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Payment Order Reference</td><td>PaymentTransaction.PaymentTransactionIdentification[1].PaymentIdentification.IdentifierValue</td><td>POIXXXXXXXXXX</td><td>Unique Payment Order ID assigned by adapter (same as Client Batch ID passed in request)</td></tr>
+          <tr><td>Payment Order ID Ref Type</td><td>PaymentTransaction.PaymentTransactionIdentification[1].PaymentIdentificationType</td><td>PaymentOrderID</td><td>Unique enum identifying this as a Payment Order ID</td></tr>
+          <tr><td>Transaction ID Reference</td><td>PaymentTransaction.PaymentTransactionIdentification[0].PaymentIdentification.IdentifierValue</td><td>TXNXXXXXXXXXX</td><td>Posting Instruction Batch ID (Core Banking System UUID); reflected as Transaction ID in Position Keeping SD</td></tr>
+          <tr><td>Transaction ID Ref Type</td><td>PaymentTransaction.PaymentTransactionIdentification[0].PaymentIdentificationType</td><td>TransactionID</td><td>Unique enum identifying this as a Transaction ID</td></tr>
+          <tr><td>Payment Status</td><td>PaymentTransaction.PaymentTransactionStatus.PaymentTransactionStatus.StatusReason</td><td>Initiated</td><td>Current status; only &#x27;Initiated&#x27; shown in demo flow</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info"><strong>BIAN mapping.</strong> This page implements the BIAN <em>Payment Order Initiation</em> service domain in version 14.0. Operational state is sourced live from the Thought Machine core through the platform adapter layer.</div>
+    </main>
+    <aside class="docs-toc"><div class="toc-title">On this page</div>
+      <a href="#what-is-this-service-domain" class="toc-link">What Is This Service Domain?</a>
+      <a href="#key-distinction" class="toc-link">Key Distinction</a>
+      <a href="#payment-order-types" class="toc-link">Payment Order Types</a>
+      <a href="#when-to-use-this-service-domain" class="toc-link">When to Use This Service Domain</a>
+      <a href="#use-case-a-customer-initiated-fund-transfer-mobi" class="toc-link">Use Case A, Customer-Initiated Fund Transfer (Mobile Banking)</a>
+      <a href="#use-case-b-bank-operator-initiated-payment" class="toc-link">Use Case B, Bank Operator-Initiated Payment</a>
+      <a href="#implementation-scope" class="toc-link">Implementation Scope</a>
+      <a href="#level-of-detail-to-capture" class="toc-link">Level of Detail to Capture</a>
+      <a href="#control-record-structure" class="toc-link">Control Record Structure</a>
+      <a href="#payment-workflow-current-scope" class="toc-link">Payment Workflow, Current Scope</a>
+      <a href="#use-case-2-self-transfer-customers-own-accounts" class="toc-link">Use Case 2, Self Transfer (Customer&#x27;s Own Accounts)</a>
+      <a href="#use-case-3-funding-from-banks-internal-account" class="toc-link">Use Case 3, Funding from Bank&#x27;s Internal Account</a>
+      <a href="#use-case-1-intrabank-transfer-out-of-scope" class="toc-link">Use Case 1, Intrabank Transfer (Out of Scope)</a>
+      <a href="#related-service-domains-systems" class="toc-link">Related Service Domains &amp; Systems</a>
+      <a href="#future-payment-mechanism-extensions" class="toc-link">Future Payment Mechanism Extensions</a>
+      <a href="#bian-field-mapping" class="toc-link">BIAN Field Mapping</a>
+    </aside>
+    <aside class="related-pages"><div class="container"><div class="related-title">Continue reading</div><div class="grid-3">
+      <a href="#/docs/glue/api-reference" class="card card--link"><h3 class="card-title">Party Lifecycle (Create party) →</h3><p class="card-text">The Party reference for customer ownership.</p></a>
+      <a href="#/docs/glue/journey-onboarding" class="card card--link"><h3 class="card-title">Customer onboarding journey →</h3><p class="card-text">End-to-end onboarding flow.</p></a>
+      <a href="#/docs/glue" class="card card--link"><h3 class="card-title">Glue Developer Hub →</h3><p class="card-text">Auth, environments, and the rest of the API surfaces.</p></a>
+    </div></div></aside>
+  </section>
